@@ -1,0 +1,28 @@
+---
+title: "terminology"
+author: "Dongyue Xie"
+date: "2019-11-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+**Coverage**: 1. number of reads that align to, or "cover," a known reference: number of reads $\times$ read length / $\#$ bases of reference. 2. the percentage coverage of a reference by reads. E.g. if 90% of a reference is covered by reads (and 10% not) it is a 90% coverage. https://www.ecseq.com/support/ngs/how-to-calculate-the-coverage-for-a-sequencing-experiment
+
+**Depth**: total number of usable reads from the sequencing machine.
+
+**Genotype**: alleles in an organism. Pair of alleles	at a locus. Genetic identity.
+
+
+**Heritability**: percent of total trait variance ‘explained’ by genes 
+
+**Phenotype, Trait**: observed charateristics, often used interchangeably with Phenotype. A phenotype can also refer to a collection of traits. An individual can have a collection of traits (brown hair, brown eyes, cleft chin, etc) and you could say that all that is their phenotype.
+
+**SNPs**: most common type of genetic variation among people. For example, a SNP may replace the nucleotide cytosine (C) with the nucleotide thymine (T) in a certain stretch of DNA. Most commonly, these variations are found in the DNA between genes. They can act as biological markers, helping scientists locate genes that are associated with disease. When SNPs occur within a gene or in a regulatory region near a gene, they may play a more direct role in disease by affecting the gene’s function.
+
+**QTL**:
+
+**HapMap**
+
+**Linkage analysis**
+
