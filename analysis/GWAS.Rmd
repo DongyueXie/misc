@@ -1,0 +1,18 @@
+---
+title: "GWAS"
+author: "Dongyue Xie"
+date: "2019-11-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Genome-wide association study: associate specific genetic variations with particular diseases. This method searches the genome for small variations, called single nucleotide polymorphisms or SNPs (pronounced “snips”), that occur more frequently in people with a particular disease than in people without the disease.
+
+
+Overview of methods: 
+
+
+
