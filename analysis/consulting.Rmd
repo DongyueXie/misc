@@ -1,0 +1,145 @@
+---
+title: "Consulting - Gene expression, microbiota and genotype"
+author: "Dongyue Xie"
+date: "2019-12-06"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Conclusion
+
+1. Take log transformation of the variable 'Normalized' before run 2-way anova. 
+
+See detailed analysis below:
+
+# Analysis
+
+## Igha
+
+```{r}
+datax = read.csv('~/Downloads/Igha.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(10,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+```
+
+The first plot suggests that variance is not homogeneous. The second plot suggests that the response(Normalized expression) is not normal distributed. 
+
+So we need to do some transformation of the response. 
+
+```{r}
+library(car)
+data.trans = boxCox(anova.fit)
+```
+
+Since 0 is in the 95% confidence interval ,we can just take log tranformation.
+```{r}
+datax[,1] = log(datax[,1])
+```
+
+Now, we are ready to fit the 2-way anova model. Since the desing is unbanlanced, we also need to make type III adjustment.
+
+```{r}
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+Anova(anova.fit,type='III')
+```
+
+
+This suggests that Igha gene expression does not differ significantly among genotypes and treatments.
+
+## Reg3b
+
+```{r}
+datax = read.csv('~/Downloads/Reg3b.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(10,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+
+data.trans = boxCox(anova.fit)
+
+datax[,1] = log(datax[,1])
+
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+Anova(anova.fit,type='III')
+```
+
+This suggests: Genotypes and Treatment are significantly associated with Reg3b gene expression.
+
+
+
+## Jchain
+
+```{r}
+datax = read.csv('~/Downloads/Jchain.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(10,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+
+data.trans = boxCox(anova.fit)
+
+datax[,1] = log(datax[,1])
+
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+Anova(anova.fit,type='III')
+```
+
+This suggests Treatment is significantly associated with Jchain gene expression.
+
+## Saa1
+
+```{r}
+datax = read.csv('~/Downloads/Saa1.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(10,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+
+data.trans = boxCox(anova.fit)
+
+datax[,1] = log(datax[,1])
+
+anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
+Anova(anova.fit,type='III')
+```
+
+This suggests that Genotypes and Treatment are significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.
