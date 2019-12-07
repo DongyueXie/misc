@@ -1,5 +1,5 @@
 ---
-title: "Consulting - Gene expression, microbiota and genotype"
+title: "Gene expression, microbiota and genotype"
 author: "Dongyue Xie"
 date: "2019-12-06"
 output: workflowr::wflow_html
@@ -9,7 +9,19 @@ editor_options:
 
 # Conclusion
 
+If use "Normalized" as response to perform 2-way ANOVA, then:
+
 1. Take log transformation of the variable 'Normalized' before run 2-way anova. 
+
+
+Conclusions from ANOVA:
+
+1. Igha gene expression does not differ significantly among genotypes and treatments.
+2. Genotypes and Treatment are significantly associated with Reg3b gene expression.
+3. Treatment is significantly associated with Jchain gene expression. 
+4. Genotypes and Treatment are significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.
+
+
 
 See detailed analysis below:
 
