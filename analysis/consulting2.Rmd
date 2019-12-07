@@ -1,0 +1,123 @@
+---
+title: "Gene expression, microbiota and genotype"
+author: "Dongyue Xie"
+date: "2019-12-06"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Conclusion
+
+If directly use dCT as response, just run the 2-way ANOVA.
+
+Conclusions from ANOVA:
+
+1. Igha gene expression does not differ significantly among genotypes and treatments.
+2. Treatment is significantly associated with Reg3b gene expression.
+3. Treatment is significantly associated with Jchain gene expression. 
+4. Treatment is significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.
+
+
+# Analysis
+
+## Igha
+
+```{r}
+library(car)
+datax = read.csv('~/Downloads/Igha.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(7,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+```
+
+Variance is homogeneous and dCT is normal distributed. So we do not need to do transformations of the dCT.
+
+```{r}
+# adjust due to unbanlanced design
+Anova(anova.fit,type='III')
+```
+
+
+This suggests that Igha gene expression does not differ significantly among genotypes and treatments.
+
+## Reg3b
+
+```{r}
+datax = read.csv('~/Downloads/Reg3b.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(7,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+
+Anova(anova.fit,type='III')
+```
+
+This suggests: Treatment is significantly associated with Reg3b gene expression.
+
+
+
+## Jchain
+
+```{r}
+datax = read.csv('~/Downloads/Jchain.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(7,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+
+Anova(anova.fit,type='III')
+```
+
+This suggests Treatment is significantly associated with Jchain gene expression.
+
+## Saa1
+
+```{r}
+datax = read.csv('~/Downloads/Saa1.csv',header = TRUE,skip=1)
+
+# Use Treatment, Genotype and Normzalized value
+
+datax = datax[,c(7,3,4)]
+
+#table(datax$Genotype,datax$Treatment)
+
+# fit 2-way anova
+anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
+
+# check asusmptions
+plot(anova.fit,1)
+plot(anova.fit,2)
+
+Anova(anova.fit,type='III')
+```
+
+This suggests that Treatment is significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.
