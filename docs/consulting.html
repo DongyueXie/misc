@@ -14,7 +14,7 @@
 
 <meta name="date" content="2019-12-06" />
 
-<title>Consulting - Gene expression, microbiota and genotype</title>
+<title>Gene expression, microbiota and genotype</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -379,7 +379,7 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Consulting - Gene expression, microbiota and genotype</h1>
+<h1 class="title toc-ignore">Gene expression, microbiota and genotype</h1>
 <h4 class="author">Dongyue Xie</h4>
 <h4 class="date">2019-12-06</h4>
 
@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed5546bc1e8edd5b0e658a9a2e22a46ed9c6e159btargetblankd5546bca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/d5546bc1e8edd5b0e658a9a2e22a46ed9c6e159b" target="_blank">d5546bc</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef039025f100e2686cc347e98378e18d542c663cetargetblankf039025a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/f039025f100e2686cc347e98378e18d542c663ce" target="_blank">f039025</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed5546bc1e8edd5b0e658a9a2e22a46ed9c6e159btargetblankd5546bca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef039025f100e2686cc347e98378e18d542c663cetargetblankf039025a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -509,9 +509,6 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-
-Unstaged changes:
-    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -555,6 +552,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/f039025f100e2686cc347e98378e18d542c663ce/analysis/consulting.Rmd" target="_blank">f039025</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-07
+</td>
+<td>
+wflow_publish(“analysis/consulting.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/consulting.html" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/d5546bc1e8edd5b0e658a9a2e22a46ed9c6e159b/analysis/consulting.Rmd" target="_blank">d5546bc</a>
 </td>
 <td>
@@ -576,8 +607,16 @@ wflow_publish(“analysis/consulting.Rmd”)
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
+<p>If use “Normalized” as response to perform 2-way ANOVA, then:</p>
 <ol style="list-style-type: decimal">
 <li>Take log transformation of the variable ‘Normalized’ before run 2-way anova.</li>
+</ol>
+<p>Conclusions from ANOVA:</p>
+<ol style="list-style-type: decimal">
+<li>Igha gene expression does not differ significantly among genotypes and treatments.</li>
+<li>Genotypes and Treatment are significantly associated with Reg3b gene expression.</li>
+<li>Treatment is significantly associated with Jchain gene expression.</li>
+<li>Genotypes and Treatment are significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.</li>
 </ol>
 <p>See detailed analysis below:</p>
 </div>
@@ -599,14 +638,125 @@ anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
 # check asusmptions
 plot(anova.fit,1)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-1">
+Past versions of unnamed-chunk-1-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-1-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-1-1.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(anova.fit,2)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-1-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-2">
+Past versions of unnamed-chunk-1-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-1-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-1-2.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The first plot suggests that variance is not homogeneous. The second plot suggests that the response(Normalized expression) is not normal distributed.</p>
 <p>So we need to do some transformation of the response.</p>
 <pre class="r"><code>library(car)</code></pre>
 <pre><code>Loading required package: carData</code></pre>
 <pre class="r"><code>data.trans = boxCox(anova.fit)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-2-1.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Since 0 is in the 95% confidence interval ,we can just take log tranformation.</p>
 <pre class="r"><code>datax[,1] = log(datax[,1])</code></pre>
 <p>Now, we are ready to fit the 2-way anova model. Since the desing is unbanlanced, we also need to make type III adjustment.</p>
@@ -641,10 +791,121 @@ anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
 # check asusmptions
 plot(anova.fit,1)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-5-1.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(anova.fit,2)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-5-2.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data.trans = boxCox(anova.fit)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
+Past versions of unnamed-chunk-5-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-5-3.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>datax[,1] = log(datax[,1])
 
 anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
@@ -678,10 +939,121 @@ anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
 # check asusmptions
 plot(anova.fit,1)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-6-1.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(anova.fit,2)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-6-2.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data.trans = boxCox(anova.fit)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-3">
+Past versions of unnamed-chunk-6-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-6-3.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>datax[,1] = log(datax[,1])
 
 anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
@@ -715,10 +1087,121 @@ anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
 # check asusmptions
 plot(anova.fit,1)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-7-1.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(anova.fit,2)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-7-2.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data.trans = boxCox(anova.fit)</code></pre>
 <p><img src="figure/consulting.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-3">
+Past versions of unnamed-chunk-7-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fda926a81bb235118a9ff5dfcb9fa31de904880b/docs/figure/consulting.Rmd/unnamed-chunk-7-3.png" target="_blank">fda926a</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-06
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>datax[,1] = log(datax[,1])
 
 anova.fit = aov(Normalized ~ Treatment * Genotype, data = datax)
