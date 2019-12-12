@@ -1,0 +1,50 @@
+---
+title: "mouthwash"
+author: "Dongyue Xie"
+date: "2019-12-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+In differential expression analysis, there are two concerns: sparse effects and unwanted variation.
+
+This paper combines EB and RUV. It is based on assuming sparse effects which is an alternative to methods based on 'control genes'. 
+
+Typical statisitcal analysis of differential analysis: 1: for each gene $j$, estimate effect size and standard error; 2. Apply FDR methods to determine which genes are significant.
+
+Unwanted variation may include measured variables such as sex/age and also unmeasured variables such as sample preparation. A popular way to remove unwanted variation is factor-augmented regression model, $Y=X\beta+Z\alpha+E$, in which only $Y$ and $X$ are known. 
+
+Steps of factor-augmented regression: 1. Fit OLS of $j$th column of $Y$ on $X$. 2. Perform factor analysis on residuals and get $\hat\alpha$, $\hat\sigma^2_j$. 3. Estimate $\beta$ in the model $\hat\beta\sim(\beta+\hat\alpha^Tz,S)$. 
+
+There are more parameters than samples in step 3 so we need additional assumptions. One assumption assumes some genes are control genes. An alternative approach is to assume $\beta$ is sparse. 
+
+## Method
+
+In the 3rd step, estimate ash prior and $z$ by maximizing $p(\hat\beta|g,Z,\hat\alpha,\hat s)$.
+
+In the 4th step, compute posterior $p(\beta_j|\hat g,\hat z,\hat\beta,\hat s)$.
+
+Some concerns:
+
+1. Identifiability: factor model has identifiability issues. The estimate of $\alpha$ can be considered identified up to its rowspace. So the estimates in step 3 and 4 should only depend on row space of $\hat\alpha$.
+
+2. Accurate variance estimate $\hat\sigma_j$: to make sure the estimate of variance is accurate, a multiplicative parameter is included, $\hat\beta\sim N(\beta+\hat\alpha^Tz,\xi S)$. Then $\xi$ is jointly estimated in step 3 with $\beta,z$. In step 4, the posterior computation is conditional on $\hat\xi$. 
+
+## Comparisons
+
+OLS,SVA,CATE,RUV2,RUV3
+
+what's the meaning of modular approach?
+
+
+### Generate simulated data
+
+$Z\in R^{n\times p}$ null samples with $n$ individuals and $p$ genes. 
+
+1. All genes are not differentially expressed($\pi_0=1$): Random $n$ divide to two groups. 
+
+2. Add signal to $(1-\pi_0)$ of genes: randomly chose $1-\pi_0$ non-null genes and add effect size $a_j\sim N(0,0.8^2)$. For a non-null gene $j$, draw new counts $w_{ij}|z_{ij}\sim Binomial(z_{ij},2^{a_jx_{i2}})$ if $a_j<0$;$w_{ij}|z_{ij}\sim Binomial(z_{ij},2^{-a_j(1-x_{i2})})$ if $a_j>0$. In this way, $a_j$ is the approximate $\log_2$ effect between groups. 
+
