@@ -1,0 +1,47 @@
+---
+title: "Linux Command"
+author: "Dongyue Xie"
+date: "2019-12-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+`cd $SCRATCH`
+
+`htop`: check login mode cpu use
+
+Get compute node:
+
+`sinteractive --time=10:00:00 --mem=8G -c 4 -p mstephens --account=pi-mstephens`
+
+`--exclusive`: 
+
+`squeue -u dyxie` : see job status
+
+`squeue -p mstephens`: see who's using nodes.
+
+`scontrol show node=midway2-0437`
+
+`squeue -p broadwl | less -S`
+
+`export OPENLABS_NUM_THREADS=4`: use 4 cpus to compute 
+
+
+Open another command window, login to midway2 then `ssh midway2-0437`, `htop --user=dyxie` monitor the computations on the other command window.
+
+Use `screen` to back up screens. 
+
+`nano myscript.R` to write an R script. 
+
+`module load R` then `Rscript myscript.R`
+
+
+`sbatch myscript.sbatch` 
+
+```{r}
+
+```
+
