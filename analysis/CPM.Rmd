@@ -1,0 +1,24 @@
+---
+title: "Common transformation of counts"
+author: "Dongyue Xie"
+date: "2020-01-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+[A good review](https://haroldpimentel.wordpress.com/2014/05/08/what-the-fpkm-a-review-rna-seq-expression-units/) of RNA-Seq expression units from [Harold Pimentel](https://pimentel.github.io/).
+
+CPM: counts per million
+
+
+RPKM: reads per kilobase per million 
+
+
+
+```{r}
+
+```
+
