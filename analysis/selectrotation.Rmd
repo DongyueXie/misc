@@ -1,0 +1,183 @@
+---
+title: "select rotation"
+author: "Dongyue Xie"
+date: "2020-01-03"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+library(rpart)
+library(BART)
+
+as.numeric.factor <- function(x) {as.numeric(levels(x))[x]}
+
+random_rotation = function(p){
+  Q=qr.Q(qr(matrix(rnorm(p^2),p,p)))
+  Q
+}
+
+rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
+
+  
+  p = ncol(x)
+  n = nrow(x)
+  
+  fit = rpart(y~.,data = data.frame(y=y,x=x),method='class',control = control)
+  ypred = predict(fit,data.frame(x=x.oob),type='class')
+  
+  
+  best.accuracy = sum(ypred==y.oob)/length(y.oob)
+  best.fit = fit
+  best.Rotation = 'identity'
+  best.yhat = predict(fit,data.frame(x=x),type='class')
+  
+  for(rot in 1:n_rotate){
+    Rmat = random_rotation(p)
+    x.train = x%*%Rmat
+    x.test = x.oob%*%Rmat
+    fit = rpart(y~.,data = data.frame(y=y,x=x.train), method='class',control = rpart.control(minbucket=nodesize))
+    ypred = predict(fit,data.frame(x=x.test),type='class')
+    accuracy = (sum(ypred==y.oob)/length(ypred)) 
+    if(accuracy > best.accuracy){
+      best.accuracy = accuracy
+      best.fit = fit
+      best.Rotation = Rmat
+      best.yhat = predict(fit,data.frame(x=x.train),type='class')
+    }
+  }
+  return(list(best.accuracy = best.accuracy,
+      best.fit = best.fit,
+      best.Rotation = best.Rotation,
+      best.yhat = best.yhat))
+}
+
+rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x))),
+                     replace=TRUE,samplesize = if (replace) nrow(x) else ceiling(.632*nrow(x)),
+                     control = rpart.control(),
+                     keepforest = FALSE,n_rotate=30,printevery=100){
+  x = as.matrix(x)
+  xtest = as.matrix(xtest)
+  y = as.factor(y)
+  ytest = as.factor(ytest)
+  
+  p = ncol(x)
+  n = nrow(x)
+  
+  if (mtry >= p) stop("mtry should be smaller than the number of columns in x")
+  
+  forest = list()
+  
+  
+  yhat = matrix(nrow=n,ncol=ntree)
+  ypred = matrix(nrow=n,ncol=ntree)
+  oob_accuracy = c()
+  
+  for(t in 1:ntree){
+    
+   if(t%%printevery==0){print(sprintf("done %d (out of %d)",t,ntree))}
+    
+    #select variables to split
+    var_idx = sample(1:p,mtry)
+    #select samples 
+    sample_idx = sample(1:n,samplesize,replace = replace)
+    
+    x_t = x[sample_idx,var_idx]
+    y_t = y[sample_idx]
+    x_t_oob = x[-unique(sample_idx),var_idx]
+    y_t_oob = y[-unique(sample_idx)]
+    
+    tree.fit = rotate_tree(x_t,y_t,x_t_oob,y_t_oob,n_rotate=n_rotate,control=control)
+    
+    
+    oob_accuracy[t] = tree.fit$best.accuracy
+    yhat[sample_idx,t] = as.numeric.factor(tree.fit$best.yhat)
+    
+    if(!is.null(xtest)){
+      if(is.character(tree.fit$best.Rotation)){
+      ypred[,t] = as.numeric.factor(predict(tree.fit$best.fit, data.frame(x=xtest[,var_idx]),type='class'))
+    }else{
+      ypred[,t] = as.numeric.factor(predict(tree.fit$best.fit, data.frame(x=xtest[,var_idx]%*%tree.fit$best.Rotation),type='class'))
+    }
+    }
+    
+    if(keepforest){
+      forest[[t]] = tree.fit
+    }
+    
+  }
+  vote_hat = 1*(apply(yhat,1,mean,na.rm=TRUE) > 0.5)
+  vote_pred = 1*(apply(ypred,1,mean,na.rm=TRUE) > 0.5)
+  
+  accuracy_train = sum(y == vote_hat)/n
+  accuracy_test = ifelse(is.null(ytest),ytest,sum(ytest==vote_pred)/length(ytest))
+  
+  return(list(accuracy_train=accuracy_train,
+              accuracy_test =accuracy_test, 
+              yhat = yhat, 
+              ypred = ypred, 
+              vote_hat = vote_hat,
+              vote_pred = vote_pred,
+              oob_accuracy = oob_accuracy,
+              forest = forest))
+}
+```
+
+```{r,eval=FALSE}
+f_linear = function(x){
+  ey=-2.50*x[,1] + 2.0*x[,2] -1.60*x[,3] + 1.2*x[,4] +0.9*x[,5] 
+  as.factor(rbinom(nrow(x),1,pnorm(ey)))
+}
+
+f_friedman=function(x){
+  ey = (((sin(pi*x[,1]*x[,2]) + 2*(x[,3]-.5)^2+x[,4]-2*x[,5])))
+  as.factor(rbinom(nrow(x),1,pnorm(ey)))
+}
+
+set.seed(1234)
+n=100
+p=5
+x = matrix(runif(n*p),nrow=n)
+y = f_friedman(x)
+
+xtest = matrix(runif(n*p),nrow=n)
+ytest = f_friedman(xtest)
+
+rf = randomForest(x,y,xtest,ytest,ntree=100)
+rrrf = rrrforest(x,y,xtest,ytest,ntree=100,n_rotate = 10)
+rrf = rotationForest(data.frame(x),y,L=500)
+
+
+library(pROC)
+library(rotationForest)
+
+
+roc_obj <- roc(as.numeric.factor(ytest), as.numeric.factor(rf$test$predicted))
+auc(roc_obj)
+
+accuracy_calc = function(a,b){
+  sum(a==b)/length(a)
+}
+
+roc_obj <- roc(as.numeric.factor(ytest), rrrf$vote_pred)
+auc(roc_obj)
+
+roc_obj <- roc(as.numeric.factor(ytest), 1*(predict(rrf,data.frame(xtest)) > 0.5))
+auc(roc_obj)
+
+
+
+ypred = rrrf$ypred
+err.rate = c()
+
+for(i in 1:ncol(ypred)){
+  err.rate[i] = sum(ytest!= (1*(apply(ypred[,1:i,drop=FALSE],1,mean) > 0.5)))/length(ytest)
+}
+
+plot(1-rf$test$err.rate[,1],type='l')
+lines(1-err.rate,col=4)
+```
+
