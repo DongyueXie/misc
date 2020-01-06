@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2019-12-27" />
+
+<title>Single cell differential expression analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">misc</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/DongyueXie/misc">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Single cell differential expression analysis</h1>
+<h4 class="author">Dongyue Xie</h4>
+<h4 class="date">2019-12-27</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-01-06
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>misc/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20191122code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20191122)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20191122code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20191122)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreefb35a52c9667f234347235d6522a09cde0fcd000targetblankfb35a52a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/fb35a52c9667f234347235d6522a09cde0fcd000" target="_blank">fb35a52</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreefb35a52c9667f234347235d6522a09cde0fcd000targetblankfb35a52a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
+
+Untracked files:
+    Untracked:  analysis/MAST.Rmd
+    Untracked:  analysis/ruv4.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/fb35a52c9667f234347235d6522a09cde0fcd000/analysis/scde.Rmd" target="_blank">fb35a52</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-06
+</td>
+<td>
+wflow_publish(“analysis/scde.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Two review papers on single cell differential expression analysis I found: <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2599-6">Wang et al</a>, and <a href="https://www.nature.com/articles/nmeth.4612#MOESM1">Sonenson and Robinson</a>.</p>
+<p>One review paper on RNA-seq bulk data differential expression analysis: <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-91">Sonenson and Delorenzi</a>.</p>
+<p>Single cell RNA seq datasets: <a href="http://imlspenticton.uzh.ch:3838/conquer/">conquer</a></p>
+<p><strong>What are UMI data sets?</strong>, <strong>Full length vs UMI</strong></p>
+<p>The data object contains: TPM, counts, length-scaled TPMs, the average length of the transcripts expressed in each sample for each gene.</p>
+<p>Task:</p>
+<ol style="list-style-type: decimal">
+<li>Whether we need to RUV? Apply some single cell DE method like MAST, D3E, scDD, SCDE, DEsngle etc, maybe also try methods for RNA seq data like edgeR, Deseq2, voomlimma.</li>
+</ol>
+<p>– in paper Sonenson and Robinson(2018), the did an experiment on null datasets and found that for unfiltered data sets, many methods struggled to correctly control the type I error.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>If need to RUV, how does current methods like SVA and MOUTHWASH work?</p></li>
+<li><p>If current method does not work, why? How to improve?</p></li>
+</ol>
+<p>For this GSE45719 datasets: mouse, total 291 cells, among which 50 cells are 16-cell stage blastomere and 50 cells are Mid blastocyst cell (92-94h post-fertilization).</p>
+<p>To create NULL datasets, we can use only 16-cell stage cells and randomly partition the cells into two groups.</p>
+</div>
+<div id="null-sc-dataset-de" class="section level2">
+<h2>NULL sc-dataset DE</h2>
+<pre class="r"><code>library(ggplot2)
+suppressPackageStartupMessages(library(SummarizedExperiment))
+suppressPackageStartupMessages(library(MultiAssayExperiment))
+datax&lt;- readRDS(&quot;~/Downloads/GSE45719.rds&quot;)
+datax_gene = experiments(datax)[[&quot;gene&quot;]]
+head(assays(datax_gene)[[&quot;count&quot;]])</code></pre>
+<pre><code>                      GSM1112490 GSM1112491 GSM1112492 GSM1112493
+ENSMUSG00000000001.4   2178.0000   1111.000    654.000         91
+ENSMUSG00000000003.15     0.0000      0.000      0.000          0
+ENSMUSG00000000028.14   350.9997   1191.996   3001.005       1074
+ENSMUSG00000000031.15     0.0000      0.000      0.000          0
+ENSMUSG00000000037.16    32.0000      0.000      0.000          0
+ENSMUSG00000000049.11     0.0000      0.000      0.000          0
+                      GSM1112494 GSM1112495 GSM1112496 GSM1112497
+ENSMUSG00000000001.4    1589.000  1033.0000       2154  2874.0000
+ENSMUSG00000000003.15      0.000     0.0000          0     0.0000
+ENSMUSG00000000028.14   1738.003   999.9997        516   311.0005
+ENSMUSG00000000031.15      0.000     0.0000          0     0.0000
+ENSMUSG00000000037.16      0.000     0.0000          0     2.0000
+ENSMUSG00000000049.11    328.000     0.0000          0     0.0000
+                      GSM1112498 GSM1112499 GSM1112500 GSM1112501
+ENSMUSG00000000001.4    2642.000        206   601.0000       1991
+ENSMUSG00000000003.15      0.000          0     0.0000          0
+ENSMUSG00000000028.14   2767.997       3350   300.9997        736
+ENSMUSG00000000031.15      0.000          0     0.0000          0
+ENSMUSG00000000037.16      0.000          0     0.0000          0
+ENSMUSG00000000049.11      0.000          0     0.0000          0
+                      GSM1112502 GSM1112503 GSM1112504 GSM1112505
+ENSMUSG00000000001.4         762        399        115          0
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14       1024       1903       1246        299
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0         16        146          0
+                      GSM1112506 GSM1112507 GSM1112508 GSM1112509
+ENSMUSG00000000001.4           0          0        960       1445
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14        276          0        624          0
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112510 GSM1112511 GSM1112512 GSM1112513
+ENSMUSG00000000001.4         794    141.000  917.00000   305.0000
+ENSMUSG00000000003.15          0      0.000    0.00000     0.0000
+ENSMUSG00000000028.14          1   1837.001 1255.00000   535.0005
+ENSMUSG00000000031.15          0      0.000    0.00000     0.0000
+ENSMUSG00000000037.16          0      0.000   14.00002     0.0000
+ENSMUSG00000000049.11          0      0.000    0.00000     0.0000
+                      GSM1112514 GSM1112515 GSM1112516 GSM1112517
+ENSMUSG00000000001.4        1330  1092.0000       2519  1693.0000
+ENSMUSG00000000003.15          0     0.0000          0     0.0000
+ENSMUSG00000000028.14          9   582.0004       2930   607.0003
+ENSMUSG00000000031.15          0     0.0000          0     0.0000
+ENSMUSG00000000037.16          0     0.0000          0     0.0000
+ENSMUSG00000000049.11          0     0.0000          0     0.0000
+                      GSM1112518 GSM1112519 GSM1112520 GSM1112521
+ENSMUSG00000000001.4        3398   2859.000   723.0000  1413.0000
+ENSMUSG00000000003.15          0      0.000     0.0000     0.0000
+ENSMUSG00000000028.14        790   1994.002   821.0004   978.0002
+ENSMUSG00000000031.15          0      0.000     0.0000     0.0000
+ENSMUSG00000000037.16          0      0.000     0.0000     0.0000
+ENSMUSG00000000049.11          0      0.000     0.0000     0.0000
+                      GSM1112522 GSM1112523 GSM1112524 GSM1112525
+ENSMUSG00000000001.4           0       1722        513    422.000
+ENSMUSG00000000003.15          0          0          0      0.000
+ENSMUSG00000000028.14          0       2860       1028   1893.002
+ENSMUSG00000000031.15          0          0          0      0.000
+ENSMUSG00000000037.16          0          0          0      0.000
+ENSMUSG00000000049.11          0          0          0      0.000
+                      GSM1112526 GSM1112527 GSM1112528 GSM1112529
+ENSMUSG00000000001.4        2434       2546   1861.000        687
+ENSMUSG00000000003.15          0          0      0.000          0
+ENSMUSG00000000028.14         40        834   2688.005        648
+ENSMUSG00000000031.15          0          0      0.000          0
+ENSMUSG00000000037.16          0          0      0.000          0
+ENSMUSG00000000049.11          0          0      0.000          0
+                       GSM1112530 GSM1112531 GSM1112532 GSM1112533
+ENSMUSG00000000001.4  1210.000000        526        449    500.000
+ENSMUSG00000000003.15    0.000000          0          0      0.000
+ENSMUSG00000000028.14   12.000000       1071        567   2886.003
+ENSMUSG00000000031.15    0.000000          0          0      0.000
+ENSMUSG00000000037.16    1.999997          0          0      0.000
+ENSMUSG00000000049.11    0.000000          0          0      0.000
+                      GSM1112534 GSM1112535 GSM1112536 GSM1112537
+ENSMUSG00000000001.4         378         46        288        139
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14       1527       8013       1804        327
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0        382          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112538 GSM1112539 GSM1112540 GSM1112541
+ENSMUSG00000000001.4     500.000        439    953.000       1832
+ENSMUSG00000000003.15      0.000          0      0.000          0
+ENSMUSG00000000028.14    683.792         24   8900.003       6589
+ENSMUSG00000000031.15      0.000          0      0.000          0
+ENSMUSG00000000037.16      0.000          0      0.000          0
+ENSMUSG00000000049.11      0.000          0      0.000          0
+                      GSM1112542  GSM1112543 GSM1112544 GSM1112545
+ENSMUSG00000000001.4  1131.00000  668.000000   503.0000    316.000
+ENSMUSG00000000003.15    0.00000    0.000000     0.0000      0.000
+ENSMUSG00000000028.14 2973.99800 4329.000000  2523.9960   2762.003
+ENSMUSG00000000031.15    0.00000    0.000000     0.0000      0.000
+ENSMUSG00000000037.16   19.99999    1.999995   482.0003    153.000
+ENSMUSG00000000049.11    0.00000    0.000000     9.0000    137.000
+                      GSM1112546 GSM1112547 GSM1112548  GSM1112549
+ENSMUSG00000000001.4   1200.0000   1071.000       2108  340.000000
+ENSMUSG00000000003.15     0.0000      0.000          0    0.000000
+ENSMUSG00000000028.14  3851.0030   5071.005       5161 7362.000000
+ENSMUSG00000000031.15     0.0000      0.000          0    0.000000
+ENSMUSG00000000037.16   343.0004      1.000         48    2.000002
+ENSMUSG00000000049.11   315.0000      0.000          0   81.000000
+                      GSM1112550 GSM1112551 GSM1112552 GSM1112553
+ENSMUSG00000000001.4      78.000        993    922.000    771.000
+ENSMUSG00000000003.15      0.000          0      0.000      0.000
+ENSMUSG00000000028.14   3672.996       1069   2585.997   4305.004
+ENSMUSG00000000031.15      0.000          0      0.000      0.000
+ENSMUSG00000000037.16      1.000         67      8.000      6.000
+ENSMUSG00000000049.11      0.000          0      0.000      3.000
+                       GSM1112554  GSM1112555 GSM1112556 GSM1112557
+ENSMUSG00000000001.4  459.0000000 1071.000000         17        102
+ENSMUSG00000000003.15   0.0000000    0.000000          0          0
+ENSMUSG00000000028.14 407.0004700 2023.003000         96         85
+ENSMUSG00000000031.15   0.0000000    0.000000          0          0
+ENSMUSG00000000037.16   0.9999997    2.000001          0          0
+ENSMUSG00000000049.11   0.0000000    0.000000          0          0
+                      GSM1112558 GSM1112559 GSM1112560 GSM1112561
+ENSMUSG00000000001.4        1442        839  1515.0000    487.000
+ENSMUSG00000000003.15          0          0     0.0000      0.000
+ENSMUSG00000000028.14       1379       1205   940.0003   5124.996
+ENSMUSG00000000031.15          0          0     0.0000      0.000
+ENSMUSG00000000037.16          0          0     0.0000    417.000
+ENSMUSG00000000049.11          0          0     0.0000      0.000
+                      GSM1112562 GSM1112563 GSM1112564 GSM1112565
+ENSMUSG00000000001.4    1792.000 2320.00000   1619.000         34
+ENSMUSG00000000003.15      0.000    0.00000      0.000          0
+ENSMUSG00000000028.14   1118.999  846.00000   1413.004       1245
+ENSMUSG00000000031.15      0.000    0.00000      0.000          0
+ENSMUSG00000000037.16      0.000    0.00000      0.000          0
+ENSMUSG00000000049.11      0.000   35.99995      0.000          0
+                      GSM1112566 GSM1112567 GSM1112568 GSM1112569
+ENSMUSG00000000001.4     587.000      9.000       1848   3478.000
+ENSMUSG00000000003.15      0.000      0.000          0      0.000
+ENSMUSG00000000028.14   2254.996   1344.002       2937   1828.004
+ENSMUSG00000000031.15      0.000      0.000          0      0.000
+ENSMUSG00000000037.16      1.000      0.000          0      0.000
+ENSMUSG00000000049.11      0.000      0.000          0      0.000
+                      GSM1112570 GSM1112571 GSM1112572 GSM1112573
+ENSMUSG00000000001.4    2464.000       1193        440        794
+ENSMUSG00000000003.15      0.000          0          0          0
+ENSMUSG00000000028.14   2582.004       1247        947        350
+ENSMUSG00000000031.15      0.000          0          0          0
+ENSMUSG00000000037.16      0.000          0          0          0
+ENSMUSG00000000049.11      0.000          0          0          0
+                      GSM1112574 GSM1112575 GSM1112576 GSM1112577
+ENSMUSG00000000001.4         486       2030   1039.000  2651.0000
+ENSMUSG00000000003.15          0          0      0.000     0.0000
+ENSMUSG00000000028.14        821        774   2288.999  2355.0030
+ENSMUSG00000000031.15          0          0      0.000     0.0000
+ENSMUSG00000000037.16          0          0      0.000   139.9999
+ENSMUSG00000000049.11         14          0    320.000     1.0000
+                      GSM1112578 GSM1112579 GSM1112580 GSM1112581
+ENSMUSG00000000001.4        1320        488   1256.000        510
+ENSMUSG00000000003.15          0          0      0.000          0
+ENSMUSG00000000028.14        949        596   2125.001        347
+ENSMUSG00000000031.15          0          0      0.000          0
+ENSMUSG00000000037.16          0          0      0.000          0
+ENSMUSG00000000049.11          0         36      0.000          0
+                      GSM1112590 GSM1112591 GSM1112592 GSM1112593
+ENSMUSG00000000001.4           0        645         18          0
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14          0          0          0          0
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11       4185      16703       9696       9259
+                      GSM1112594 GSM1112595 GSM1112596 GSM1112597
+ENSMUSG00000000001.4           1   2767.000   2484.000   2775.000
+ENSMUSG00000000003.15          0      0.000      0.000      0.000
+ENSMUSG00000000028.14          0   2749.998   2827.002   2499.999
+ENSMUSG00000000031.15          0      0.000      0.000      0.000
+ENSMUSG00000000037.16          0   3712.995   3422.993   3687.002
+ENSMUSG00000000049.11       2147      0.000      0.000      0.000
+                      GSM1112598 GSM1112599 GSM1112600 GSM1112601
+ENSMUSG00000000001.4    3064.000   3148.000   2078.000   3155.000
+ENSMUSG00000000003.15      0.000      0.000      0.000      0.000
+ENSMUSG00000000028.14   1774.002   2513.998   2054.997   1080.000
+ENSMUSG00000000031.15      0.000      0.000      0.000      0.000
+ENSMUSG00000000037.16   3889.000   3934.000   3085.999   3178.007
+ENSMUSG00000000049.11      0.000      0.000      0.000      0.000
+                      GSM1112602 GSM1112603 GSM1112604 GSM1112605
+ENSMUSG00000000001.4   2631.0000  2052.0000   3016.000  2152.0000
+ENSMUSG00000000003.15     0.0000     0.0000      0.000     0.0000
+ENSMUSG00000000028.14   801.9999   581.9995    985.000   746.0004
+ENSMUSG00000000031.15     0.0000     1.0000      0.000     0.0000
+ENSMUSG00000000037.16  2304.9966   539.9999   1454.999   809.0000
+ENSMUSG00000000049.11     0.0000     0.0000      2.000     0.0000
+                      GSM1112606 GSM1112607 GSM1112608 GSM1112609
+ENSMUSG00000000001.4        3069   2794.000   4003.000   2600.000
+ENSMUSG00000000003.15          0      0.000      0.000      0.000
+ENSMUSG00000000028.14       1632   2608.997   3261.989   2093.004
+ENSMUSG00000000031.15          0      0.000      0.000      0.000
+ENSMUSG00000000037.16       1031   1283.000   1489.001   1204.001
+ENSMUSG00000000049.11          0      0.000      0.000      0.000
+                      GSM1112610 GSM1112611 GSM1112612 GSM1112613
+ENSMUSG00000000001.4    5720.000       2421       3871   4233.000
+ENSMUSG00000000003.15      0.000          0          0      0.000
+ENSMUSG00000000028.14   2922.007       1732         97   2761.004
+ENSMUSG00000000031.15      0.000          0          0      0.000
+ENSMUSG00000000037.16   1599.004          0          0      0.000
+ENSMUSG00000000049.11      0.000          0          0      0.000
+                      GSM1112614 GSM1112615 GSM1112616 GSM1112617
+ENSMUSG00000000001.4     5.00000       4521       3337    557.000
+ENSMUSG00000000003.15    0.00000          0          0      0.000
+ENSMUSG00000000028.14   23.99997         33       2926   1476.005
+ENSMUSG00000000031.15    0.00000          0          0      0.000
+ENSMUSG00000000037.16    0.00000          0          0      0.000
+ENSMUSG00000000049.11    0.00000          0          0      0.000
+                      GSM1112618 GSM1112619 GSM1112620 GSM1112621
+ENSMUSG00000000001.4   1636.0000        846   1373.000       3813
+ENSMUSG00000000003.15     0.0000          0      0.000          0
+ENSMUSG00000000028.14   607.0003       1245   2071.815       3729
+ENSMUSG00000000031.15     0.0000          0      0.000          0
+ENSMUSG00000000037.16     0.0000          0      0.000          0
+ENSMUSG00000000049.11     0.0000          0      0.000          0
+                      GSM1112622 GSM1112623 GSM1112624 GSM1112625
+ENSMUSG00000000001.4    1428.000       1689   4079.000         32
+ENSMUSG00000000003.15      0.000          0      0.000          0
+ENSMUSG00000000028.14   1811.003       1356   1920.005       3883
+ENSMUSG00000000031.15      0.000          0      0.000          0
+ENSMUSG00000000037.16      0.000          0      0.000          0
+ENSMUSG00000000049.11      0.000          0      0.000          0
+                      GSM1112626 GSM1112627 GSM1112628 GSM1112629
+ENSMUSG00000000001.4        2107    11.0000        812        703
+ENSMUSG00000000003.15          0     0.0000          0          0
+ENSMUSG00000000028.14       1333   469.0005       1042       2395
+ENSMUSG00000000031.15          0     0.0000          0          0
+ENSMUSG00000000037.16          0     0.0000          0          0
+ENSMUSG00000000049.11          0     0.0000          0          0
+                      GSM1112630 GSM1112631 GSM1112632 GSM1112633
+ENSMUSG00000000001.4    1822.000       1825     75.000  1228.0000
+ENSMUSG00000000003.15      0.000          0      0.000     0.0000
+ENSMUSG00000000028.14   1577.999        776   2064.999   303.0001
+ENSMUSG00000000031.15      0.000          0      0.000     0.0000
+ENSMUSG00000000037.16      0.000          0      0.000     0.0000
+ENSMUSG00000000049.11      0.000          0      0.000     0.0000
+                      GSM1112634 GSM1112635 GSM1112636 GSM1112637
+ENSMUSG00000000001.4   1552.0000   874.0000       1359       1284
+ENSMUSG00000000003.15     0.0000     0.0000          0          0
+ENSMUSG00000000028.14   643.0001   130.0005       1400        984
+ENSMUSG00000000031.15     0.0000     0.0000          0          0
+ENSMUSG00000000037.16     0.0000     0.0000          0          0
+ENSMUSG00000000049.11     0.0000     0.0000          0          0
+                      GSM1112638 GSM1112639 GSM1112640 GSM1112641
+ENSMUSG00000000001.4         922        394       1681       1638
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14          0          7        191          2
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112642 GSM1112643 GSM1112644 GSM1112645
+ENSMUSG00000000001.4        2145       1655        555        875
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14       2708         39        618       1453
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112646 GSM1112647 GSM1112648 GSM1112649
+ENSMUSG00000000001.4    4651.000   708.0000     22.000       1234
+ENSMUSG00000000003.15      0.000     0.0000      0.000          0
+ENSMUSG00000000028.14   2016.999   175.0005   2331.998        833
+ENSMUSG00000000031.15      0.000     0.0000      0.000          0
+ENSMUSG00000000037.16      0.000     0.0000      0.000          0
+ENSMUSG00000000049.11      0.000     0.0000      0.000          0
+                      GSM1112650 GSM1112651 GSM1112652 GSM1112653
+ENSMUSG00000000001.4           0       3545       1805       1206
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14         29       1114       1249        987
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112654 GSM1112655 GSM1112656 GSM1112657
+ENSMUSG00000000001.4    1310.000   5238.000  8580.0000    4957.00
+ENSMUSG00000000003.15      0.000      0.000     0.0000       0.00
+ENSMUSG00000000028.14  10776.690  19212.955 26761.9700   22267.97
+ENSMUSG00000000031.15   3147.001      0.000     0.0000       0.00
+ENSMUSG00000000037.16   1511.996   1181.004   290.0005    1179.00
+ENSMUSG00000000049.11      0.000      0.000    46.0000       0.00
+                      GSM1112658 GSM1112659 GSM1112660 GSM1112661
+ENSMUSG00000000001.4    2943.000   4275.000    7631.00  1051.0000
+ENSMUSG00000000003.15      0.000      0.000       0.00     0.0000
+ENSMUSG00000000028.14   7678.996  20073.037   14125.03 12857.0000
+ENSMUSG00000000031.15      0.000      0.000       0.00     0.0000
+ENSMUSG00000000037.16    768.000   1492.004    3442.00   934.0003
+ENSMUSG00000000049.11    120.000      0.000       9.00     1.0000
+                      GSM1112662 GSM1112663 GSM1112664 GSM1112665
+ENSMUSG00000000001.4    3526.000   5134.000       1073        882
+ENSMUSG00000000003.15      0.000      0.000          0          0
+ENSMUSG00000000028.14  24224.990  15175.000       1265        517
+ENSMUSG00000000031.15      0.000   2700.999          0          0
+ENSMUSG00000000037.16   2121.997   2425.998          0          0
+ENSMUSG00000000049.11      0.000      0.000          0          0
+                      GSM1112666 GSM1112667 GSM1112668 GSM1112669
+ENSMUSG00000000001.4        2435 1127.00000 1912.00000  1031.0000
+ENSMUSG00000000003.15          0    0.00000    0.00000     0.0000
+ENSMUSG00000000028.14          0   23.00004   25.00004   225.9999
+ENSMUSG00000000031.15          0    0.00000    0.00000     0.0000
+ENSMUSG00000000037.16          0    0.00000    0.00000     0.0000
+ENSMUSG00000000049.11          0    0.00000    0.00000     0.0000
+                      GSM1112670 GSM1112671 GSM1112672 GSM1112673
+ENSMUSG00000000001.4         468     53.000       1214   296.0000
+ENSMUSG00000000003.15          0      0.000          0     0.0000
+ENSMUSG00000000028.14         78   1488.001       1514   380.9999
+ENSMUSG00000000031.15          0      0.000          0     0.0000
+ENSMUSG00000000037.16          0      0.000          0     0.0000
+ENSMUSG00000000049.11          0      0.000          0     0.0000
+                      GSM1112674 GSM1112675 GSM1112676 GSM1112677
+ENSMUSG00000000001.4     539.000 2580.00000   773.0000         65
+ENSMUSG00000000003.15      0.000    0.00000     0.0000          0
+ENSMUSG00000000028.14   1629.001   16.99997   251.0004          0
+ENSMUSG00000000031.15      0.000    0.00000     0.0000          0
+ENSMUSG00000000037.16      0.000    0.00000     0.0000          0
+ENSMUSG00000000049.11      0.000    0.00000     0.0000          0
+                      GSM1112678 GSM1112679 GSM1112680 GSM1112681
+ENSMUSG00000000001.4        2509        297       1353       3147
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14          0        124        777       1315
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0         33          0
+                      GSM1112682 GSM1112683 GSM1112684 GSM1112685
+ENSMUSG00000000001.4        2191        805       1295       1788
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14        484        692        838        573
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112686 GSM1112687 GSM1112688 GSM1112689
+ENSMUSG00000000001.4     787.000       4292       1054       4614
+ENSMUSG00000000003.15      0.000          0          0          0
+ENSMUSG00000000028.14   1288.004          8        848       5100
+ENSMUSG00000000031.15      0.000          0          0          0
+ENSMUSG00000000037.16      0.000          0          0          0
+ENSMUSG00000000049.11      0.000          0          0          0
+                      GSM1112690 GSM1112691 GSM1112692 GSM1112693
+ENSMUSG00000000001.4          12       2704       2762       1887
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14        395       4691       1592        630
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112694 GSM1112695 GSM1112696 GSM1112697
+ENSMUSG00000000001.4    362.0000    62.0000    17.0000    522.000
+ENSMUSG00000000003.15     0.0000     0.0000     0.0000      0.000
+ENSMUSG00000000028.14  1186.0000   955.0000   836.9998    972.934
+ENSMUSG00000000031.15     0.0000     0.0000     0.0000      0.000
+ENSMUSG00000000037.16   230.0004   703.9997   815.9999   1641.002
+ENSMUSG00000000049.11     0.0000     0.0000     0.0000      0.000
+                      GSM1112698 GSM1112699 GSM1112700 GSM1112701
+ENSMUSG00000000001.4   864.00000   734.0000        144   100.0000
+ENSMUSG00000000003.15    0.00000     0.0000          0     0.0000
+ENSMUSG00000000028.14  882.00000  2061.9960        603   752.0002
+ENSMUSG00000000031.15    0.00000     0.0000          0     0.0000
+ENSMUSG00000000037.16   61.00005   432.0004        150   159.9996
+ENSMUSG00000000049.11    9.00000     0.0000          0     0.0000
+                      GSM1112702 GSM1112703 GSM1112704 GSM1112705
+ENSMUSG00000000001.4     55.0000    92.0000    38.0000    91.0000
+ENSMUSG00000000003.15     0.0000     0.0000     0.0000     0.0000
+ENSMUSG00000000028.14  1087.7650   963.5002   568.9995  1247.0040
+ENSMUSG00000000031.15     0.0000     0.0000     0.0000     0.0000
+ENSMUSG00000000037.16   480.9997   271.0000   303.0002   541.9998
+ENSMUSG00000000049.11     0.0000     0.0000     0.0000    10.0000
+                      GSM1112706 GSM1112707 GSM1112708 GSM1112709
+ENSMUSG00000000001.4         970  1253.0000  2065.0000       1666
+ENSMUSG00000000003.15          0     0.0000     0.0000          0
+ENSMUSG00000000028.14          5   714.0005   699.0004       1221
+ENSMUSG00000000031.15          0     0.0000     0.0000          0
+ENSMUSG00000000037.16          0     0.0000     0.0000          0
+ENSMUSG00000000049.11          0     3.0000     0.0000          0
+                      GSM1112710 GSM1112711 GSM1112712 GSM1112713
+ENSMUSG00000000001.4    2985.000       2481       1154 872.000000
+ENSMUSG00000000003.15      0.000          0          0   0.000000
+ENSMUSG00000000028.14   2107.999       1335        810 427.000000
+ENSMUSG00000000031.15      0.000          0          0   0.000000
+ENSMUSG00000000037.16      0.000          0          0   5.000005
+ENSMUSG00000000049.11      0.000          0          0   0.000000
+                      GSM1112714 GSM1112715 GSM1112716 GSM1112717
+ENSMUSG00000000001.4   1030.0000     34.000          0       1579
+ENSMUSG00000000003.15     0.0000      0.000          0          0
+ENSMUSG00000000028.14  1310.0000    170.000        910         12
+ENSMUSG00000000031.15     0.0000      0.000          0          0
+ENSMUSG00000000037.16   119.0002   2445.995          0          0
+ENSMUSG00000000049.11     0.0000      0.000          0          0
+                      GSM1112718 GSM1112719 GSM1112720 GSM1112721
+ENSMUSG00000000001.4     167.000        323       2034    134.000
+ENSMUSG00000000003.15      0.000          0          0      0.000
+ENSMUSG00000000028.14   1607.003          0       2828   2254.002
+ENSMUSG00000000031.15      0.000          0          0      0.000
+ENSMUSG00000000037.16      0.000          0          0      0.000
+ENSMUSG00000000049.11      0.000          0          0      0.000
+                      GSM1112722 GSM1112723 GSM1112724 GSM1112725
+ENSMUSG00000000001.4    3245.000          8         64          7
+ENSMUSG00000000003.15      0.000          0          0          0
+ENSMUSG00000000028.14   1449.995        550       3340       2342
+ENSMUSG00000000031.15      0.000          0          0          0
+ENSMUSG00000000037.16      0.000          0          0          0
+ENSMUSG00000000049.11      0.000          0          0          0
+                      GSM1112726 GSM1112727 GSM1112728 GSM1112729
+ENSMUSG00000000001.4        1739        762        939        766
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14        802        101        979        862
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          1          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112730 GSM1112731 GSM1112732 GSM1112733
+ENSMUSG00000000001.4         944       1588    486.000   626.0000
+ENSMUSG00000000003.15          0          0      0.000     0.0000
+ENSMUSG00000000028.14       1387        570   1596.997   125.9998
+ENSMUSG00000000031.15          0          0      0.000     0.0000
+ENSMUSG00000000037.16        160          0      0.000     0.0000
+ENSMUSG00000000049.11          0          0      0.000     0.0000
+                      GSM1112734 GSM1112735 GSM1112736 GSM1112737
+ENSMUSG00000000001.4         193       3515       1750       1406
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14       1927       3793        113       2895
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          1          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112738 GSM1112739 GSM1112740 GSM1112741
+ENSMUSG00000000001.4         632       1120       2248        601
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14       1039       2047       2850       1371
+ENSMUSG00000000031.15          0          1          0          0
+ENSMUSG00000000037.16          1          0          0          0
+ENSMUSG00000000049.11          0          0          0         15
+                      GSM1112742 GSM1112743 GSM1112744 GSM1112745
+ENSMUSG00000000001.4    1830.000        376  362.00000        506
+ENSMUSG00000000003.15      0.000          0    0.00000          0
+ENSMUSG00000000028.14   1575.996        362  331.00000        223
+ENSMUSG00000000031.15      0.000          0    0.00000          0
+ENSMUSG00000000037.16      0.000          0   47.99999          0
+ENSMUSG00000000049.11      0.000          7    0.00000          0
+                      GSM1112746 GSM1112747 GSM1112748 GSM1112749
+ENSMUSG00000000001.4          30       1170        391       3335
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14         79       1171          0          4
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1112750 GSM1112751 GSM1112752 GSM1112753
+ENSMUSG00000000001.4    328.0000   4470.000  2097.0000       1859
+ENSMUSG00000000003.15     0.0000      0.000     0.0000          0
+ENSMUSG00000000028.14   437.9997   1360.996   593.9998          1
+ENSMUSG00000000031.15     0.0000      0.000     0.0000          0
+ENSMUSG00000000037.16     0.0000      0.000     0.0000          0
+ENSMUSG00000000049.11     0.0000      0.000     0.0000          0
+                      GSM1112754 GSM1112755 GSM1112756 GSM1112757
+ENSMUSG00000000001.4           2  3088.0000 423.000000       2267
+ENSMUSG00000000003.15          0     0.0000   0.000000          0
+ENSMUSG00000000028.14         60   283.9999   1.999996        738
+ENSMUSG00000000031.15          0     0.0000   0.000000          0
+ENSMUSG00000000037.16          0     0.0000   0.000000          0
+ENSMUSG00000000049.11          0     0.0000   0.000000          0
+                      GSM1112758 GSM1112759 GSM1112760 GSM1112761
+ENSMUSG00000000001.4        2863  1658.0000       1377       1173
+ENSMUSG00000000003.15          0     0.0000          0          0
+ENSMUSG00000000028.14       2058   676.0005        947       2977
+ENSMUSG00000000031.15          0     0.0000          0          0
+ENSMUSG00000000037.16          0     0.0000          0          0
+ENSMUSG00000000049.11          0     0.0000          0          0
+                      GSM1112762 GSM1112763 GSM1112764 GSM1112765
+ENSMUSG00000000001.4    2031.000       3001       2445        540
+ENSMUSG00000000003.15      0.000          0          0          0
+ENSMUSG00000000028.14   1903.001        347        767         13
+ENSMUSG00000000031.15      0.000          0          0          0
+ENSMUSG00000000037.16      0.000          0          0          0
+ENSMUSG00000000049.11      0.000          0          0          0
+                      GSM1112766 GSM1112767 GSM1112768 GSM1112769
+ENSMUSG00000000001.4    4087.000   4795.000   5989.000   3332.000
+ENSMUSG00000000003.15      0.000      0.000      0.000      0.000
+ENSMUSG00000000028.14   4074.001   2612.997   1901.999   1587.998
+ENSMUSG00000000031.15      0.000      0.000      0.000      0.000
+ENSMUSG00000000037.16   1733.999   2261.001   2185.000   1156.000
+ENSMUSG00000000049.11      0.000      0.000      0.000      0.000
+                      GSM1278017 GSM1278018 GSM1278019 GSM1278020
+ENSMUSG00000000001.4         763        578       1663        286
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14        825        625        582        452
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1278021 GSM1278022 GSM1278023 GSM1278024
+ENSMUSG00000000001.4         600        232        532       1471
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14        859        803        720        641
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1278025 GSM1278036 GSM1278037 GSM1278038
+ENSMUSG00000000001.4         876       1329       3065       1832
+ENSMUSG00000000003.15          0          0          0          0
+ENSMUSG00000000028.14        722          0          3        212
+ENSMUSG00000000031.15          0          0          0          0
+ENSMUSG00000000037.16          0          0          0          0
+ENSMUSG00000000049.11          0          0          0          0
+                      GSM1278039 GSM1278040 GSM1278041 GSM1278042
+ENSMUSG00000000001.4        6864       4112   5833.000  5332.0000
+ENSMUSG00000000003.15          0          0      0.000     0.0000
+ENSMUSG00000000028.14         21          0   2075.003   513.0003
+ENSMUSG00000000031.15          0          0      0.000     0.0000
+ENSMUSG00000000037.16          0          0      0.000     0.0000
+ENSMUSG00000000049.11          0        723      0.000     0.0000
+                      GSM1278043 GSM1278044 GSM1278045
+ENSMUSG00000000001.4        1473       3889       2872
+ENSMUSG00000000003.15          0          0          0
+ENSMUSG00000000028.14        476       1683          0
+ENSMUSG00000000031.15          0          0        124
+ENSMUSG00000000037.16          0          0          0
+ENSMUSG00000000049.11          0          0          0</code></pre>
+<pre class="r"><code>cell16_idx = 1:50
+
+cell16_readcounts = (assays(datax_gene)[[&quot;count&quot;]])[,1:50]
+
+
+
+#filter out genes that are not expressed
+
+cell16_reads = cell16_readcounts[rowSums(cell16_readcounts)!=0,]
+
+cell16=cell16_reads 
+
+dim(cell16)</code></pre>
+<pre><code>[1] 27517    50</code></pre>
+<pre class="r"><code>sum(cell16==0)/prod(dim(cell16))</code></pre>
+<pre><code>[1] 0.5125835</code></pre>
+<pre class="r"><code>#
+
+# task 1
+# randomly partition the data into 2 groups, then simply use a two sample t test
+
+# first partition
+set.seed(12345)
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>summary(p_values1)</code></pre>
+<pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+0.0003378 0.2663421 0.3651364 0.4512739 0.6531414 1.0000000 </code></pre>
+<p>A lot of p-values are around 0.3-0.35. Take a look at gene 12:</p>
+<pre class="r"><code>as.numeric(cell16[12,group1_idx])</code></pre>
+<pre><code> [1] 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</code></pre>
+<pre class="r"><code>as.numeric(cell16[12,-group1_idx])</code></pre>
+<pre><code> [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</code></pre>
+<pre class="r"><code>t.test(cell16[12,group1_idx],cell16[12,-group1_idx],alternative = &#39;two.sided&#39;)$p.value</code></pre>
+<pre><code>[1] 0.3272869</code></pre>
+<p>Only one cell has non-zero read counts among two groups. To apply two-sample t-test, we should try to avoid this situation. So choose the top 1000 expressed genes:</p>
+<pre class="r"><code>#Choose the top 1000 expressed genes 
+top_expressed_genes = (order(rowSums(cell16_reads),decreasing = TRUE))[1:1000]
+cell16 = cell16_reads[top_expressed_genes,]
+
+dim(cell16)</code></pre>
+<pre><code>[1] 1000   50</code></pre>
+<pre class="r"><code>sum(cell16==0)/prod(dim(cell16))</code></pre>
+<pre><code>[1] 0.00876</code></pre>
+<pre class="r"><code>#
+
+# task 1
+# randomly partition the data into 2 groups, then simply use a two sample t test
+
+# first partition
+set.seed(12345)
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+
+ks.test(p_values1,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  p_values1
+D = 0.090775, p-value = 1.392e-07
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># second partition
+
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+ks.test(p_values1,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  p_values1
+D = 0.24902, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># third partition
+
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+ks.test(p_values1,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  p_values1
+D = 0.044142, p-value = 0.0406
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="summary---null" class="section level3">
+<h3>Summary - NULL</h3>
+<p>If not accounting for 0’s in scData, then the null distribution of p-values is certainly not uniform. Mainly because two-sample t test is not applicable.</p>
+<p>If removing genes with two many 0’s, then the p-value distributions deviate from uniform.</p>
+</div>
+</div>
+<div id="ruv-methods-for-rna-seq" class="section level2">
+<h2>RUV methods for RNA-seq</h2>
+<p>First apply on NULL data then add signals to genes using Poisson thinning.</p>
+<pre class="r"><code>library(vicar)
+
+set.seed(12345)
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+
+group_indicator = rep(0,ncol(cell16))
+group_indicator[group1_idx] = 1
+
+X = model.matrix(~group_indicator)
+
+Y = t(cell16)
+
+num_sv     &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;be&quot;)
+num_sv_l   &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;leek&quot;)
+
+num_sv</code></pre>
+<pre><code>[1] 4</code></pre>
+<pre class="r"><code>num_sv_l</code></pre>
+<pre><code>[1] 48</code></pre>
+<p>Two approaches give very different number of surrogate variables! Try to use 4 SVs in the following analysis.</p>
+<pre class="r"><code>mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)</code></pre>
+<pre><code>Running mouthwash on 50 x 2 matrix X and 50 x 1000 matrix Y.
+ - Computing independent basis using QR decomposition.
+ - Computation took 0.017 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0 seconds.
+ - Running second step of mouthwash:
+    + Estimating model parameters using EM.
+    + Computation took 2.627 seconds.
+    + Generating adaptive shrinkage (ash) output.
+    + Computation took 0.199 seconds.
+ - Second step took 3.638 seconds.
+ - Estimating additional hidden confounders.
+ - Computation took 0.015 seconds.</code></pre>
+<pre class="r"><code>mout$pi0</code></pre>
+<pre><code>[1] 0.9922996</code></pre>
+<pre class="r"><code>library(cate)
+#library(leapp)
+
+cate_cate   &lt;- cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+
+# this method is vey slow!
+#leapp_leapp &lt;- leapp::leapp(data = t(Y), pred.prim = X[, 2, drop = FALSE], 
+#                            pred.covar = X[, -2, drop = FALSE], num.fac = num_sv)
+
+sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)</code></pre>
+<pre><code>Number of significant surrogate variables is:  4 
+Iteration (out of 5 ):1  2  3  4  5  </code></pre>
+<pre class="r"><code>X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+hist(svaout$pvalues,breaks=15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(svaout$pvalues,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  svaout$pvalues
+D = 0.032173, p-value = 0.2518
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(cate_cate$beta.p.value,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(cate_cate$beta.p.value,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  cate_cate$beta.p.value
+D = 0.085223, p-value = 9.83e-07
+alternative hypothesis: two-sided</code></pre>
+<p>Add some signal to the NULL dataset.</p>
+<pre class="r"><code>library(seqgendiff)
+#tt = thin_diff(round(cell16), design_fixed = X[,2,drop=FALSE])
+set.seed(12345)
+thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.5))
+
+#check null groups
+
+group1 = cell16[,which(thinout$designmat==1)]
+group2 = cell16[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+ks.test(p_values1,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  p_values1
+D = 0.1421, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Y = t(thinout$mat)
+
+X = model.matrix(~thinout$designmat)
+
+num_sv     &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;be&quot;)
+num_sv_l   &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;leek&quot;)
+
+num_sv</code></pre>
+<pre><code>[1] 4</code></pre>
+<pre class="r"><code>num_sv_l</code></pre>
+<pre><code>[1] 48</code></pre>
+<pre class="r"><code>mean(abs(thinout$coef) &lt; 10^-6)</code></pre>
+<pre><code>[1] 0.9</code></pre>
+<pre class="r"><code>mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)</code></pre>
+<pre><code>Running mouthwash on 50 x 2 matrix X and 50 x 1000 matrix Y.
+ - Computing independent basis using QR decomposition.
+ - Computation took 0.015 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0 seconds.
+ - Running second step of mouthwash:
+    + Estimating model parameters using EM.
+    + Computation took 2.245 seconds.
+    + Generating adaptive shrinkage (ash) output.
+    + Computation took 0.107 seconds.
+ - Second step took 3.137 seconds.
+ - Estimating additional hidden confounders.
+ - Computation took 0.019 seconds.</code></pre>
+<pre class="r"><code>mout$pi0</code></pre>
+<pre><code>[1] 0.806857</code></pre>
+<pre class="r"><code>bout &lt;- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)</code></pre>
+<pre><code> - Computing independent basis using QR decomposition.
+ - Computation took 0.015 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0 seconds.
+ - Running second step of backwash:
+    + Initializing parameters for EM algorithm.
+    + Computation took 0.19 seconds.
+    + Running one round of parameter updates.
+    + Computation took 0.03 seconds.
+    + Estimating model parameters using EM.
+    + Computation took 9.111 seconds.
+    + Generating posterior statistics.
+    + Computation took 0.002 seconds.
+ - Second step took 10.908 seconds.
+ - Generating final backwash outputs.
+ - Computation took 0.013 seconds.</code></pre>
+<pre class="r"><code>bout$pi0</code></pre>
+<pre><code>[1] 0.8127092</code></pre>
+<pre class="r"><code>cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+
+sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)</code></pre>
+<pre><code>Number of significant surrogate variables is:  4 
+Iteration (out of 5 ):1  2  3  4  5  </code></pre>
+<pre class="r"><code>X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef) &lt; 10^-6))
+
+
+
+# plot ROC curve
+roc_out &lt;- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec &lt;- c(&quot;MOUTHWASH&quot;, &#39;BACKWASH&#39;,&quot;CATErr&quot;, &quot;SVA&quot;)
+names(roc_out) &lt;- name_vec
+
+sout &lt;- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method &lt;- name_vec[index]
+}
+longdat &lt;- do.call(rbind, sout)
+
+shortdat &lt;- dplyr::filter(longdat, Method == &quot;MOUTHWASH&quot; | Method == &quot;BACKWASH&quot; |
+                            Method == &quot;CATErr&quot; | Method == &quot;SVA&quot; | Method == &quot;LEAPP&quot;)
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle(&quot;ROC Curves&quot;)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="right">0.943</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="right">0.918</td>
+</tr>
+<tr class="odd">
+<td>BACKWASH</td>
+<td align="right">0.887</td>
+</tr>
+<tr class="even">
+<td>MOUTHWASH</td>
+<td align="right">0.887</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># estimate pi0
+method_list &lt;- list()
+method_list$CATErr           &lt;- list()
+method_list$CATErr$betahat   &lt;- c(cate_cate$beta)
+method_list$CATErr$sebetahat &lt;- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             &lt;- list()
+method_list$SVA$betahat     &lt;- c(svaout$betahat)
+method_list$SVA$sebetahat   &lt;- c(svaout$sebetahat)
+
+ashfit &lt;- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 &lt;- sapply(ashfit, FUN = ashr::get_pi0)
+api0 &lt;- c(api0, MOUTHWASH = mout$pi0)
+api0 &lt;- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = &quot;Estimate of Pi0&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Estimate of Pi0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>BACKWASH</td>
+<td align="right">0.8127092</td>
+</tr>
+<tr class="even">
+<td>SVA</td>
+<td align="right">0.8126893</td>
+</tr>
+<tr class="odd">
+<td>MOUTHWASH</td>
+<td align="right">0.8068570</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="right">0.4149302</td>
+</tr>
+</tbody>
+</table>
+<p>Weaker signal: rexp(,rate=1)</p>
+<pre class="r"><code>set.seed(12345)
+thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=1))
+
+#check null groups
+
+group1 = cell16[,which(thinout$designmat==1)]
+group2 = cell16[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+ks.test(p_values1,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  p_values1
+D = 0.1421, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Y = t(thinout$mat)
+
+X = model.matrix(~thinout$designmat)
+
+num_sv     &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;be&quot;)
+num_sv_l   &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;leek&quot;)
+
+num_sv</code></pre>
+<pre><code>[1] 4</code></pre>
+<pre class="r"><code>num_sv_l</code></pre>
+<pre><code>[1] 48</code></pre>
+<pre class="r"><code>mean(abs(thinout$coef) &lt; 10^-6)</code></pre>
+<pre><code>[1] 0.9</code></pre>
+<pre class="r"><code>mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)</code></pre>
+<pre><code>Running mouthwash on 50 x 2 matrix X and 50 x 1000 matrix Y.
+ - Computing independent basis using QR decomposition.
+ - Computation took 0.011 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0.001 seconds.
+ - Running second step of mouthwash:
+    + Estimating model parameters using EM.
+    + Computation took 4.454 seconds.
+    + Generating adaptive shrinkage (ash) output.
+    + Computation took 0.109 seconds.
+ - Second step took 5.386 seconds.
+ - Estimating additional hidden confounders.
+ - Computation took 0.018 seconds.</code></pre>
+<pre class="r"><code>mout$pi0</code></pre>
+<pre><code>[1] 0.8120897</code></pre>
+<pre class="r"><code>bout &lt;- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)</code></pre>
+<pre><code> - Computing independent basis using QR decomposition.
+ - Computation took 0.015 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0 seconds.
+ - Running second step of backwash:
+    + Initializing parameters for EM algorithm.
+    + Computation took 0.168 seconds.
+    + Running one round of parameter updates.
+    + Computation took 0.031 seconds.
+    + Estimating model parameters using EM.
+    + Computation took 7.884 seconds.
+    + Generating posterior statistics.
+    + Computation took 0.004 seconds.
+ - Second step took 9.774 seconds.
+ - Generating final backwash outputs.
+ - Computation took 0.013 seconds.</code></pre>
+<pre class="r"><code>bout$pi0</code></pre>
+<pre><code>[1] 0.8210579</code></pre>
+<pre class="r"><code>cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+
+sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)</code></pre>
+<pre><code>Number of significant surrogate variables is:  4 
+Iteration (out of 5 ):1  2  3  4  5  </code></pre>
+<pre class="r"><code>X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef) &lt; 10^-6))
+
+roc_out &lt;- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec &lt;- c(&quot;MOUTHWASH&quot;, &#39;BACKWASH&#39;,&quot;CATErr&quot;, &quot;SVA&quot;)
+names(roc_out) &lt;- name_vec
+
+sout &lt;- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method &lt;- name_vec[index]
+}
+longdat &lt;- do.call(rbind, sout)
+
+shortdat &lt;- dplyr::filter(longdat, Method == &quot;MOUTHWASH&quot; | Method == &quot;BACKWASH&quot; |
+                            Method == &quot;CATErr&quot; | Method == &quot;SVA&quot; | Method == &quot;LEAPP&quot;)
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle(&quot;ROC Curves&quot;)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="right">0.888</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="right">0.859</td>
+</tr>
+<tr class="odd">
+<td>BACKWASH</td>
+<td align="right">0.805</td>
+</tr>
+<tr class="even">
+<td>MOUTHWASH</td>
+<td align="right">0.805</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>method_list &lt;- list()
+method_list$CATErr           &lt;- list()
+method_list$CATErr$betahat   &lt;- c(cate_cate$beta)
+method_list$CATErr$sebetahat &lt;- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             &lt;- list()
+method_list$SVA$betahat     &lt;- c(svaout$betahat)
+method_list$SVA$sebetahat   &lt;- c(svaout$sebetahat)
+
+ashfit &lt;- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 &lt;- sapply(ashfit, FUN = ashr::get_pi0)
+api0 &lt;- c(api0, MOUTHWASH = mout$pi0)
+api0 &lt;- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = &quot;Estimate of Pi0&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Estimate of Pi0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="right">0.8212793</td>
+</tr>
+<tr class="even">
+<td>BACKWASH</td>
+<td align="right">0.8210579</td>
+</tr>
+<tr class="odd">
+<td>MOUTHWASH</td>
+<td align="right">0.8120897</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="right">0.4781507</td>
+</tr>
+</tbody>
+</table>
+<p>Stronger signal: rexp(,rate = 0.2)</p>
+<pre class="r"><code>set.seed(12345)
+thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.2))
+
+#check null groups
+
+group1 = cell16[,which(thinout$designmat==1)]
+group2 = cell16[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+ks.test(p_values1,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  p_values1
+D = 0.1421, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Y = t(thinout$mat)
+
+X = model.matrix(~thinout$designmat)
+
+num_sv     &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;be&quot;)
+num_sv_l   &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;leek&quot;)
+
+num_sv</code></pre>
+<pre><code>[1] 4</code></pre>
+<pre class="r"><code>num_sv_l</code></pre>
+<pre><code>[1] 48</code></pre>
+<pre class="r"><code>mean(abs(thinout$coef) &lt; 10^-6)</code></pre>
+<pre><code>[1] 0.9</code></pre>
+<pre class="r"><code>mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)</code></pre>
+<pre><code>Running mouthwash on 50 x 2 matrix X and 50 x 1000 matrix Y.
+ - Computing independent basis using QR decomposition.
+ - Computation took 0.014 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0 seconds.
+ - Running second step of mouthwash:
+    + Estimating model parameters using EM.
+    + Computation took 2.225 seconds.
+    + Generating adaptive shrinkage (ash) output.
+    + Computation took 0.104 seconds.
+ - Second step took 3.094 seconds.
+ - Estimating additional hidden confounders.
+ - Computation took 0.015 seconds.</code></pre>
+<pre class="r"><code>mout$pi0</code></pre>
+<pre><code>[1] 0.7596616</code></pre>
+<pre class="r"><code>bout &lt;- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)</code></pre>
+<pre><code> - Computing independent basis using QR decomposition.
+ - Computation took 0.013 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0 seconds.
+ - Running second step of backwash:
+    + Initializing parameters for EM algorithm.
+    + Computation took 0.186 seconds.
+    + Running one round of parameter updates.
+    + Computation took 0.027 seconds.
+    + Estimating model parameters using EM.
+    + Computation took 20.594 seconds.
+    + Generating posterior statistics.
+    + Computation took 0.003 seconds.
+ - Second step took 22.836 seconds.
+ - Generating final backwash outputs.
+ - Computation took 0.016 seconds.</code></pre>
+<pre class="r"><code>bout$pi0</code></pre>
+<pre><code>[1] 0.8159548</code></pre>
+<pre class="r"><code>cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+
+sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)</code></pre>
+<pre><code>Number of significant surrogate variables is:  4 
+Iteration (out of 5 ):1  2  3  4  5  </code></pre>
+<pre class="r"><code>X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef) &lt; 10^-6))
+
+roc_out &lt;- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec &lt;- c(&quot;MOUTHWASH&quot;, &#39;BACKWASH&#39;,&quot;CATErr&quot;, &quot;SVA&quot;)
+names(roc_out) &lt;- name_vec
+
+sout &lt;- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method &lt;- name_vec[index]
+}
+longdat &lt;- do.call(rbind, sout)
+
+shortdat &lt;- dplyr::filter(longdat, Method == &quot;MOUTHWASH&quot; | Method == &quot;BACKWASH&quot; |
+                            Method == &quot;CATErr&quot; | Method == &quot;SVA&quot; | Method == &quot;LEAPP&quot;)
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle(&quot;ROC Curves&quot;)</code></pre>
+<p><img src="figure/scde.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="right">0.974</td>
+</tr>
+<tr class="even">
+<td>MOUTHWASH</td>
+<td align="right">0.953</td>
+</tr>
+<tr class="odd">
+<td>CATErr</td>
+<td align="right">0.951</td>
+</tr>
+<tr class="even">
+<td>BACKWASH</td>
+<td align="right">0.950</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>method_list &lt;- list()
+method_list$CATErr           &lt;- list()
+method_list$CATErr$betahat   &lt;- c(cate_cate$beta)
+method_list$CATErr$sebetahat &lt;- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             &lt;- list()
+method_list$SVA$betahat     &lt;- c(svaout$betahat)
+method_list$SVA$sebetahat   &lt;- c(svaout$sebetahat)
+
+ashfit &lt;- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 &lt;- sapply(ashfit, FUN = ashr::get_pi0)
+api0 &lt;- c(api0, MOUTHWASH = mout$pi0)
+api0 &lt;- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = &quot;Estimate of Pi0&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Estimate of Pi0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="right">0.8503571</td>
+</tr>
+<tr class="even">
+<td>BACKWASH</td>
+<td align="right">0.8159548</td>
+</tr>
+<tr class="odd">
+<td>MOUTHWASH</td>
+<td align="right">0.7596616</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="right">0.5565965</td>
+</tr>
+</tbody>
+</table>
+<div id="summary---ruv" class="section level3">
+<h3>Summary - RUV</h3>
+<ol style="list-style-type: decimal">
+<li><p>Applying SVA on NULL data gives uniformly distributed p-values. Cate with robust regression didn’t make p-values uniformly distributed but considerabley more small p-values. MOUTHWASH outputs <span class="math inline">\(\hat\pi_0\)</span> very close to 1.</p></li>
+<li><p>Adding signals to NULL dataset.</p></li>
+<li><p>What i didnn’t look at: two many 0’s in the dataset.</p></li>
+</ol>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.1 (2019-07-05)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] parallel  stats4    stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] seqgendiff_1.1.1            cate_1.1                   
+ [3] vicar_0.1-10                MultiAssayExperiment_1.10.4
+ [5] SummarizedExperiment_1.14.1 DelayedArray_0.10.0        
+ [7] BiocParallel_1.18.1         matrixStats_0.55.0         
+ [9] Biobase_2.44.0              GenomicRanges_1.36.1       
+[11] GenomeInfoDb_1.20.0         IRanges_2.18.3             
+[13] S4Vectors_0.22.1            BiocGenerics_0.30.0        
+[15] ggplot2_3.2.1              
+
+loaded via a namespace (and not attached):
+ [1] nlme_3.1-141           svd_0.5                bitops_1.0-6          
+ [4] fs_1.3.1               bit64_0.9-7            doParallel_1.0.15     
+ [7] rprojroot_1.3-2        tools_3.6.1            backports_1.1.5       
+[10] R6_2.4.0               DBI_1.0.0              lazyeval_0.2.2        
+[13] mgcv_1.8-29            colorspace_1.4-1       withr_2.1.2           
+[16] gridExtra_2.3          tidyselect_0.2.5       bit_1.1-14            
+[19] compiler_3.6.1         git2r_0.26.1           labeling_0.3          
+[22] scales_1.0.0           SQUAREM_2017.10-1      genefilter_1.66.0     
+[25] mixsqp_0.1-97          stringr_1.4.0          esaBcv_1.2.1          
+[28] digest_0.6.21          rmarkdown_1.16         XVector_0.24.0        
+[31] pscl_1.5.2             pkgconfig_2.0.3        htmltools_0.4.0       
+[34] highr_0.8              ruv_0.9.7.1            limma_3.40.6          
+[37] rlang_0.4.0            RSQLite_2.1.2          leapp_1.2             
+[40] dplyr_0.8.3            RCurl_1.95-4.12        magrittr_1.5          
+[43] GenomeInfoDbData_1.2.1 Matrix_1.2-17          Rcpp_1.0.2            
+[46] munsell_0.5.0          pROC_1.15.3            stringi_1.4.3         
+[49] whisker_0.4            yaml_2.2.0             MASS_7.3-51.4         
+[52] zlibbioc_1.30.0        plyr_1.8.4             grid_3.6.1            
+[55] blob_1.2.0             promises_1.1.0         crayon_1.3.4          
+[58] lattice_0.20-38        splines_3.6.1          annotate_1.62.0       
+[61] zeallot_0.1.0          knitr_1.25             pillar_1.4.2          
+[64] corpcor_1.6.9          codetools_0.2-16       XML_3.98-1.20         
+[67] glue_1.3.1             evaluate_0.14          vctrs_0.2.0           
+[70] httpuv_1.5.2           foreach_1.4.7          gtable_0.3.0          
+[73] purrr_0.3.2            assertthat_0.2.1       ashr_2.2-38           
+[76] xfun_0.10              xtable_1.8-4           later_1.0.0           
+[79] survival_2.44-1.1      truncnorm_1.0-8        tibble_2.1.3          
+[82] iterators_1.0.12       AnnotationDbi_1.46.1   memoise_1.1.0         
+[85] workflowr_1.5.0        sva_3.32.1            </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
