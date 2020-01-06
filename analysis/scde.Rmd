@@ -47,7 +47,7 @@ suppressPackageStartupMessages(library(SummarizedExperiment))
 suppressPackageStartupMessages(library(MultiAssayExperiment))
 datax<- readRDS("~/Downloads/GSE45719.rds")
 datax_gene = experiments(datax)[["gene"]]
-head(assays(datax_gene)[["count"]])
+#head(assays(datax_gene)[["count"]])
 
 cell16_idx = 1:50
 
@@ -327,30 +327,10 @@ Weaker signal: rexp(,rate=1)
 set.seed(12345)
 thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=1))
 
-#check null groups
-
-group1 = cell16[,which(thinout$designmat==1)]
-group2 = cell16[,which(thinout$designmat==0)]
-## for each gene, run a two-sample t test
-
-p_values1 = c()
-for(i in 1:nrow(cell16)){
-  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
-}
-ks.test(p_values1,'punif',0,1)
-hist(p_values1,breaks = 15)
-
 Y = t(thinout$mat)
 
 X = model.matrix(~thinout$designmat)
 
-num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
-num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
-
-num_sv
-num_sv_l
-
-mean(abs(thinout$coef) < 10^-6)
 
 mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
 mout$pi0
@@ -420,28 +400,13 @@ Stronger signal: rexp(,rate = 0.2)
 set.seed(12345)
 thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.2))
 
-#check null groups
 
-group1 = cell16[,which(thinout$designmat==1)]
-group2 = cell16[,which(thinout$designmat==0)]
-## for each gene, run a two-sample t test
-
-p_values1 = c()
-for(i in 1:nrow(cell16)){
-  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
-}
-ks.test(p_values1,'punif',0,1)
-hist(p_values1,breaks = 15)
 
 Y = t(thinout$mat)
 
 X = model.matrix(~thinout$designmat)
 
-num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
-num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
 
-num_sv
-num_sv_l
 
 mean(abs(thinout$coef) < 10^-6)
 
