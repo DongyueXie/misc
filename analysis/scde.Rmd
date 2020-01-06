@@ -1,0 +1,514 @@
+---
+title: "Single cell differential expression analysis"
+author: "Dongyue Xie"
+date: "2019-12-27"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r,include=FALSE}
+knitr::opts_chunk$set(warning = FALSE,message = FALSE)
+```
+
+## Introduction
+
+Two review papers on single cell differential expression analysis I found: [Wang et al](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2599-6), and [Sonenson and Robinson](https://www.nature.com/articles/nmeth.4612#MOESM1).
+
+One review paper on RNA-seq bulk data differential expression analysis: [Sonenson and Delorenzi](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-91).
+
+Single cell RNA seq datasets: [conquer](http://imlspenticton.uzh.ch:3838/conquer/)
+
+
+**What are UMI data sets?**, **Full length vs UMI**
+
+The data object contains: TPM, counts, length-scaled TPMs, the average length of the transcripts expressed in each sample for each gene. 
+
+Task:
+
+1. Whether we need to RUV? Apply some single cell DE method like MAST, D3E, scDD, SCDE, DEsngle etc, maybe also try methods for RNA seq data like edgeR, Deseq2, voomlimma.
+
+-- in paper Sonenson and Robinson(2018), the did an experiment on null datasets and found that for unfiltered data sets, many methods struggled to correctly control the type I error.
+
+2. If need to RUV, how does current methods like SVA and MOUTHWASH work?
+
+3. If current method does not work, why? How to improve?
+
+
+For this GSE45719 datasets: mouse, total 291 cells, among which 50 cells are 16-cell stage blastomere and 50 cells are Mid blastocyst cell (92-94h post-fertilization). 
+
+To create NULL datasets, we can use only 16-cell stage cells and randomly partition the cells into two groups.
+
+## NULL sc-dataset DE
+
+```{r}
+library(ggplot2)
+suppressPackageStartupMessages(library(SummarizedExperiment))
+suppressPackageStartupMessages(library(MultiAssayExperiment))
+datax<- readRDS("~/Downloads/GSE45719.rds")
+datax_gene = experiments(datax)[["gene"]]
+head(assays(datax_gene)[["count"]])
+
+cell16_idx = 1:50
+
+cell16_readcounts = (assays(datax_gene)[["count"]])[,1:50]
+
+
+
+#filter out genes that are not expressed
+
+cell16_reads = cell16_readcounts[rowSums(cell16_readcounts)!=0,]
+
+cell16=cell16_reads 
+
+dim(cell16)
+sum(cell16==0)/prod(dim(cell16))
+
+#
+
+# task 1
+# randomly partition the data into 2 groups, then simply use a two sample t test
+
+# first partition
+set.seed(12345)
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+hist(p_values1,breaks = 15)
+
+
+summary(p_values1)
+```
+
+A lot of p-values are around 0.3-0.35. Take a look at gene 12:
+
+```{r}
+as.numeric(cell16[12,group1_idx])
+as.numeric(cell16[12,-group1_idx])
+t.test(cell16[12,group1_idx],cell16[12,-group1_idx],alternative = 'two.sided')$p.value
+```
+
+Only one cell has non-zero read counts among two groups. To apply two-sample t-test, we should try to avoid this situation. So choose the top 1000 expressed genes:  
+
+```{r}
+
+#Choose the top 1000 expressed genes 
+top_expressed_genes = (order(rowSums(cell16_reads),decreasing = TRUE))[1:1000]
+cell16 = cell16_reads[top_expressed_genes,]
+
+dim(cell16)
+sum(cell16==0)/prod(dim(cell16))
+
+#
+
+# task 1
+# randomly partition the data into 2 groups, then simply use a two sample t test
+
+# first partition
+set.seed(12345)
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+
+ks.test(p_values1,'punif',0,1)
+
+hist(p_values1,breaks = 15)
+
+# second partition
+
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+ks.test(p_values1,'punif',0,1)
+hist(p_values1,breaks = 15)
+
+# third partition
+
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+ks.test(p_values1,'punif',0,1)
+hist(p_values1,breaks = 15)
+
+```
+
+### Summary - NULL
+
+If not accounting for 0's in scData, then the null distribution of p-values is certainly not uniform. Mainly because two-sample t test is not applicable. 
+
+If removing genes with two many 0's, then the p-value distributions deviate from uniform. 
+
+## RUV methods for RNA-seq
+
+First apply on NULL data then add signals to genes using Poisson thinning.
+
+```{r}
+library(vicar)
+
+set.seed(12345)
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+
+group_indicator = rep(0,ncol(cell16))
+group_indicator[group1_idx] = 1
+
+X = model.matrix(~group_indicator)
+
+Y = t(cell16)
+
+num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
+num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
+
+num_sv
+num_sv_l
+```
+
+Two approaches give very different number of surrogate variables! Try to use 4 SVs in the following analysis.
+
+```{r}
+mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+mout$pi0
+library(cate)
+#library(leapp)
+
+cate_cate   <- cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = "rr")
+
+# this method is vey slow!
+#leapp_leapp <- leapp::leapp(data = t(Y), pred.prim = X[, 2, drop = FALSE], 
+#                            pred.covar = X[, -2, drop = FALSE], num.fac = num_sv)
+
+sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+hist(svaout$pvalues,breaks=15)
+ks.test(svaout$pvalues,'punif',0,1)
+
+hist(cate_cate$beta.p.value,breaks = 15)
+ks.test(cate_cate$beta.p.value,'punif',0,1)
+
+```
+
+
+
+Add some signal to the NULL dataset.
+
+```{r}
+library(seqgendiff)
+#tt = thin_diff(round(cell16), design_fixed = X[,2,drop=FALSE])
+set.seed(12345)
+thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.5))
+
+#check null groups
+
+group1 = cell16[,which(thinout$designmat==1)]
+group2 = cell16[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+ks.test(p_values1,'punif',0,1)
+hist(p_values1,breaks = 15)
+
+Y = t(thinout$mat)
+
+X = model.matrix(~thinout$designmat)
+
+num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
+num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
+
+num_sv
+num_sv_l
+
+mean(abs(thinout$coef) < 10^-6)
+
+mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+mout$pi0
+
+bout <- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+bout$pi0
+
+
+cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = "rr")
+
+sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef) < 10^-6))
+
+
+
+# plot ROC curve
+roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec <- c("MOUTHWASH", 'BACKWASH',"CATErr", "SVA")
+names(roc_out) <- name_vec
+
+sout <- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method <- name_vec[index]
+}
+longdat <- do.call(rbind, sout)
+
+shortdat <- dplyr::filter(longdat, Method == "MOUTHWASH" | Method == "BACKWASH" |
+                            Method == "CATErr" | Method == "SVA" | Method == "LEAPP")
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle("ROC Curves")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+
+# estimate pi0
+method_list <- list()
+method_list$CATErr           <- list()
+method_list$CATErr$betahat   <- c(cate_cate$beta)
+method_list$CATErr$sebetahat <- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             <- list()
+method_list$SVA$betahat     <- c(svaout$betahat)
+method_list$SVA$sebetahat   <- c(svaout$sebetahat)
+
+ashfit <- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 <- sapply(ashfit, FUN = ashr::get_pi0)
+api0 <- c(api0, MOUTHWASH = mout$pi0)
+api0 <- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = "Estimate of Pi0")
+```
+
+
+Weaker signal: rexp(,rate=1)
+
+```{r}
+set.seed(12345)
+thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=1))
+
+#check null groups
+
+group1 = cell16[,which(thinout$designmat==1)]
+group2 = cell16[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+ks.test(p_values1,'punif',0,1)
+hist(p_values1,breaks = 15)
+
+Y = t(thinout$mat)
+
+X = model.matrix(~thinout$designmat)
+
+num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
+num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
+
+num_sv
+num_sv_l
+
+mean(abs(thinout$coef) < 10^-6)
+
+mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+mout$pi0
+
+bout <- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+bout$pi0
+
+
+cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = "rr")
+
+sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef) < 10^-6))
+
+roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec <- c("MOUTHWASH", 'BACKWASH',"CATErr", "SVA")
+names(roc_out) <- name_vec
+
+sout <- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method <- name_vec[index]
+}
+longdat <- do.call(rbind, sout)
+
+shortdat <- dplyr::filter(longdat, Method == "MOUTHWASH" | Method == "BACKWASH" |
+                            Method == "CATErr" | Method == "SVA" | Method == "LEAPP")
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle("ROC Curves")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+method_list <- list()
+method_list$CATErr           <- list()
+method_list$CATErr$betahat   <- c(cate_cate$beta)
+method_list$CATErr$sebetahat <- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             <- list()
+method_list$SVA$betahat     <- c(svaout$betahat)
+method_list$SVA$sebetahat   <- c(svaout$sebetahat)
+
+ashfit <- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 <- sapply(ashfit, FUN = ashr::get_pi0)
+api0 <- c(api0, MOUTHWASH = mout$pi0)
+api0 <- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = "Estimate of Pi0")
+```
+
+
+
+Stronger signal: rexp(,rate = 0.2)
+
+```{r}
+set.seed(12345)
+thinout = thin_2group(round(cell16),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.2))
+
+#check null groups
+
+group1 = cell16[,which(thinout$designmat==1)]
+group2 = cell16[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(cell16)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+ks.test(p_values1,'punif',0,1)
+hist(p_values1,breaks = 15)
+
+Y = t(thinout$mat)
+
+X = model.matrix(~thinout$designmat)
+
+num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
+num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
+
+num_sv
+num_sv_l
+
+mean(abs(thinout$coef) < 10^-6)
+
+mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+mout$pi0
+
+bout <- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+bout$pi0
+
+
+cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = "rr")
+
+sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef) < 10^-6))
+
+roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec <- c("MOUTHWASH", 'BACKWASH',"CATErr", "SVA")
+names(roc_out) <- name_vec
+
+sout <- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method <- name_vec[index]
+}
+longdat <- do.call(rbind, sout)
+
+shortdat <- dplyr::filter(longdat, Method == "MOUTHWASH" | Method == "BACKWASH" |
+                            Method == "CATErr" | Method == "SVA" | Method == "LEAPP")
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle("ROC Curves")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+method_list <- list()
+method_list$CATErr           <- list()
+method_list$CATErr$betahat   <- c(cate_cate$beta)
+method_list$CATErr$sebetahat <- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             <- list()
+method_list$SVA$betahat     <- c(svaout$betahat)
+method_list$SVA$sebetahat   <- c(svaout$sebetahat)
+
+ashfit <- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 <- sapply(ashfit, FUN = ashr::get_pi0)
+api0 <- c(api0, MOUTHWASH = mout$pi0)
+api0 <- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = "Estimate of Pi0")
+```
+
+### Summary - RUV
+
+1. Applying SVA on NULL data gives uniformly distributed p-values. Cate with robust regression didn't make p-values uniformly distributed but considerabley more small p-values. MOUTHWASH outputs $\hat\pi_0$ very close to 1. 
+
+2. Adding signals to NULL dataset. 
+
+3. What i didnn't look at: two many 0's in the dataset. 
