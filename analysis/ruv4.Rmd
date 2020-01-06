@@ -1,0 +1,29 @@
+---
+title: "Gerard and Stephens paper on RUV"
+author: "Dongyue Xie"
+date: "2020-01-06"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+What are responses(Y)? conuts, tpm or sth else?
+
+```{r}
+set.seed(1)
+library(vicar)
+library(ggplot2)
+library(dplyr)
+library(seqgendiff)
+
+data(sim_gtex)
+
+Y <- sim_gtex$Y
+X <- sim_gtex$X
+ctl <- sim_gtex$ctl
+which_null <- sim_gtex$which_null
+beta <- sim_gtex$beta
+```
+
