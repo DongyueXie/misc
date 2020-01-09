@@ -1,0 +1,26 @@
+---
+title: "DataCollection"
+author: "Dongyue Xie"
+date: "2020-01-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+
+A collection of data that might be useful for future projects.
+
+[Mouse ATAC Atlas](http://atlas.gs.washington.edu/mouse-atac/data/#atac-matrices): 1 scRNA-Seq and sc-ATAC-Seq data.
+
+[DC3](https://www.nature.com/articles/s41467-019-12547-1#data-availability): 1 scRNA, ATAC, HiC
+
+[Couple NMF](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6065048/?report=classic): 1 scRNA and ATAC-Seq.
+
+[conquer](http://imlspenticton.uzh.ch:3838/conquer/): scRNA data collection. Around 40 datasets.
+
+```{r}
+
+```
+
