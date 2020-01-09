@@ -1,0 +1,88 @@
+---
+title: "MAST"
+author: "Dongyue Xie"
+date: "2019-12-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+Try the method MAST designed for single cell.
+
+## MAST review
+
+The expression matrix is on $\log_2(TPM+1)$ scale. TPM = $10^6*$mean read length$*$read count i / (total mapped reads $*$ read length i). [Note: Normalization method](https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html).
+
+$CDR = \frac{1}{N}\sum_g Z_{ig}$ is the proportion of genes detected in each cell.
+
+$Y = \{y_{ig}\}$ denotes scRNA-Seq expression; $Z=\{z_{ig}\}$ indicates whehter gene $g$ is expressed in cell $i$. Then fit two models $logit(p(Z_{ig}=1)) = X_i\beta_g^D$, $Y_{ig}|Z_{ig}=1\sim N(X_i\beta_g^C,\sigma^2_g)$.
+
+Many genes are expected to have similar variances. Using EB to shrink the estimate of gene-specific variances. Let $\tau_g^2$ be the precision (1/variance) then suppose $\tau_g^2\sim Gamma(\alpha,\beta)$. Genes with fewer expressed cells end up with stronger shrinkage. 
+
+Differential expression tests: declare gene DE if FDR adjusted p-value smaller than 0.01 and estimated fold-change greater than 1.5. There are two p-values to look at. Which one?
+
+
+[Tutorial on R package](http://bioconductor.org/packages/release/bioc/vignettes/MAST/inst/doc/MAITAnalysis.html)
+
+
+```{r,message=FALSE,warning=FALSE,eval=FALSE}
+library(MAST)
+
+suppressPackageStartupMessages({
+    library(ggplot2)
+    library(GGally)
+    library(GSEABase)
+    library(limma)
+    library(reshape2)
+    library(data.table)
+    library(knitr)
+    library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+    library(stringr)
+    library(NMF)
+    library(rsvd)
+    library(RColorBrewer)
+    library(MAST)
+})
+
+freq_expressed <- 0.2
+FCTHRESHOLD <- log2(1.5)
+
+data(maits, package='MAST')
+dim(maits$expressionmat)
+
+
+scaRaw <- FromMatrix(t(maits$expressionmat), maits$cdat, maits$fdat)
+
+
+filterCrit <- with(colData(scaRaw), pastFastqc=="PASS"& exonRate >0.3 & PercentToHuman>0.6 & nGeneOn> 4000)
+
+sca <- subset(scaRaw,filterCrit)
+eid <- select(TxDb.Hsapiens.UCSC.hg19.knownGene,keys = mcols(sca)$entrez,keytype ="GENEID",columns = c("GENEID","TXNAME"))
+ueid <- unique(na.omit(eid)$GENEID)
+sca <- sca[mcols(sca)$entrez %in% ueid,]
+## Remove invariant genes
+sca <- sca[sample(which(freq(sca)>0), 6000),]
+
+cdr2 <-colSums(assay(sca)>0)
+
+colData(sca)$cngeneson <- scale(cdr2)
+
+scaSample <- sca[sample(which(freq(sca)>.1), 20),]
+flat <- as(scaSample, 'data.table')
+
+
+thres <- thresholdSCRNACountMatrix(assay(sca), nbins = 20, min_per_bin = 30)
+assays(sca) <- list(thresh=thres$counts_threshold, tpm=assay(sca))
+expressed_genes <- freq(sca) > freq_expressed
+sca <- sca[expressed_genes,]
+
+
+cond<-factor(colData(sca)$condition)
+cond<-relevel(cond,"Unstim")
+colData(sca)$condition<-cond
+
+zlmCond <- zlm(~condition + cngeneson, sca)
+summaryCond <- summary(zlmCond, doLRT='conditionStim') 
+```
+
+
