@@ -1,0 +1,72 @@
+---
+title: "GTEX"
+author: "Dongyue Xie"
+date: "2020-01-13"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Number of SRA RNA seq files: 
+
+Heart - 369 
+
+Brain - 1055
+
+Lung - 242
+
+Muscle - 330
+
+Nerve - 238
+
+Thyroid - 250
+
+
+
+```{linux}
+for i in {SRR1069802,SRR1071692,SRR1072650,SRR1075631,SRR1075997,SRR1076779,SRR1077115,SRR1077528,SRR1077643};
+
+do 
+
+prefetch $i;
+rm *.1;
+rm *.10;
+rm *.11;
+rm *.9;
+rm *.13;
+rm *.8;
+
+done
+```
+
+An easier one:
+
+```{linux}
+cat your_accession_list.txt | while read i
+do  
+fasterq-dump ${i} <options>
+done
+```
+
+
+```{linux}
+for i in {SRR1069690,SRR1069802,SRR1071692,SRR1072650,SRR1075631,SRR1075997,SRR1076779,SRR1077115,SRR1077528,SRR1077643};
+
+do
+
+sam-dump $i.sra | samtools view -Sb > /project2/mstephens/dongyue/gtex/$i.bam ;
+
+done
+
+```
+
+```{linux}
+find *.sra | parallel 'sam-dump {} | samtools view -Sb > /project2/mstephens/dongyue/gtex/{/.}.bam'
+```
+
+
+
+sam-dump SRR1077115.sra | samtools view -Sb > /project2/mstephens/dongyue/gtex/SRR1077115.bam ;
+
