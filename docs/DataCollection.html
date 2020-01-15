@@ -406,7 +406,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-01-09
+<strong>Last updated:</strong> 2020-01-15
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree5d6aa900afb20cb0e0b3d2ca6b3424dfa6b47aaftargetblank5d6aa90a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/5d6aa900afb20cb0e0b3d2ca6b3424dfa6b47aaf" target="_blank">5d6aa90</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree638818663d5cee8c172c5097ff63bcc513393fbctargetblank6388186a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/638818663d5cee8c172c5097ff63bcc513393fbc" target="_blank">6388186</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree5d6aa900afb20cb0e0b3d2ca6b3424dfa6b47aaftargetblank5d6aa90a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree638818663d5cee8c172c5097ff63bcc513393fbctargetblank6388186a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -509,6 +509,13 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/GTEX.Rmd
+
+Unstaged changes:
+    Modified:   analysis/command.Rmd
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -552,6 +559,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/638818663d5cee8c172c5097ff63bcc513393fbc/analysis/DataCollection.Rmd" target="_blank">6388186</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-15
+</td>
+<td>
+wflow_publish(“analysis/DataCollection.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/ee9d09c2794662fb7da116b0f9581b8d47673e0f/docs/DataCollection.html" target="_blank">ee9d09c</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/5d6aa900afb20cb0e0b3d2ca6b3424dfa6b47aaf/analysis/DataCollection.Rmd" target="_blank">5d6aa90</a>
 </td>
 <td>
@@ -578,6 +619,7 @@ wflow_publish(“analysis/DataCollection.Rmd”)
 <p><a href="https://www.nature.com/articles/s41467-019-12547-1#data-availability">DC3</a>: 1 scRNA, ATAC, HiC</p>
 <p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6065048/?report=classic">Couple NMF</a>: 1 scRNA and ATAC-Seq.</p>
 <p><a href="http://imlspenticton.uzh.ch:3838/conquer/">conquer</a>: scRNA data collection. Around 40 datasets.</p>
+<p><a href="https://bioconductor.org/packages/release/bioc/vignettes/bsseq/inst/doc/bsseq_analysis.html">bsseq</a>: DNA methylation data for binomial smoothing.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
