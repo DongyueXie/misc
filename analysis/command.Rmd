@@ -41,6 +41,8 @@ Use `screen` to back up screens.
 
 `sbatch myscript.sbatch` 
 
+[parallel in linux command](https://www.msi.umn.edu/support/faq/how-can-i-use-gnu-parallel-run-lot-commands-parallel)
+
 ```{r}
 
 ```
