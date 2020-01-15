@@ -20,6 +20,8 @@ A collection of data that might be useful for future projects.
 
 [conquer](http://imlspenticton.uzh.ch:3838/conquer/): scRNA data collection. Around 40 datasets.
 
+[bsseq](https://bioconductor.org/packages/release/bioc/vignettes/bsseq/inst/doc/bsseq_analysis.html): DNA methylation data for binomial smoothing.
+
 ```{r}
 
 ```
