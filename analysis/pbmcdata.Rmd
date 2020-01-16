@@ -1,0 +1,136 @@
+---
+title: "pbmcdata"
+author: "Dongyue Xie"
+date: "2020-01-15"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+
+* Reproduce the experimental data used in Van den Berge et al., 2018 for creating PBMC null datasets. 
+
+* Data includes 2,638 samples and 13,713 genes.
+
+
+---
+
+## Steps
+
+Same steps as in `https://github.com/statOmics/zinbwaveZinger/blob/master/realdata/createdata/createDataObject.Rmd`. 
+
+
+Reading in data.
+
+```{r init, message=FALSE, eval=F}
+library(Seurat)
+library(dplyr)
+library(Matrix)
+# Load the PBMC dataset
+pbmc.data <- Read10X(data.dir = "~/Downloads/pbmc3k_filtered_gene_bc_matrices")
+pbmc <- CreateSeuratObject(counts = pbmc.data, min.cells = 3, min.features = 200, project = "10X_PBMC")
+```
+
+
+
+QC and selecting cells for further analysis
+
+```{r, eval=F}
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
+pbmc <- subset(pbmc, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+```
+
+Normalizing the data
+
+```{r normalize, results='hide', eval=F}
+pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
+```
+
+Detection of variable genes across the single cells
+
+```{r var_genes, fig.height=7, fig.width=11, results='hide', eval=F}
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+```
+
+Scaling the data and removing unwanted sources of variation
+
+```{r regress, fig.height=7, fig.width=11, results='hide', eval=F}
+all.genes <- rownames(pbmc)
+pbmc <- ScaleData(pbmc, features = all.genes, vars.to.regress = "percent.mt")
+```
+
+Perform linear dimensional reduction
+
+```{r pca, eval=F}
+pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+```
+
+Cluster the cells
+
+```{r cluster, fig.height=5, fig.width=7, eval=F}
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindClusters(pbmc, resolution = 0.5)
+```
+
+
+Run Non-linear dimensional reduction (tSNE)
+
+```{r tsne, fig.height=5, fig.width=7, message=FALSE, warnings=FALSE, eval=F}
+pbmc <- RunUMAP(pbmc, dims = 1:10)
+```
+
+```{r, eval=F}
+new.cluster.ids <- c("Naive CD4 T", "Memory CD4 T", "CD14+ Mono", "B", "CD8 T", "FCGR3A+ Mono", 
+    "NK", "DC", "Platelet")
+names(new.cluster.ids) <- levels(pbmc)
+pbmc <- RenameIdents(pbmc, new.cluster.ids)
+#DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+```
+
+
+Create SE object
+
+```{r, eval=F}
+library(SingleCellExperiment)
+# use raw data as input for zinbwave but keep only non filtered cells
+# and most variable genes indentified by seurat
+pbmc2 <- CreateSeuratObject(counts = pbmc.data, min.cells = 3, min.features = 200, project = "10X_PBMC")
+pbmc2[["percent.mt"]] <- PercentageFeatureSet(pbmc2, pattern = "^MT-")
+pbmc2 <- subset(pbmc2, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+
+keepcells = colnames(pbmc@data)
+counts = pbmc2@assays$RNA[, keepcells]
+# zinbwave does not want dgTMatrix as input
+counts = as.matrix(counts)
+counts = counts[rowSums(counts) > 0, ]
+#keepcells = as.integer(pbmc@ident) %in% 1:2
+#counts = counts[, keepcells]
+# coldata
+clusters = as.integer(pbmc@active.ident)
+#clusters = clusters[clusters %in% 1:2]
+cData = data.frame(seurat = clusters)
+rownames(cData) = colnames(counts)
+# rowdata
+rData = data.frame(seuratVarGenes = rownames(counts) %in% rownames(pbmc@assays$RNA))
+rownames(rData) = rownames(counts)
+# create sce object
+core = SingleCellExperiment(assays = list(counts = counts),
+                            colData = cData, rowData = rData)
+unloadNamespace("Seurat")
+saveRDS(core, file = '~/Downloads/pbmc.rds')
+saveRDS(assay(pbmc2), file = '~/Downloads/pbmc_counts.rds')
+```
+
+
+Cluster ID	Markers	Cell Type
+0	IL7R, CCR7	Naive CD4+ T
+1	IL7R, S100A4	Memory CD4+
+2	CD14, LYZ	CD14+ Mono
+3	MS4A1	B
+4	CD8A	CD8+ T
+5	FCGR3A, MS4A7	FCGR3A+ Mono
+6	GNLY, NKG7	NK
+7	FCER1A, CST3	DC
+8	PPBP	Platelet
