@@ -1,0 +1,113 @@
+---
+title: "scde using PBMC data"
+author: "DongyueXie"
+date: "2020-01-15"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+In my previous [analysis](scde.html), I tried RUV methods on single-cell RNA-Seq data. I only used top 1000 expressed genes from the dataset. So only a few of gene expressions are 0. This is not what typically scRNA data are. Also, I tried only in total 50 cells. 
+
+This time, I'm going to try PBMC data prepared by [Satjia Lab](https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html). 
+
+```{r}
+library(MAST)
+library(Seurat)
+datax = readRDS('data/pbmc_counts.rds')@assays$RNA
+datax = datax[rowSums(datax)>0,]
+clusters = readRDS('data/pbmc.rds')
+
+cell_cluster = clusters@colData$seurat
+```
+
+How many zeros are there? A lot
+
+```{r}
+sum(datax==0)/(dim(datax)[1]*dim(datax)[2])
+```
+
+
+Let's only use the Naive CD4+ T cells, which corresponds to the first cluster.
+
+```{r}
+CDT_idx = which(cell_cluster == 1)
+CDT = datax[,CDT_idx]
+
+set.seed(12345)
+group1_idx = sample(1:ncol(CDT),ncol(CDT)/2)
+group1 = CDT[,group1_idx]
+group2 = CDT[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(CDT)){
+  p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative='two.sided')$p.value
+}
+hist(p_values1,breaks = 15)
+
+
+summary(p_values1)
+```
+
+There are 1225 genes that have no expression in any Naive CD4+ T cells. Remove these genes. Now we have not filtered out any genes.
+
+```{r}
+CDT = CDT[-which((rowSums(CDT)==0)),]
+```
+
+Again, t-test does not apply here since for a lot of genes, only one cell has non-zero read counts among two groups.
+
+How about apply TMM then t-test?
+
+```{r}
+library(edgeR)
+tmm = calcNormFactors(CDT,method='TMM')
+CDTnorm = cpm(CDT,tmm)
+group1 = CDTnorm[,group1_idx]
+group2 = CDTnorm[,-group1_idx]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(CDT)){
+  p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative='two.sided')$p.value
+}
+hist(p_values1,breaks = 15)
+
+
+summary(p_values1)
+```
+
+Now let's apply ROTS method for scDE, which is one of the best performance method tested in [Sonenson and Delorenzi](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-91).
+
+First Normalize the counts by Trimmed Mean of M-values as required by ROTS. Then apply ROTS.
+```{r}
+
+group = rep(0,ncol(CDT))
+group[group1_idx] = 1
+library(ROTS)
+#ROTS_results = ROTS(data = CDTnorm, groups = group , B = 100 , K = 500 , seed = 1234)
+load('data/ROTS_results.RData')
+summary(ROTS_results, fdr = 0.05)
+hist(ROTS_results$pvalue,breaks = 15)
+```
+
+Let's reduce the number of cells in each group. Reudce from 355 to 50.
+
+```{r}
+n_cell = 100
+set.seed(12345)
+CDT_subset = CDT[,sample(1:ncol(CDT),n_cell)]
+tmm = calcNormFactors(CDT_subset,method='TMM')
+CDTnorm_subset = cpm(CDT_subset,tmm)
+group = rep(0,ncol(CDTnorm_subset))
+group1_idx = sample(1:n_cell,n_cell/2)
+group[group1_idx] = 1
+ROTS_results2 = ROTS(data = CDTnorm_subset, groups = group , B = 100 , K = 500 , seed = 1234)
+summary(ROTS_results2, fdr = 0.05)
+hist(ROTS_results2$pvalue,breaks = 15)
+```
+
+
