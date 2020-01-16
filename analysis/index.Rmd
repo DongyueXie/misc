@@ -29,6 +29,8 @@ editor_options:
 
 [RNA-Seq data collection](DataCollection.html)
 
+[Pre-process pbmc data](pbmcdata.html)
+
 # Methods
 
 [Deconvolution](deconvolution.html)
@@ -41,6 +43,6 @@ editor_options:
 
 [ruv4](ruv4.html)
 
-[single cell DE](scde.html)
+[single cell DE](scde.html), [single cell DE PBMC](scdePBMC.html)
 
 [select rr in rf using oob](selectrotation.html)
