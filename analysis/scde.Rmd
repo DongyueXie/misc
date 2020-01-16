@@ -30,6 +30,8 @@ Task:
 
 -- in paper Sonenson and Robinson(2018), the did an experiment on null datasets and found that for unfiltered data sets, many methods struggled to correctly control the type I error.
 
+-- DE methods performance depend heavily on whether filtering out low expressed genes / how to filter out low expressed genes.
+
 2. If need to RUV, how does current methods like SVA and MOUTHWASH work?
 
 3. If current method does not work, why? How to improve?
@@ -78,7 +80,7 @@ group2 = cell16[,-group1_idx]
 
 p_values1 = c()
 for(i in 1:nrow(cell16)){
-  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+  p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative='two.sided')$p.value
 }
 hist(p_values1,breaks = 15)
 
@@ -91,7 +93,7 @@ A lot of p-values are around 0.3-0.35. Take a look at gene 12:
 ```{r}
 as.numeric(cell16[12,group1_idx])
 as.numeric(cell16[12,-group1_idx])
-t.test(cell16[12,group1_idx],cell16[12,-group1_idx],alternative = 'two.sided')$p.value
+t.test(log(cell16[12,group1_idx]+1),log(cell16[12,-group1_idx]+1),alternative = 'two.sided')$p.value
 ```
 
 Only one cell has non-zero read counts among two groups. To apply two-sample t-test, we should try to avoid this situation. So choose the top 1000 expressed genes:  
@@ -119,7 +121,7 @@ group2 = cell16[,-group1_idx]
 
 p_values1 = c()
 for(i in 1:nrow(cell16)){
-  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+  p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative='two.sided')$p.value
 }
 
 ks.test(p_values1,'punif',0,1)
@@ -135,7 +137,7 @@ group2 = cell16[,-group1_idx]
 
 p_values1 = c()
 for(i in 1:nrow(cell16)){
-  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+  p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative='two.sided')$p.value
 }
 ks.test(p_values1,'punif',0,1)
 hist(p_values1,breaks = 15)
@@ -149,12 +151,34 @@ group2 = cell16[,-group1_idx]
 
 p_values1 = c()
 for(i in 1:nrow(cell16)){
-  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+  p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative='two.sided')$p.value
 }
 ks.test(p_values1,'punif',0,1)
 hist(p_values1,breaks = 15)
 
 ```
+
+Try ROTS
+
+```{r}
+set.seed(12345)
+group1_idx = sample(1:ncol(cell16),ncol(cell16)/2)
+group1 = cell16[,group1_idx]
+group2 = cell16[,-group1_idx]
+
+group_indicator = rep(0,ncol(cell16))
+group_indicator[group1_idx] = 1
+
+library(edgeR)
+tmm = calcNormFactors(cell16,method='TMM')
+cell16norm = cpm(cell16,tmm)
+library(ROTS)
+ROTS_results = ROTS(data = cell16norm, groups = group_indicator , B = 100 , K = 500 , seed = 1234)
+summary(ROTS_results, fdr = 0.05)
+hist(ROTS_results$pvalue,breaks = 15)
+ks.test(ROTS_results$pvalue,'punif',0,1)
+```
+
 
 ### Summary - NULL
 
