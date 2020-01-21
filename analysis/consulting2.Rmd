@@ -7,16 +7,31 @@ editor_options:
   chunk_output_type: console
 ---
 
-# Conclusion
+# Overview
 
-If directly use dCT as response, just run the 2-way ANOVA.
+The experiment is a $2\times 3$ design with two genotypes(cre +, cre -) and three treatments(SPF, Healthy and CMA). Each cell has unequal observations so the design is unbalanced. 
 
-Conclusions from ANOVA:
+The observations are Ct(cycle thresholds), which is defined as the number of cycles required for the fluorescent signal to cross the threshold (ie. exceeds background level). Ct levels are inversely proportional to the amount of target nucleic acid in the sample. Each observation has two numbers, Ct of target gene and Ct of housekeeping gene. The delta Ct, is defined as Ct(target gene) - Ct(housekeeping gene), which measures the differential expression. This is to essentially normalise the gene of interest to a gene which is not affected by the experiment. 
 
-1. Igha gene expression does not differ significantly among genotypes and treatments.
-2. Treatment is significantly associated with Reg3b gene expression.
-3. Treatment is significantly associated with Jchain gene expression. 
-4. Treatment is significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.
+# Questions to be addressed
+
+1. Do gene expressions differ among genotypes? treatment? interactions between genetypes and treatment?
+
+-- Run a two-way anova with interaction and adjustment for unbalance. 
+
+2. If they differ, how?
+
+-- run tukey's multiple comparisons.
+
+# Method
+
+## Delta-delta Ct method
+
+Delta-delta method is a very popular approach for qPCR data analysis which tells you the fold change of the gene expression. The output is $2^{-\Delta\Delta Ct}$, where $\Delta\Delta Ct$ is $\Delta Ct(treatment)-\Delta Ct(control\hspace{1mm}average)$. The fold change is the expression ratio: if the fold change is positive it means that the gene is upregulated; if the fold change is negative it means it is downregulated. 
+
+## Directly use Delta Ct 
+
+I sugget directly use Delte Ct values instead of going for $2^{-\Delta\Delta Ct}$. The first reason is that to run statistical hypothesis on $2^{-\Delta\Delta Ct}$, we need to take $\log$ trasformation on it, which is equivalent to use $-\Delta\Delta Ct$. Further, runing anova and other statistical tests on $-\Delta\Delta Ct$ is equivalent to runing them on $\Delta Ct$, since $-\Delta\Delta Ct$ is obtained just by subtrating a number from it. By saying equivalent, it's in terms of the statistical significance. Second, Delta-delta Ct method is mainly for calculating fold change of gene expressions see if gene is upregulated or not. We can obtain the same results from running statisitcal tests on $\Delta Ct$.
 
 
 # Analysis
@@ -31,14 +46,18 @@ datax = read.csv('~/Downloads/Igha.csv',header = TRUE,skip=1)
 
 datax = datax[,c(7,3,4)]
 
+datax$Treatment = factor(datax$Treatment,levels = c('SPF','CMA', 'HEALTHY'))
+
 #table(datax$Genotype,datax$Treatment)
 
 # fit 2-way anova
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
-# check asusmptions
-plot(anova.fit,1)
-plot(anova.fit,2)
+# check normal asusmptions
+
+#plot(anova.fit,1)
+#plot(anova.fit,2)
+
 ```
 
 Variance is homogeneous and dCT is normal distributed. So we do not need to do transformations of the dCT.
@@ -47,7 +66,6 @@ Variance is homogeneous and dCT is normal distributed. So we do not need to do t
 # adjust due to unbanlanced design
 Anova(anova.fit,type='III')
 ```
-
 
 This suggests that Igha gene expression does not differ significantly among genotypes and treatments.
 
@@ -59,6 +77,7 @@ datax = read.csv('~/Downloads/Reg3b.csv',header = TRUE,skip=1)
 # Use Treatment, Genotype and Normzalized value
 
 datax = datax[,c(7,3,4)]
+datax$Treatment = factor(datax$Treatment,levels = c('SPF','CMA', 'HEALTHY'))
 
 #table(datax$Genotype,datax$Treatment)
 
@@ -66,15 +85,22 @@ datax = datax[,c(7,3,4)]
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
 # check asusmptions
-plot(anova.fit,1)
-plot(anova.fit,2)
+
+#plot(anova.fit,1)
+#plot(anova.fit,2)
 
 Anova(anova.fit,type='III')
 ```
 
 This suggests: Treatment is significantly associated with Reg3b gene expression.
 
+Then we answer the question: how do gene expressions differ among treatment. We run tukey's multiple comparison tests on treatment:
 
+```{r}
+TukeyHSD(anova.fit, which = "Treatment")
+```
+
+From the adjusted p-value(p adj), we conlude that gene expressions differ significantly between SPF and CMA as well as HEALTHY and CMA, but not between SPF and HEALTHY. The column diff gives the difference between means of the two treatments.
 
 ## Jchain
 
@@ -84,6 +110,7 @@ datax = read.csv('~/Downloads/Jchain.csv',header = TRUE,skip=1)
 # Use Treatment, Genotype and Normzalized value
 
 datax = datax[,c(7,3,4)]
+datax$Treatment = factor(datax$Treatment,levels = c('SPF','CMA', 'HEALTHY'))
 
 #table(datax$Genotype,datax$Treatment)
 
@@ -91,13 +118,20 @@ datax = datax[,c(7,3,4)]
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
 # check asusmptions
-plot(anova.fit,1)
-plot(anova.fit,2)
+
+#plot(anova.fit,1)
+#plot(anova.fit,2)
 
 Anova(anova.fit,type='III')
 ```
 
 This suggests Treatment is significantly associated with Jchain gene expression.
+
+```{r}
+TukeyHSD(anova.fit, which = "Treatment")
+```
+
+From the adjusted p-value(p adj), we conlude that gene expressions differ significantly between SPF and CMA as well as HEALTHY and CMA, but not between SPF and HEALTHY. The column diff gives the difference between means of the two treatments.
 
 ## Saa1
 
@@ -107,17 +141,38 @@ datax = read.csv('~/Downloads/Saa1.csv',header = TRUE,skip=1)
 # Use Treatment, Genotype and Normzalized value
 
 datax = datax[,c(7,3,4)]
-
+datax$Treatment = factor(datax$Treatment,levels = c('SPF','CMA', 'HEALTHY'))
 #table(datax$Genotype,datax$Treatment)
 
 # fit 2-way anova
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
 # check asusmptions
-plot(anova.fit,1)
-plot(anova.fit,2)
+#plot(anova.fit,1)
+#plot(anova.fit,2)
 
 Anova(anova.fit,type='III')
 ```
 
 This suggests that Treatment is significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.
+
+```{r}
+TukeyHSD(anova.fit,which = 'Treatment')
+```
+
+From the adjusted p-value(p adj), we conlude that gene expressions differ significantly between SPF and CMA as well as HEALTHY and SPF, but not between CMA and HEALTHY. The column diff gives the difference between means of the two treatments.
+
+To visulize the interaction, we can plot
+
+```{r}
+interaction.plot(x.factor = datax$Treatment, trace.factor = datax$Genotype, 
+                 response = datax$dCT, fun = mean, 
+                 type = "b", legend = TRUE, 
+                 xlab = "Treatment", ylab="dCt",
+                 pch=c(1,19), col = c("#00AFBB", "#E7B800"))
+```
+
+To have a detailed look of all interations:
+```{r}
+TukeyHSD(anova.fit,which='Treatment:Genotype')
+```
