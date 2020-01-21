@@ -406,7 +406,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-12-06
+<strong>Last updated:</strong> 2020-01-21
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,19 +497,25 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree97861d240372a578471634277ec904d0f248e17ftargetblank97861d2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/97861d240372a578471634277ec904d0f248e17f" target="_blank">97861d2</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree0aa049d9988a7bf1efef74962f687746fcaa3a59targetblank0aa049da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/0aa049d9988a7bf1efef74962f687746fcaa3a59" target="_blank">0aa049d</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree97861d240372a578471634277ec904d0f248e17ftargetblank97861d2a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree0aa049d9988a7bf1efef74962f687746fcaa3a59targetblank0aa049da" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
+
+Untracked files:
+    Untracked:  analysis/BartXbart.Rmd
+    Untracked:  data/ROTS_results.RData
+    Untracked:  data/pbmc.rds
+    Untracked:  data/pbmc_counts.rds
 
 </code></pre>
 <p>
@@ -553,6 +559,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/0aa049d9988a7bf1efef74962f687746fcaa3a59/analysis/consulting2.Rmd" target="_blank">0aa049d</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-21
+</td>
+<td>
+wflow_publish(“analysis/consulting2.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/c9702a5b5e577deee571ec7b69b617405a67bf9c/docs/consulting2.html" target="_blank">c9702a5</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-07
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/97861d240372a578471634277ec904d0f248e17f/analysis/consulting2.Rmd" target="_blank">97861d2</a>
 </td>
 <td>
@@ -572,16 +612,32 @@ wflow_publish(“analysis/consulting2.Rmd”)
 </div>
 </div>
 </div>
-<div id="conclusion" class="section level1">
-<h1>Conclusion</h1>
-<p>If directly use dCT as response, just run the 2-way ANOVA.</p>
-<p>Conclusions from ANOVA:</p>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>The experiment is a <span class="math inline">\(2\times 3\)</span> design with two genotypes(cre +, cre -) and three treatments(SPF, Healthy and CMA). Each cell has unequal observations so the design is unbalanced.</p>
+<p>The observations are Ct(cycle thresholds), which is defined as the number of cycles required for the fluorescent signal to cross the threshold (ie. exceeds background level). Ct levels are inversely proportional to the amount of target nucleic acid in the sample. Each observation has two numbers, Ct of target gene and Ct of housekeeping gene. The delta Ct, is defined as Ct(target gene) - Ct(housekeeping gene), which measures the differential expression. This is to essentially normalise the gene of interest to a gene which is not affected by the experiment.</p>
+</div>
+<div id="questions-to-be-addressed" class="section level1">
+<h1>Questions to be addressed</h1>
 <ol style="list-style-type: decimal">
-<li>Igha gene expression does not differ significantly among genotypes and treatments.</li>
-<li>Treatment is significantly associated with Reg3b gene expression.</li>
-<li>Treatment is significantly associated with Jchain gene expression.</li>
-<li>Treatment is significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.</li>
+<li>Do gene expressions differ among genotypes? treatment? interactions between genetypes and treatment?</li>
 </ol>
+<p>– Run a two-way anova with interaction and adjustment for unbalance.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>If they differ, how?</li>
+</ol>
+<p>– run tukey’s multiple comparisons.</p>
+</div>
+<div id="method" class="section level1">
+<h1>Method</h1>
+<div id="delta-delta-ct-method" class="section level2">
+<h2>Delta-delta Ct method</h2>
+<p>Delta-delta method is a very popular approach for qPCR data analysis which tells you the fold change of the gene expression. The output is <span class="math inline">\(2^{-\Delta\Delta Ct}\)</span>, where <span class="math inline">\(\Delta\Delta Ct\)</span> is <span class="math inline">\(\Delta Ct(treatment)-\Delta Ct(control\hspace{1mm}average)\)</span>. The fold change is the expression ratio: if the fold change is positive it means that the gene is upregulated; if the fold change is negative it means it is downregulated.</p>
+</div>
+<div id="directly-use-delta-ct" class="section level2">
+<h2>Directly use Delta Ct</h2>
+<p>I sugget directly use Delte Ct values instead of going for <span class="math inline">\(2^{-\Delta\Delta Ct}\)</span>. The first reason is that to run statistical hypothesis on <span class="math inline">\(2^{-\Delta\Delta Ct}\)</span>, we need to take <span class="math inline">\(\log\)</span> trasformation on it, which is equivalent to use <span class="math inline">\(-\Delta\Delta Ct\)</span>. Further, runing anova and other statistical tests on <span class="math inline">\(-\Delta\Delta Ct\)</span> is equivalent to runing them on <span class="math inline">\(\Delta Ct\)</span>, since <span class="math inline">\(-\Delta\Delta Ct\)</span> is obtained just by subtrating a number from it. By saying equivalent, it’s in terms of the statistical significance. Second, Delta-delta Ct method is mainly for calculating fold change of gene expressions see if gene is upregulated or not. We can obtain the same results from running statisitcal tests on <span class="math inline">\(\Delta Ct\)</span>.</p>
+</div>
 </div>
 <div id="analysis" class="section level1">
 <h1>Analysis</h1>
@@ -595,28 +651,29 @@ wflow_publish(“analysis/consulting2.Rmd”)
 
 datax = datax[,c(7,3,4)]
 
+datax$Treatment = factor(datax$Treatment,levels = c(&#39;SPF&#39;,&#39;CMA&#39;, &#39;HEALTHY&#39;))
+
 #table(datax$Genotype,datax$Treatment)
 
 # fit 2-way anova
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
-# check asusmptions
-plot(anova.fit,1)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(anova.fit,2)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-1-2.png" width="672" style="display: block; margin: auto;" /></p>
+# check normal asusmptions
+
+#plot(anova.fit,1)
+#plot(anova.fit,2)</code></pre>
 <p>Variance is homogeneous and dCT is normal distributed. So we do not need to do transformations of the dCT.</p>
 <pre class="r"><code># adjust due to unbanlanced design
 Anova(anova.fit,type=&#39;III&#39;)</code></pre>
 <pre><code>Anova Table (Type III tests)
 
 Response: dCT
-                    Sum Sq Df F value   Pr(&gt;F)    
-(Intercept)        109.957  1 25.7730 1.59e-05 ***
-Treatment           24.131  2  2.8280  0.07397 .  
-Genotype             8.163  1  1.9134  0.17616    
-Treatment:Genotype   1.250  2  0.1465  0.86432    
-Residuals          136.524 32                     
+                    Sum Sq Df F value    Pr(&gt;F)    
+(Intercept)        242.739  1 56.8959 1.368e-08 ***
+Treatment           24.131  2  2.8280   0.07397 .  
+Genotype             7.399  1  1.7344   0.19721    
+Treatment:Genotype   1.250  2  0.1465   0.86432    
+Residuals          136.524 32                      
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>This suggests that Igha gene expression does not differ significantly among genotypes and treatments.</p>
@@ -628,6 +685,7 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 # Use Treatment, Genotype and Normzalized value
 
 datax = datax[,c(7,3,4)]
+datax$Treatment = factor(datax$Treatment,levels = c(&#39;SPF&#39;,&#39;CMA&#39;, &#39;HEALTHY&#39;))
 
 #table(datax$Genotype,datax$Treatment)
 
@@ -635,23 +693,36 @@ datax = datax[,c(7,3,4)]
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
 # check asusmptions
-plot(anova.fit,1)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(anova.fit,2)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>Anova(anova.fit,type=&#39;III&#39;)</code></pre>
+
+#plot(anova.fit,1)
+#plot(anova.fit,2)
+
+Anova(anova.fit,type=&#39;III&#39;)</code></pre>
 <pre><code>Anova Table (Type III tests)
 
 Response: dCT
                    Sum Sq Df  F value    Pr(&gt;F)    
-(Intercept)        715.95  1 490.9344 &lt; 2.2e-16 ***
+(Intercept)        320.67  1 219.8846 6.868e-16 ***
 Treatment           31.90  2  10.9361 0.0002402 ***
-Genotype             4.55  1   3.1186 0.0869452 .  
+Genotype             1.34  1   0.9205 0.3445361    
 Treatment:Genotype   7.35  2   2.5184 0.0964448 .  
 Residuals           46.67 32                       
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>This suggests: Treatment is significantly associated with Reg3b gene expression.</p>
+<p>Then we answer the question: how do gene expressions differ among treatment. We run tukey’s multiple comparison tests on treatment:</p>
+<pre class="r"><code>TukeyHSD(anova.fit, which = &quot;Treatment&quot;)</code></pre>
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = dCT ~ Treatment * Genotype, data = datax)
+
+$Treatment
+                  diff        lwr        upr     p adj
+CMA-SPF     -1.9341713 -3.1298418 -0.7385008 0.0010664
+HEALTHY-SPF -0.4696847 -1.6854212  0.7460519 0.6135921
+HEALTHY-CMA  1.4644866  0.3214818  2.6074914 0.0096486</code></pre>
+<p>From the adjusted p-value(p adj), we conlude that gene expressions differ significantly between SPF and CMA as well as HEALTHY and CMA, but not between SPF and HEALTHY. The column diff gives the difference between means of the two treatments.</p>
 </div>
 <div id="jchain" class="section level2">
 <h2>Jchain</h2>
@@ -660,6 +731,7 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 # Use Treatment, Genotype and Normzalized value
 
 datax = datax[,c(7,3,4)]
+datax$Treatment = factor(datax$Treatment,levels = c(&#39;SPF&#39;,&#39;CMA&#39;, &#39;HEALTHY&#39;))
 
 #table(datax$Genotype,datax$Treatment)
 
@@ -667,23 +739,35 @@ datax = datax[,c(7,3,4)]
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
 # check asusmptions
-plot(anova.fit,1)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(anova.fit,2)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>Anova(anova.fit,type=&#39;III&#39;)</code></pre>
+
+#plot(anova.fit,1)
+#plot(anova.fit,2)
+
+Anova(anova.fit,type=&#39;III&#39;)</code></pre>
 <pre><code>Anova Table (Type III tests)
 
 Response: dCT
-                    Sum Sq Df F value    Pr(&gt;F)    
-(Intercept)        119.081  1 53.4013 2.627e-08 ***
-Treatment           19.876  2  4.4566   0.01962 *  
-Genotype             3.201  1  1.4354   0.23969    
-Treatment:Genotype   3.687  2  0.8266   0.44666    
-Residuals           71.358 32                      
+                    Sum Sq Df  F value    Pr(&gt;F)    
+(Intercept)        225.065  1 100.9293 2.024e-11 ***
+Treatment           19.876  2   4.4566   0.01962 *  
+Genotype             0.158  1   0.0708   0.79189    
+Treatment:Genotype   3.687  2   0.8266   0.44666    
+Residuals           71.358 32                       
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>This suggests Treatment is significantly associated with Jchain gene expression.</p>
+<pre class="r"><code>TukeyHSD(anova.fit, which = &quot;Treatment&quot;)</code></pre>
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = dCT ~ Treatment * Genotype, data = datax)
+
+$Treatment
+                  diff        lwr       upr     p adj
+CMA-SPF     -1.3075130 -2.7860283 0.1710024 0.0913477
+HEALTHY-SPF  0.2387343 -1.2645939 1.7420624 0.9196956
+HEALTHY-CMA  1.5462473  0.1328561 2.9596384 0.0296045</code></pre>
+<p>From the adjusted p-value(p adj), we conlude that gene expressions differ significantly between SPF and CMA as well as HEALTHY and CMA, but not between SPF and HEALTHY. The column diff gives the difference between means of the two treatments.</p>
 </div>
 <div id="saa1" class="section level2">
 <h2>Saa1</h2>
@@ -692,30 +776,88 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 # Use Treatment, Genotype and Normzalized value
 
 datax = datax[,c(7,3,4)]
-
+datax$Treatment = factor(datax$Treatment,levels = c(&#39;SPF&#39;,&#39;CMA&#39;, &#39;HEALTHY&#39;))
 #table(datax$Genotype,datax$Treatment)
 
 # fit 2-way anova
 anova.fit = aov(dCT ~ Treatment * Genotype, data = datax)
 
 # check asusmptions
-plot(anova.fit,1)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(anova.fit,2)</code></pre>
-<p><img src="figure/consulting2.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>Anova(anova.fit,type=&#39;III&#39;)</code></pre>
+#plot(anova.fit,1)
+#plot(anova.fit,2)
+
+Anova(anova.fit,type=&#39;III&#39;)</code></pre>
 <pre><code>Anova Table (Type III tests)
 
 Response: dCT
                     Sum Sq Df F value   Pr(&gt;F)    
-(Intercept)          2.589  1  0.7319  0.39863    
+(Intercept)        169.905  1 48.0357 7.56e-08 ***
 Treatment          118.261  2 16.7174 1.07e-05 ***
-Genotype             9.665  1  2.7325  0.10811    
+Genotype             1.112  1  0.3143  0.57895    
 Treatment:Genotype  27.661  2  3.9102  0.03025 *  
 Residuals          113.186 32                     
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>This suggests that Treatment is significantly associated with Saa1 gene expression. Also, the relationship between Saa1 gene expression and treatment depends on genotype.</p>
+<pre class="r"><code>TukeyHSD(anova.fit,which = &#39;Treatment&#39;)</code></pre>
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = dCT ~ Treatment * Genotype, data = datax)
+
+$Treatment
+                 diff         lwr        upr     p adj
+CMA-SPF     -4.535648 -6.39773996 -2.6735570 0.0000033
+HEALTHY-SPF -2.838310 -4.73165177 -0.9449686 0.0023680
+HEALTHY-CMA  1.697338 -0.08273368  3.4774103 0.0640796</code></pre>
+<p>From the adjusted p-value(p adj), we conlude that gene expressions differ significantly between SPF and CMA as well as HEALTHY and SPF, but not between CMA and HEALTHY. The column diff gives the difference between means of the two treatments.</p>
+<p>To visulize the interaction, we can plot</p>
+<pre class="r"><code>interaction.plot(x.factor = datax$Treatment, trace.factor = datax$Genotype, 
+                 response = datax$dCT, fun = mean, 
+                 type = &quot;b&quot;, legend = TRUE, 
+                 xlab = &quot;Treatment&quot;, ylab=&quot;dCt&quot;,
+                 pch=c(1,19), col = c(&quot;#00AFBB&quot;, &quot;#E7B800&quot;))</code></pre>
+<p><img src="figure/consulting2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>To have a detailed look of all interations:</p>
+<pre class="r"><code>TukeyHSD(anova.fit,which=&#39;Treatment:Genotype&#39;)</code></pre>
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = dCT ~ Treatment * Genotype, data = datax)
+
+$`Treatment:Genotype`
+                                                  diff        lwr
+CMA:CD11c-cre-neg-SPF:CD11c-cre-neg         -5.4955206 -8.4439766
+HEALTHY:CD11c-cre-neg-SPF:CD11c-cre-neg     -1.7969384 -4.9664333
+SPF:CD11c-cre-pos-SPF:CD11c-cre-neg         -0.6608739 -4.2316314
+CMA:CD11c-cre-pos-SPF:CD11c-cre-neg         -3.8165604 -6.9860553
+HEALTHY:CD11c-cre-pos-SPF:CD11c-cre-neg     -4.1772190 -7.2223712
+HEALTHY:CD11c-cre-neg-CMA:CD11c-cre-neg      3.6985822  0.6218732
+SPF:CD11c-cre-pos-CMA:CD11c-cre-neg          4.8346468  1.3459866
+CMA:CD11c-cre-pos-CMA:CD11c-cre-neg          1.6789603 -1.3977487
+HEALTHY:CD11c-cre-pos-CMA:CD11c-cre-neg      1.3183017 -1.6301543
+SPF:CD11c-cre-pos-HEALTHY:CD11c-cre-neg      1.1360645 -2.5413061
+CMA:CD11c-cre-pos-HEALTHY:CD11c-cre-neg     -2.0196219 -5.3087622
+HEALTHY:CD11c-cre-pos-HEALTHY:CD11c-cre-neg -2.3802805 -5.5497754
+CMA:CD11c-cre-pos-SPF:CD11c-cre-pos         -3.1556865 -6.8330571
+HEALTHY:CD11c-cre-pos-SPF:CD11c-cre-pos     -3.5163451 -7.0871025
+HEALTHY:CD11c-cre-pos-CMA:CD11c-cre-pos     -0.3606586 -3.5301535
+                                                   upr     p adj
+CMA:CD11c-cre-neg-SPF:CD11c-cre-neg         -2.5470647 0.0000420
+HEALTHY:CD11c-cre-neg-SPF:CD11c-cre-neg      1.3725565 0.5308744
+SPF:CD11c-cre-pos-SPF:CD11c-cre-neg          2.9098836 0.9928809
+CMA:CD11c-cre-pos-SPF:CD11c-cre-neg         -0.6470655 0.0109812
+HEALTHY:CD11c-cre-pos-SPF:CD11c-cre-neg     -1.1320668 0.0028441
+HEALTHY:CD11c-cre-neg-CMA:CD11c-cre-neg      6.7752913 0.0111569
+SPF:CD11c-cre-pos-CMA:CD11c-cre-neg          8.3233069 0.0025316
+CMA:CD11c-cre-pos-CMA:CD11c-cre-neg          4.7556693 0.5711781
+HEALTHY:CD11c-cre-pos-CMA:CD11c-cre-neg      4.2667576 0.7528749
+SPF:CD11c-cre-pos-HEALTHY:CD11c-cre-neg      4.8134352 0.9340990
+CMA:CD11c-cre-pos-HEALTHY:CD11c-cre-neg      1.2695184 0.4439477
+HEALTHY:CD11c-cre-pos-HEALTHY:CD11c-cre-neg  0.7892144 0.2336856
+CMA:CD11c-cre-pos-SPF:CD11c-cre-pos          0.5216842 0.1267106
+HEALTHY:CD11c-cre-pos-SPF:CD11c-cre-pos      0.0544124 0.0555629
+HEALTHY:CD11c-cre-pos-CMA:CD11c-cre-pos      2.8088363 0.9992932</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
