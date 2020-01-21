@@ -33,6 +33,13 @@ Delta-delta method is a very popular approach for qPCR data analysis which tells
 
 I sugget directly use Delte Ct values instead of going for $2^{-\Delta\Delta Ct}$. The first reason is that to run statistical hypothesis on $2^{-\Delta\Delta Ct}$, we need to take $\log$ trasformation on it, which is equivalent to use $-\Delta\Delta Ct$. Further, runing anova and other statistical tests on $-\Delta\Delta Ct$ is equivalent to runing them on $\Delta Ct$, since $-\Delta\Delta Ct$ is obtained just by subtrating a number from it. By saying equivalent, it's in terms of the statistical significance. Second, Delta-delta Ct method is mainly for calculating fold change of gene expressions see if gene is upregulated or not. We can obtain the same results from running statisitcal tests on $\Delta Ct$.
 
+# Reference
+
+[The qPCR data statistical analysis](https://gene-quantification.de/integromics-qpcr-statistics-white-paper.pdf)
+
+[How To Perform The Delta-Delta Ct Method](https://toptipbio.com/delta-delta-ct-pcr/)
+
+[Test(s) For Comparing qPCR results / ΔΔCт values](https://stats.stackexchange.com/questions/120821/tests-for-comparing-qpcr-results-%CE%94%CE%94c%D1%82-values)
 
 # Analysis
 
