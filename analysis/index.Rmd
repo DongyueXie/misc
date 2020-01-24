@@ -48,3 +48,9 @@ editor_options:
 [single cell DE](scde.html), [single cell DE PBMC](scdePBMC.html)
 
 [select rr in rf using oob](selectrotation.html)
+
+# Seb and Kevin
+
+[cisTopic scATAC-Seq](cisTopic.html)
+
+
