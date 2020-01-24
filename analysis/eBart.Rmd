@@ -1,0 +1,397 @@
+---
+title: "eBart"
+author: "Dongyue Xie"
+date: "2020-01-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Problem
+
+1. works good for 1-d function, but not for higher dimension 
+
+2. overfitting 
+
+3. variable selection: selects irrelavant features to split.
+
+## Introduction
+
+
+```{r,eval=FALSE}
+f = function(x){
+10*sin(pi*x[,1]*x[,2]) + 20*(x[,3]-.5)^2+10*x[,4]+5*x[,5]
+}
+sigma = 1.0  #y = f(x) + sigma*z , z~N(0,1)
+n = 100     #number of observations
+p=10
+set.seed(12345)
+x=matrix(runif(n*p),n,p) #10 variables, only first 5 matter
+Ey = f(x)
+y=Ey+sigma*rnorm(n)
+x.test=matrix(runif(n*p),n,p) #10 variables, only first 5 matter
+Ey.test = f(x.test)
+
+Ey = c(rep(0,n/4),rep(1,n/4),rep(3,n/4),rep(7,n/4))
+y = Ey + sigma*rnorm(n)
+x = cbind(seq(0,1,length.out = n))
+
+n=200
+f = function(x){
+  8*exp(-20+5*x)/(1+exp(-20+5*x)) + 5*(exp(-20+2*x))/(1+exp(-20+2*x))
+}
+x = cbind(seq(0,15,length.out = n))
+Ey = f(x)
+y = Ey + sigma*rnorm(n)
+
+
+```
+
+```{r,eval=FALSE}
+rmse = function(x,y){sqrt(mean((x-y)^2))}
+
+library(rpart)
+library(BART)
+library(ebnm)
+library(XBART)
+
+tree.fit = rpart(y~.,data.frame(y=y,x=x))
+tree.fit = prune(tree.fit,cp=0.1)
+plot(y,col='grey80');lines(predict(tree.fit,data.frame(x=x)))
+rmse(predict(tree.fit,data.frame(x=x)),Ey)
+rmse(predict(tree.fit,data.frame(x=x.test)),Ey.test)
+
+btree.fit = wbart(x,y,x.test,ntree=1,power = 1)
+plot(y,col='grey80');lines(btree.fit$yhat.train.mean)
+rmse(btree.fit$yhat.train.mean,Ey)
+rmse(btree.fit$yhat.test.mean,Ey.test)
+
+bart.fit = wbart(x,y,x.test)
+plot(y);lines(bart.fit$yhat.train.mean)
+rmse(bart.fit$yhat.train.mean,Ey)
+rmse(bart.fit$yhat.test.mean,Ey.test)
+
+ebtree.fit = ebnm_tree(x,y,1,Tmin=5,lfsr_cutoff = NULL,r = 2)
+length(ebtree.fit$t_active)
+plot(y,col='grey80');lines(fitted_ebnm_tree(ebtree.fit,y))
+rmse(fitted_ebnm_tree(ebtree.fit,y),Ey)
+rmse(fitted_ebnm_tree(ebtree.fit,y,x.test)$ypred,Ey.test)
+
+ebart.fit = ebnm_forest(x,y,x.test,Tmin=5,nskip = 10,
+                        ndpost = 20,printevery = 10,ntree=50,lfsr_cutoff = NULL,r=10,k=3)
+as.numeric(unlist(lapply(ebart.fit$treelist,function(x){length(x$t_data)})))
+plot(y,col='grey80');lines(ebart.fit$yhat.train.mean)
+rmse(ebart.fit$yhat.train.mean,Ey)
+rmse(ebart.fit$yhat.test.mean,Ey.test)
+plot(ebart.fit$sigma)
+table(unlist(lapply(ebart.fit$treelist,function(z){z$s_var})))
+
+```
+
+
+Grow one such tree
+
+```{r}
+#'@param sigma y = f + N(0,sigma^2)
+ebnm_tree = function(X,y,sigma,Tmin,lfsr_cutoff,r){
+  
+  if(is.null(sigma)){
+    lmf = lm(y~.,data.frame(X,y))
+    sigma = summary(lmf)$sigma
+  }
+  
+  n = nrow(X)
+  p = ncol(X)
+  
+  tree = list(s_pos=NULL,s_var=NULL,s_rule=NULL,s_data=NULL,s_depth=NULL,
+           t_pos=1,t_data=list(1:n),t_depth=0,t_mean=mean(y),t_active=TRUE)
+  
+  grow_tree = TRUE
+  
+  while(grow_tree){
+    
+    t_length= unlist(lapply(tree$t_data,length))
+    t_avail=which(t_length>=(3*Tmin) & tree$t_active)
+    if(length(t_avail)>0){
+      s_new = t_avail[1]
+    }else{
+      break
+    }
+    pos_new=tree$t_pos[s_new]
+    depth_new=tree$t_depth[s_new]
+    # split the data
+    sub_data=tree$t_data[[s_new]]
+    X_sub=X[sub_data,,drop=FALSE]
+    splited = ebnm_split(X_sub,y[sub_data],sigma,sub_data,lfsr_cutoff,r,depth_new)
+    # tree$t_mean[s_new],
+    if(is.null(splited)){
+      tree$t_active[s_new] = FALSE
+    }else{
+     # remove this new split node from the terminal node record
+    tree$t_pos=tree$t_pos[-s_new]
+    old_t_depth=tree$t_depth[s_new]
+    tree$t_depth=tree$t_depth[-s_new]
+    tree$t_data=tree$t_data[-s_new]
+    tree$t_mean = tree$t_mean[-s_new]
+    tree$t_active = tree$t_active[-s_new]
+
+    # update its information in split node record
+    tree$s_pos<-c(tree$s_pos,pos_new)
+    tree$s_var<-c(tree$s_var,splited$split_var)
+    tree$s_rule<-c(tree$s_rule,splited$split_rule)
+    tree$s_depth<-c(tree$s_depth,depth_new)
+    tree$s_data[[length(tree$s_pos)]]<-sub_data
+    
+    # push the new terminal nodes into record
+    k=length(tree$t_pos)
+    tree$t_pos=c(tree$t_pos,2*pos_new,2*pos_new+1)
+    tree$t_depth=c(tree$t_depth,old_t_depth+1,old_t_depth+1)
+    tree$t_data[[(k+1)]]=splited$left_data
+    tree$t_data[[(k+2)]]=splited$right_data
+    tree$t_mean=c(tree$t_mean,splited$p_mean_left,splited$p_mean_right) 
+    tree$t_active = c(tree$t_active, TRUE, TRUE)
+    }
+  }
+  return(tree)
+}
+
+############method 1####################
+ebnm_split = function(X,y,sigma,sub_data,lfsr_cutoff=0.5,r,depth){
+  n=nrow(X)
+  p=ncol(X)
+  ms = matrix(nrow = p,ncol = 2*n)
+  sds = matrix(nrow = p,ncol = 2*n)
+  
+  for(j in 1:p){
+    for(i in 1:n){
+      l.idx = which(X[,j]<=X[i,j])
+      ms[j,2*i-1] = mean(y[l.idx]) - mean(y)
+      ms[j,2*i] = mean(y[-l.idx]) - mean(y)
+      sds[j,2*i-1] = sqrt(sigma^2/length(l.idx)-sigma^2/n)
+      sds[j,2*i] = sqrt(sigma^2/(n-length(l.idx))-sigma^2/n)
+    }
+  }
+  
+  sds[sds==0] = Inf
+  
+  ebnm.fit = ebnm(c(t(ms)),c(t(sds)),prior_family = "point_normal",output = output_all())
+  lfsr = ebnm.fit$posterior$lfsr
+  if(all(lfsr>=lfsr_cutoff)){return(NULL)}else{
+    llfsr = lfsr[seq(1,length(ms),by=2)]
+    rlfsr = lfsr[seq(2,length(ms),by=2)]
+    idx = which.min(llfsr+rlfsr+abs(llfsr-rlfsr))
+  
+  split_var = ceiling(idx/n)
+  split_rule = X[idx%%n,split_var]
+  left_data = sub_data[which(X[,split_var]<=split_rule)]
+  right_data = sub_data[-which(X[,split_var]<=split_rule)]
+  
+  if(length(left_data)==0 | length(right_data)==0){
+    return(NULL)
+  }else{
+    return(list(split_var=split_var, split_rule=split_rule, 
+              p_mean_left = mean(y) + ebnm.fit$posterior$mean[idx*2-1],
+              p_mean_right = mean(y)+ebnm.fit$posterior$mean[idx*2],
+              left_data=left_data,
+              right_data=right_data))
+  }
+  }
+  
+}
+#################################################
+###############formulation 2#####################
+ebnm_split = function(X,y,sigma,sub_data,lfsr_cutoff,r,depth){
+  n=nrow(X)
+  p=ncol(X)
+  ms = matrix(nrow = p,ncol = n)
+  sds = matrix(nrow = p,ncol = n)
+  
+  for(j in 1:p){
+    for(i in 1:n){
+      l.idx = which(X[,j]<=X[i,j])
+      ms[j,i] = mean(y[l.idx]) - mean(y[-l.idx])
+      sds[j,i] = sqrt(sigma^2/length(l.idx)+sigma^2/(n-length(l.idx)))
+    }
+  }
+  
+  sds[sds==0] = Inf
+  sds[is.na(sds)] = Inf
+  
+  if(is.null(lfsr_cutoff)){
+    lfsr_cutoff = r^(-depth)
+  }
+  
+  g_init = ashr::normalmix(pi=c(1-lfsr_cutoff,lfsr_cutoff),mean=c(0,0),sd = c(0,mean(sds[-which(sds == Inf)])))
+  ebnm.fit = ebnm(c(t(ms)),c(t(sds)),prior_family = "point_normal",output = output_all(),g_init=g_init,fix_g = TRUE)
+  lfsr = ebnm.fit$posterior$lfsr
+  
+  if(all(lfsr>=lfsr_cutoff)){return(NULL)}else{
+    #idx = which.min(lfsr)
+    idx = which.max(abs(ebnm.fit$posterior$mean/ebnm.fit$posterior$sd))
+    split_var = ceiling(idx/n)
+    split_rule = X[idx%%n,split_var]
+    left_data = sub_data[which(X[,split_var]<=split_rule)]
+    right_data = sub_data[-which(X[,split_var]<=split_rule)]
+  
+  if(length(left_data)==0 | length(right_data)==0){
+    return(NULL)
+  }else{
+    return(list(split_var=split_var, split_rule=split_rule, 
+              p_mean_left = mean(y[which(X[,split_var]<=split_rule)]),
+              p_mean_right = mean(y[-which(X[,split_var]<=split_rule)]),
+              left_data=left_data,
+              right_data=right_data,fit=ebnm.fit,ms=ms,sds=sds))
+  }
+  }
+  
+}
+
+################
+ebnm_forest = function(X,y,x.test,r=3,ntree=50,ndpost=25,nskip=15,k=2,
+                       Tmin=5,printevery=10,lfsr_cutoff=NULL,sigdf=3, sigquant=.90){
+  n=nrow(X)
+  p=ncol(X)
+  nt=nrow(x.test)
+  
+  #center
+  fmean=mean(y)
+  y.train = y-fmean
+  
+  
+  if(p < n){
+    lmf = lm(y.train~.,data.frame(X,y.train))
+    sigest = summary(lmf)$sigma
+  }else{
+    sigest = sd(y.train)
+  }
+  nu=sigdf
+  qchi = qchisq(1.0-sigquant,nu)
+  lambda = (sigest*sigest*qchi)/nu #lambda parameter for sigma prior
+    
+  tau=(max(y.train)-min(y.train))/(2*k*sqrt(ntree))
+  
+  treelist=vector(ntree,mode='list')
+  #treelist=lapply(treelist, function(x){
+  #  x=list(s_pos=NULL,s_dir=NULL,s_rule=NULL,s_data=NULL,s_depth=NULL,s_obs=NULL,
+  #         t_pos=1,t_data=list(1:n),t_depth=0,t_test_data=NULL)
+  #})
+  
+  #tree_history=list()
+  
+  sigma_draw=c(sigest)
+  
+  yhat.train=matrix(nrow=ndpost,ncol=n)
+  yhat.test=matrix(nrow=ndpost,ncol=nt)
+  
+  yhat.train.j=matrix(rep(y.train/ntree,ntree),nrow=ntree,ncol=n,byrow = TRUE)
+  yhat.test.j=matrix(rep(0,ntree*nt),nrow=ntree,ncol=nt)
+  
+  #total_iter=nskip+ndpost
+  
+  # count variables
+  var_count = rep(0,p)
+  tree_size = c()
+  
+  for(i in 1:nskip){
+    if(i%%printevery==0){print(sprintf("Burn-in: done %d (out of %d)",i,nskip))}
+    for(j in 1:ntree){
+      Rj=y.train-colSums(yhat.train.j[-j,,drop=F])
+      tree = ebnm_tree(X,Rj,sigma_draw[i],Tmin,lfsr_cutoff,r)
+      yhat.train.j[j,] = fitted_ebnm_tree(tree,Rj,NULL,tau,sigma_draw[i])
+    }
+    res=y.train-colSums(yhat.train.j)
+    sigma_draw[i+1]=sqrt((nu*lambda + sum(res^2))/rchisq(1,n+nu))
+  }
+  
+  for(i in 1:ndpost){
+    if(i%%printevery==0){print(sprintf("Posterior-draw: done %d (out of %d)",i,ndpost))}
+    for(j in 1:ntree){
+      Rj=y.train-colSums(yhat.train.j[-j,,drop=F])
+      tree = ebnm_tree(X,Rj,sigma_draw[nskip+i-1],Tmin,lfsr_cutoff,r)
+      var_count = var_count + table(c(tree$s_var,1:10)) -1
+      tree_size = c(tree_size,length(tree$t_data))
+      treelist[[j]] = tree
+      hat = fitted_ebnm_tree(tree,Rj,x.test,tau,sigma_draw[nskip+i-1])
+      yhat.train.j[j,] = hat$yhat
+      yhat.test.j[j,] = hat$ypred
+    }
+    yhat.train[i,]=colSums(yhat.train.j)
+    yhat.test[i,]=colSums(yhat.test.j)
+    res=y.train-yhat.train[i,]
+    sigma_draw[nskip+i]=sqrt((nu*lambda + sum(res^2))/rchisq(1,n+nu))
+  }
+  
+  yhat.train=yhat.train+fmean
+  yhat.test=yhat.test+fmean
+  
+  return(list(yhat.train=yhat.train,yhat.test=yhat.test,
+              yhat.train.mean=colSums(yhat.train)/nrow(yhat.train),
+              yhat.test.mean=colSums(yhat.test)/nrow(yhat.test),
+              sigma=sigma_draw,
+              treelist=treelist,yhat.train.j=yhat.train.j,var_count=var_count,tree_size=table(tree_size)
+              ))
+  
+}
+
+fitted_ebnm_tree=function(tree,Rj,x.test=NULL,tau,sigma){
+  t_data=tree$t_data
+  t_R<-lapply(t_data,function(x) Rj[x])
+
+  mean.draw = lapply(t_R,function(x){
+    pmean=length(x)*mean(x)/sigma^2/(length(x)/sigma^2+1/tau^2)
+    pvar=1/(length(x)/sigma^2+1/tau^2)
+    draw.mu=rnorm(1,pmean,sqrt(pvar))
+    return(draw.mu)
+  })
+  
+  if(!is.null(x.test)){
+    t_idx = apply(x.test,1,function(x){find_terminal_idx(x,tree)})
+    yhat=c()
+    ypred=c()
+    for (dd in 1:length(mean.draw)) {
+      yhat[t_data[[dd]]]=mean.draw[[dd]]
+      ypred[which(t_idx==dd)]=mean.draw[[dd]]
+    }
+    return(list(yhat=yhat,ypred=ypred))
+  }else{
+    yhat=rep(0,length(Rj))
+  for (dd in 1:length(mean.draw)) {
+    yhat[t_data[[dd]]]=mean.draw[[dd]]
+  }
+    return(yhat)
+  }
+}
+
+
+find_terminal_idx<-function(X_test,btree_obj){
+
+  #start with the top node
+  flag_pos=1
+
+  while(! bCART::is.terminal(flag_pos,btree_obj$t_pos)){
+    split_idx=which(btree_obj$s_pos == flag_pos)
+    split_proj=X_test[btree_obj$s_var[split_idx]]
+    split_rule=btree_obj$s_rule[split_idx]
+
+    if(is.character(split_rule)){
+      if(split_proj == split_rule){
+        flag_pos=flag_pos*2
+      }else{
+        flag_pos=flag_pos*2+1
+      }
+    }else{
+      if(split_proj<=split_rule){
+        flag_pos=flag_pos*2
+      }else{
+        flag_pos=flag_pos*2+1
+      }
+    }
+  }
+
+  t_idx=which(btree_obj$t_pos==flag_pos)
+
+  return(t_idx)
+
+}
+
+```
