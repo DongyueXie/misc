@@ -1,0 +1,50 @@
+---
+title: "cisTopic"
+author: "Dongyue Xie"
+date: "2020-01-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+cisTopic exploites topic modeling for robust identification of cell types, enhancers and relevant transcription factors.
+
+**Input**: Regions by Cell accessibility matrix. For scATAC-Seq data, a region is accessible if at least one read is found, leading to a binarized count matrix. For sc-methylation data, a region is methylated if the beta value is above 0.5; however, one can run LDA using the beta values directly.
+
+**Model**: LDA and collapsed gibbs sampler. LDA provides two matrices, one containing the total number of assignments per topic in each cell, and another containing the total number of assignments per region to each topic. 
+
+Several models with different numbers of topics were run (generally, from 5 to 50 topics), and the optimal number of topics is selected based on the highest log-likelihood in the last iteration.
+
+**Cell-state identification**: apply dimension reduction methods to topic-cell probability matrix.
+
+Examples:
+
+```{r,eval=FALSE}
+suppressWarnings(library(cisTopic))
+data(counts_mel) 
+cisTopicObject <- createcisTopicObject(counts_mel, project.name='scH3K27Ac_melanoma')
+counts_mel[1:5,1:5]
+
+rm(counts_mel)
+data(cellData_mel)
+cisTopicObject <- addCellMetadata(cisTopicObject, cell.data = cellData_mel)
+rm(cellData_mel)
+
+cisTopicObject@count.matrix[1:5,1:5]
+cisTopicObject@binary.count.matrix[1:5,1:5]
+cisTopicObject@is.acc
+cisTopicObject@models
+
+cisTopicObject <- runWarpLDAModels(cisTopicObject, topic=c(14), seed=123, nCores=2, addModels=FALSE)
+
+library(methClust)
+library(CountClust)
+library(maptpx)
+library(ecostructure)
+
+set.seed(1000)
+fit <- ecos_fit(t(as.matrix(cisTopicObject@binary.count.matrix)), K = 2, tol = 0.1, num_trials = 10)
+```
+
