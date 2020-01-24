@@ -1,0 +1,70 @@
+---
+title: "Compare Bart and Xbart"
+author: "Dongyue Xie"
+date: "2020-01-20"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Summary
+
+XBART runs fast, gives comparable results as BART.
+
+## Introduction
+
+```{r,eval=FALSE}
+library(BART)
+library(XBART)
+
+get_XBART_params <- function(y) {
+  XBART_params = list(num_trees = 50, # number of trees 
+                      num_sweeps = 40, # number of sweeps (samples of the forest)
+                      n_min = 1, # minimal node size
+                      alpha = 0.95, # BART prior parameter 
+                      beta = 1.25, # BART prior parameter
+                      mtry = 10, # number of variables sampled in each split
+                      burnin = 15,
+                      no_split_penality = "Auto"
+                      ) # burnin of MCMC sample
+  num_tress = XBART_params$num_trees
+  XBART_params$max_depth = 250
+  XBART_params$num_cutpoints = 50;
+  # number of adaptive cutpoints
+  XBART_params$tau = var(y) / num_tress # prior variance of mu (leaf parameter)
+  return(XBART_params)
+}
+
+
+
+f = function(x){
+10*sin(pi*x[,1]*x[,2]) + 20*(x[,3]-.5)^2+10*x[,4]+5*x[,5]
+}
+sigma = 1.0  #y = f(x) + sigma*z , z~N(0,1)
+n = 100      #number of observations
+p=10
+set.seed(99)
+x=matrix(runif(n*p),n,p) #10 variables, only first 5 matter
+Ey = f(x)
+y=Ey+sigma*rnorm(n)
+x.test = matrix(runif(n*p),n,p) 
+Ey.test = f(x.test)
+
+fit_bart = wbart(x,y,x.test,ntree = 50,sparse = TRUE)
+params = get_XBART_params(y)
+dcat = 0
+verbose = FALSE
+parl = TRUE
+fit_xbart = XBART(as.matrix(y), as.matrix(x), as.matrix(x.test), p_categorical = dcat,
+            params$num_trees, params$num_sweeps, params$max_depth,
+            params$n_min, alpha = params$alpha, beta = params$beta, tau = params$tau, s = 1, kap = 1,
+            mtry = params$mtry, verbose = verbose,
+            num_cutpoints = params$num_cutpoints, parallel = parl, random_seed = 100, no_split_penality = params$no_split_penality)
+
+fhat.1 = apply(fit_xbart$yhats_test[, params$burnin:params$num_sweeps], 1, mean)
+sqrt(mean((fhat.1 - Ey.test) ^ 2))
+sqrt(mean((fit_bart$yhat.test.mean- Ey.test) ^ 2))
+
+
+```
+
