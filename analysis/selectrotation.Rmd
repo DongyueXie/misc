@@ -7,7 +7,9 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Introduction
+## random rotation
+
+select random rotation matrix via oob
 
 ```{r}
 library(rpart)
@@ -15,16 +17,21 @@ library(BART)
 
 as.numeric.factor <- function(x) {as.numeric(levels(x))[x]}
 
-random_rotation = function(p){
+random_rotation = function(p,screening,r){
   Q=qr.Q(qr(matrix(rnorm(p^2),p,p)))
+  if(screening){
+    active.var = rbinom(p,1,r)
+    Q[-which(active.var==1),]=0
+  }
   Q
 }
 
-rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
+rotate_tree = function(x,y,x.oob,y.oob,xtest,ytest,n_rotate,control,screening,r){
 
   
   p = ncol(x)
   n = nrow(x)
+  
   
   fit = rpart(y~.,data = data.frame(y=y,x=x),method='class',control = control)
   ypred = predict(fit,data.frame(x=x.oob),type='class')
@@ -36,10 +43,11 @@ rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
   best.yhat = predict(fit,data.frame(x=x),type='class')
   
   for(rot in 1:n_rotate){
-    Rmat = random_rotation(p)
-    x.train = x%*%Rmat
+    Rmat = random_rotation(p,screening,r)
+    if(sum(Rmat)!=0){
+      x.train = x%*%Rmat
     x.test = x.oob%*%Rmat
-    fit = rpart(y~.,data = data.frame(y=y,x=x.train), method='class',control = rpart.control(minbucket=nodesize))
+    fit = rpart(y~.,data = data.frame(y=y,x=x.train), method='class',control = control)
     ypred = predict(fit,data.frame(x=x.test),type='class')
     accuracy = (sum(ypred==y.oob)/length(ypred)) 
     if(accuracy > best.accuracy){
@@ -48,6 +56,7 @@ rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
       best.Rotation = Rmat
       best.yhat = predict(fit,data.frame(x=x.train),type='class')
     }
+    }
   }
   return(list(best.accuracy = best.accuracy,
       best.fit = best.fit,
@@ -55,9 +64,10 @@ rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
       best.yhat = best.yhat))
 }
 
-rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x))),
+rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100, mtry=floor(sqrt(ncol(x))),
                      replace=TRUE,samplesize = if (replace) nrow(x) else ceiling(.632*nrow(x)),
-                     control = rpart.control(),
+                     control = rpart.control(),screening = TRUE,eb.screen = TRUE,
+                     delta=max(c(0,(1+log(ncol(x)/nrow(x)))/2)),
                      keepforest = FALSE,n_rotate=30,printevery=100){
   x = as.matrix(x)
   xtest = as.matrix(xtest)
@@ -71,7 +81,22 @@ rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x)
   
   forest = list()
   
-  
+  if(screening){
+    ms.idx = which(y==1)
+    ms = apply(x,2,function(z){(mean(z[ms.idx])-mean(z[-ms.idx]))})
+    if(eb.screen){
+      sds = sqrt(apply(x,2,function(z){var(z[ms.idx])/length(ms.idx)+var(z[-ms.idx])/(n-length(ms.idx))}))
+      pn.res = ebnm::ebnm(ms,sds,'point_normal')$posterior$mean
+      
+      r = abs(pn.res)/max(abs(pn.res))
+    }else{
+      r = abs(ms)/max(abs(ms))
+    }
+    r = r^delta
+  }else{
+    r=rep(1,p)
+  }
+
   yhat = matrix(nrow=n,ncol=ntree)
   ypred = matrix(nrow=n,ncol=ntree)
   oob_accuracy = c()
@@ -90,7 +115,7 @@ rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x)
     x_t_oob = x[-unique(sample_idx),var_idx]
     y_t_oob = y[-unique(sample_idx)]
     
-    tree.fit = rotate_tree(x_t,y_t,x_t_oob,y_t_oob,n_rotate=n_rotate,control=control)
+    tree.fit = rotate_tree(x_t,y_t,x_t_oob,y_t_oob,n_rotate=n_rotate,control=control,screening,r[var_idx])
     
     
     oob_accuracy[t] = tree.fit$best.accuracy
@@ -126,6 +151,12 @@ rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x)
 }
 ```
 
+
+
+
+# expreiment
+
+
 ```{r,eval=FALSE}
 f_linear = function(x){
   ey=-2.50*x[,1] + 2.0*x[,2] -1.60*x[,3] + 1.2*x[,4] +0.9*x[,5] 
@@ -139,16 +170,34 @@ f_friedman=function(x){
 
 set.seed(1234)
 n=100
-p=5
+p=100
 x = matrix(runif(n*p),nrow=n)
-y = f_friedman(x)
+y = f_linear(x)
 
 xtest = matrix(runif(n*p),nrow=n)
-ytest = f_friedman(xtest)
+ytest = f_linear(xtest)
 
+round((apply(x,2,function(z){abs(mean(z[y==1])-mean(z[y==0]))}))/max((apply(x,2,function(z){abs(mean(z[y==1])-mean(z[y==0]))}))),2)
+
+round(abs(apply(x,2,cor,as.numeric.factor(y)))/max(abs(apply(x,2,cor,as.numeric.factor(y)))),2)
+
+
+ms = (apply(x,2,function(z){(mean(z[y==1])-mean(z[y==0]))}))
+
+sds = sqrt(apply(x,2,function(z){(var(z)/sum(as.numeric.factor(y))+var(z)/(n-sum(as.numeric.factor(y))))}))
+
+library(ebnm)
+
+pn.res = ebnm(ms,sds,'point_normal')
+
+round(abs(pn.res$posterior$mean)/max(abs(pn.res$posterior$mean)),2)
+
+
+library(randomForest)
 rf = randomForest(x,y,xtest,ytest,ntree=100)
-rrrf = rrrforest(x,y,xtest,ytest,ntree=100,n_rotate = 10)
-rrf = rotationForest(data.frame(x),y,L=500)
+rrrf = rrrforest(x,y,xtest,ytest,ntree=100,n_rotate = 30,replace = F)
+rrf = rotationForest(data.frame(x),y,L=100)
+rprf = rprforest(x,y,xtest,ytest)
 
 
 library(pROC)
@@ -179,5 +228,169 @@ for(i in 1:ncol(ypred)){
 
 plot(1-rf$test$err.rate[,1],type='l')
 lines(1-err.rate,col=4)
+
+# correlation of oob accuracy and accu on test data
+acc.rate = c()
+for(i in 1:ncol(ypred)){
+  acc.rate[i] = sum(ytest == ypred[,i])/length(ytest)
+}
+
+cor(acc.rate,rrrf$oob_accuracy)
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+# random projection
+
+random projection 
+
+
+```{r}
+# generate sparse random projection
+#'@param p,q random projection matrix of dimension p*q
+#'@param r a vector of length p indicate variables weights
+#'@param s parameter in sprase random projection, see https://web.stanford.edu/~hastie/Papers/Ping/KDD06_rp.pdf
+
+random_projection = function(p,q,r,s){
+  active.var = rbinom(p,1,r)
+  rp.mat = matrix(sqrt(s)*rbinom(p*q,1,1/s)*(2*rbinom(p*q,1,0.5)-1),nrow=p)
+  rp.mat[-which(active.var==1),] = 0
+  rp.mat
+}
+
+
+project_tree = function(x,y,x.oob,y.oob,n_project,control,r,q,s){
+
+  
+  p = ncol(x)
+  n = nrow(x)
+  
+  rp1 = random_projection(p,q,r,s)
+  
+  fit = rpart(y~.,data = data.frame(y=y,x=x%*%rp1),method='class',control = control)
+  ypred = predict(fit,data.frame(x=x.oob%*%rp1),type='class')
+  
+  
+  best.accuracy = sum(ypred==y.oob)/length(y.oob)
+  best.fit = fit
+  best.project = rp1
+  best.yhat = predict(fit,data.frame(x=x%*%rp1),type='class')
+  
+  for(rot in 1:n_project){
+    Rmat = random_projection(p,q,r,s)
+    x.train = x%*%Rmat
+    x.test = x.oob%*%Rmat
+    fit = rpart(y~.,data = data.frame(y=y,x=x.train), method='class',control = control)
+    ypred = predict(fit,data.frame(x=x.test),type='class')
+    accuracy = (sum(ypred==y.oob)/length(ypred)) 
+    if(accuracy > best.accuracy){
+      best.accuracy = accuracy
+      best.fit = fit
+      best.project = Rmat
+      best.yhat = predict(fit,data.frame(x=x.train),type='class')
+    }
+  }
+  return(list(best.accuracy = best.accuracy,
+      best.fit = best.fit,
+      best.project = best.project,
+      best.yhat = best.yhat))
+}
+
+
+# q: random projection dimension, could be a vector
+
+# delta: |r|^delta
+
+rprforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x))),
+                     replace=TRUE,samplesize = if (replace) nrow(x) else ceiling(.632*nrow(x)),
+                     control = rpart.control(),
+                     keepforest = FALSE,n_project=30,printevery=100,
+                     q=round(seq(log(ncol(x)),mtry,length.out = ntree/10)),
+                     #q=mtry,
+                     s=3,delta=max(c(0,(1+log(ncol(x)/nrow(x)))/2))){
+  x = as.matrix(x)
+  xtest = as.matrix(xtest)
+  y = as.factor(y)
+  ytest = as.factor(ytest)
+  
+  p = ncol(x)
+  n = nrow(x)
+  
+  if (mtry >= p) stop("mtry should be smaller than the number of columns in x")
+  
+  forest = list()
+  
+  # find r
+  
+  ms.idx = y==1
+  ms = apply(x,2,function(z){abs(mean(z[ms.idx])-mean(z[-ms.idx]))})
+  
+  r = abs(ms)/max(abs(ms))
+  
+  r = r^delta
+  
+  yhat = matrix(nrow=n,ncol=ntree)
+  ypred = matrix(nrow=n,ncol=ntree)
+  oob_accuracy = c()
+  
+  for(t in 1:ntree){
+    
+   if(t%%printevery==0){print(sprintf("done %d (out of %d)",t,ntree))}
+    
+    #select variables to split
+    var_idx = sample(1:p,mtry)
+    #select samples 
+    sample_idx = sample(1:n,samplesize,replace = replace)
+    
+    x_t = x[sample_idx,var_idx]
+    y_t = y[sample_idx]
+    x_t_oob = x[-unique(sample_idx),var_idx]
+    y_t_oob = y[-unique(sample_idx)]
+    
+    if(length(q)>1){
+      qt = sample(q,1)
+    }else{
+      qt=q
+    }
+    
+    tree.fit = project_tree(x_t,y_t,x_t_oob,y_t_oob,n_project=n_project,control=control,r=r[var_idx],q=qt,s=s)
+    
+    
+    oob_accuracy[t] = tree.fit$best.accuracy
+    yhat[sample_idx,t] = as.numeric.factor(tree.fit$best.yhat)
+    
+    if(!is.null(xtest)){
+      ypred[,t] = as.numeric.factor(predict(tree.fit$best.fit, data.frame(x=xtest[,var_idx]%*%tree.fit$best.project),type='class'))
+    }
+    
+    if(keepforest){
+      forest[[t]] = tree.fit
+    }
+    
+  }
+  vote_hat = 1*(apply(yhat,1,mean,na.rm=TRUE) > 0.5)
+  vote_pred = 1*(apply(ypred,1,mean,na.rm=TRUE) > 0.5)
+  
+  accuracy_train = sum(y == vote_hat)/n
+  accuracy_test = ifelse(is.null(ytest),ytest,sum(ytest==vote_pred)/length(ytest))
+  
+  return(list(accuracy_train=accuracy_train,
+              accuracy_test =accuracy_test, 
+              yhat = yhat, 
+              ypred = ypred, 
+              vote_hat = vote_hat,
+              vote_pred = vote_pred,
+              oob_accuracy = oob_accuracy,
+              forest = forest))
+}
+```
