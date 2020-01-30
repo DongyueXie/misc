@@ -406,7 +406,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-01-03
+<strong>Last updated:</strong> 2020-01-30
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,21 +497,24 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed54e1af89ba5a0108f8d24e6c0a9df5d9406608ftargetblankd54e1afa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/d54e1af89ba5a0108f8d24e6c0a9df5d9406608f" target="_blank">d54e1af</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree5cfd32edda17a194206c5f7b838c18118db9e011targetblank5cfd32ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/5cfd32edda17a194206c5f7b838c18118db9e011" target="_blank">5cfd32e</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed54e1af89ba5a0108f8d24e6c0a9df5d9406608ftargetblankd54e1afa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree5cfd32edda17a194206c5f7b838c18118db9e011targetblank5cfd32ea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
 Untracked files:
-    Untracked:  analysis/MAST.Rmd
+    Untracked:  data/ROTS_results.RData
+    Untracked:  data/pbmc.rds
+    Untracked:  data/pbmc_counts.rds
 
 </code></pre>
 <p>
@@ -555,6 +558,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/5cfd32edda17a194206c5f7b838c18118db9e011/analysis/selectrotation.Rmd" target="_blank">5cfd32e</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-30
+</td>
+<td>
+wflow_publish(“analysis/selectrotation.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/39b99d1652ae40cebcb5a881a9ee5fca9f38245f/docs/selectrotation.html" target="_blank">39b99d1</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/d54e1af89ba5a0108f8d24e6c0a9df5d9406608f/analysis/selectrotation.Rmd" target="_blank">d54e1af</a>
 </td>
 <td>
@@ -574,8 +611,9 @@ wflow_publish(“analysis/selectrotation.Rmd”)
 </div>
 </div>
 </div>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
+<div id="random-rotation" class="section level2">
+<h2>random rotation</h2>
+<p>select random rotation matrix via oob</p>
 <pre class="r"><code>library(rpart)
 library(BART)</code></pre>
 <pre><code>Loading required package: nlme</code></pre>
@@ -583,16 +621,21 @@ library(BART)</code></pre>
 <pre><code>Loading required package: survival</code></pre>
 <pre class="r"><code>as.numeric.factor &lt;- function(x) {as.numeric(levels(x))[x]}
 
-random_rotation = function(p){
+random_rotation = function(p,screening,r){
   Q=qr.Q(qr(matrix(rnorm(p^2),p,p)))
+  if(screening){
+    active.var = rbinom(p,1,r)
+    Q[-which(active.var==1),]=0
+  }
   Q
 }
 
-rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
+rotate_tree = function(x,y,x.oob,y.oob,xtest,ytest,n_rotate,control,screening,r){
 
   
   p = ncol(x)
   n = nrow(x)
+  
   
   fit = rpart(y~.,data = data.frame(y=y,x=x),method=&#39;class&#39;,control = control)
   ypred = predict(fit,data.frame(x=x.oob),type=&#39;class&#39;)
@@ -604,10 +647,11 @@ rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
   best.yhat = predict(fit,data.frame(x=x),type=&#39;class&#39;)
   
   for(rot in 1:n_rotate){
-    Rmat = random_rotation(p)
-    x.train = x%*%Rmat
+    Rmat = random_rotation(p,screening,r)
+    if(sum(Rmat)!=0){
+      x.train = x%*%Rmat
     x.test = x.oob%*%Rmat
-    fit = rpart(y~.,data = data.frame(y=y,x=x.train), method=&#39;class&#39;,control = rpart.control(minbucket=nodesize))
+    fit = rpart(y~.,data = data.frame(y=y,x=x.train), method=&#39;class&#39;,control = control)
     ypred = predict(fit,data.frame(x=x.test),type=&#39;class&#39;)
     accuracy = (sum(ypred==y.oob)/length(ypred)) 
     if(accuracy &gt; best.accuracy){
@@ -616,6 +660,7 @@ rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
       best.Rotation = Rmat
       best.yhat = predict(fit,data.frame(x=x.train),type=&#39;class&#39;)
     }
+    }
   }
   return(list(best.accuracy = best.accuracy,
       best.fit = best.fit,
@@ -623,9 +668,10 @@ rotate_tree = function(x,y,x.oob,y.oob,n_rotate,control){
       best.yhat = best.yhat))
 }
 
-rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x))),
+rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100, mtry=floor(sqrt(ncol(x))),
                      replace=TRUE,samplesize = if (replace) nrow(x) else ceiling(.632*nrow(x)),
-                     control = rpart.control(),
+                     control = rpart.control(),screening = TRUE,eb.screen = TRUE,
+                     delta=max(c(0,(1+log(ncol(x)/nrow(x)))/2)),
                      keepforest = FALSE,n_rotate=30,printevery=100){
   x = as.matrix(x)
   xtest = as.matrix(xtest)
@@ -639,7 +685,22 @@ rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x)
   
   forest = list()
   
-  
+  if(screening){
+    ms.idx = which(y==1)
+    ms = apply(x,2,function(z){(mean(z[ms.idx])-mean(z[-ms.idx]))})
+    if(eb.screen){
+      sds = sqrt(apply(x,2,function(z){var(z[ms.idx])/length(ms.idx)+var(z[-ms.idx])/(n-length(ms.idx))}))
+      pn.res = ebnm::ebnm(ms,sds,&#39;point_normal&#39;)$posterior$mean
+      
+      r = abs(pn.res)/max(abs(pn.res))
+    }else{
+      r = abs(ms)/max(abs(ms))
+    }
+    r = r^delta
+  }else{
+    r=rep(1,p)
+  }
+
   yhat = matrix(nrow=n,ncol=ntree)
   ypred = matrix(nrow=n,ncol=ntree)
   oob_accuracy = c()
@@ -658,7 +719,7 @@ rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x)
     x_t_oob = x[-unique(sample_idx),var_idx]
     y_t_oob = y[-unique(sample_idx)]
     
-    tree.fit = rotate_tree(x_t,y_t,x_t_oob,y_t_oob,n_rotate=n_rotate,control=control)
+    tree.fit = rotate_tree(x_t,y_t,x_t_oob,y_t_oob,n_rotate=n_rotate,control=control,screening,r[var_idx])
     
     
     oob_accuracy[t] = tree.fit$best.accuracy
@@ -692,6 +753,9 @@ rrrforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x)
               oob_accuracy = oob_accuracy,
               forest = forest))
 }</code></pre>
+</div>
+<div id="expreiment" class="section level1">
+<h1>expreiment</h1>
 <pre class="r"><code>f_linear = function(x){
   ey=-2.50*x[,1] + 2.0*x[,2] -1.60*x[,3] + 1.2*x[,4] +0.9*x[,5] 
   as.factor(rbinom(nrow(x),1,pnorm(ey)))
@@ -704,16 +768,34 @@ f_friedman=function(x){
 
 set.seed(1234)
 n=100
-p=5
+p=100
 x = matrix(runif(n*p),nrow=n)
-y = f_friedman(x)
+y = f_linear(x)
 
 xtest = matrix(runif(n*p),nrow=n)
-ytest = f_friedman(xtest)
+ytest = f_linear(xtest)
 
+round((apply(x,2,function(z){abs(mean(z[y==1])-mean(z[y==0]))}))/max((apply(x,2,function(z){abs(mean(z[y==1])-mean(z[y==0]))}))),2)
+
+round(abs(apply(x,2,cor,as.numeric.factor(y)))/max(abs(apply(x,2,cor,as.numeric.factor(y)))),2)
+
+
+ms = (apply(x,2,function(z){(mean(z[y==1])-mean(z[y==0]))}))
+
+sds = sqrt(apply(x,2,function(z){(var(z)/sum(as.numeric.factor(y))+var(z)/(n-sum(as.numeric.factor(y))))}))
+
+library(ebnm)
+
+pn.res = ebnm(ms,sds,&#39;point_normal&#39;)
+
+round(abs(pn.res$posterior$mean)/max(abs(pn.res$posterior$mean)),2)
+
+
+library(randomForest)
 rf = randomForest(x,y,xtest,ytest,ntree=100)
-rrrf = rrrforest(x,y,xtest,ytest,ntree=100,n_rotate = 10)
-rrf = rotationForest(data.frame(x),y,L=500)
+rrrf = rrrforest(x,y,xtest,ytest,ntree=100,n_rotate = 30,replace = F)
+rrf = rotationForest(data.frame(x),y,L=100)
+rprf = rprforest(x,y,xtest,ytest)
 
 
 library(pROC)
@@ -743,7 +825,156 @@ for(i in 1:ncol(ypred)){
 }
 
 plot(1-rf$test$err.rate[,1],type=&#39;l&#39;)
-lines(1-err.rate,col=4)</code></pre>
+lines(1-err.rate,col=4)
+
+# correlation of oob accuracy and accu on test data
+acc.rate = c()
+for(i in 1:ncol(ypred)){
+  acc.rate[i] = sum(ytest == ypred[,i])/length(ytest)
+}
+
+cor(acc.rate,rrrf$oob_accuracy)</code></pre>
+</div>
+<div id="random-projection" class="section level1">
+<h1>random projection</h1>
+<p>random projection</p>
+<pre class="r"><code># generate sparse random projection
+#&#39;@param p,q random projection matrix of dimension p*q
+#&#39;@param r a vector of length p indicate variables weights
+#&#39;@param s parameter in sprase random projection, see https://web.stanford.edu/~hastie/Papers/Ping/KDD06_rp.pdf
+
+random_projection = function(p,q,r,s){
+  active.var = rbinom(p,1,r)
+  rp.mat = matrix(sqrt(s)*rbinom(p*q,1,1/s)*(2*rbinom(p*q,1,0.5)-1),nrow=p)
+  rp.mat[-which(active.var==1),] = 0
+  rp.mat
+}
+
+
+project_tree = function(x,y,x.oob,y.oob,n_project,control,r,q,s){
+
+  
+  p = ncol(x)
+  n = nrow(x)
+  
+  rp1 = random_projection(p,q,r,s)
+  
+  fit = rpart(y~.,data = data.frame(y=y,x=x%*%rp1),method=&#39;class&#39;,control = control)
+  ypred = predict(fit,data.frame(x=x.oob%*%rp1),type=&#39;class&#39;)
+  
+  
+  best.accuracy = sum(ypred==y.oob)/length(y.oob)
+  best.fit = fit
+  best.project = rp1
+  best.yhat = predict(fit,data.frame(x=x%*%rp1),type=&#39;class&#39;)
+  
+  for(rot in 1:n_project){
+    Rmat = random_projection(p,q,r,s)
+    x.train = x%*%Rmat
+    x.test = x.oob%*%Rmat
+    fit = rpart(y~.,data = data.frame(y=y,x=x.train), method=&#39;class&#39;,control = control)
+    ypred = predict(fit,data.frame(x=x.test),type=&#39;class&#39;)
+    accuracy = (sum(ypred==y.oob)/length(ypred)) 
+    if(accuracy &gt; best.accuracy){
+      best.accuracy = accuracy
+      best.fit = fit
+      best.project = Rmat
+      best.yhat = predict(fit,data.frame(x=x.train),type=&#39;class&#39;)
+    }
+  }
+  return(list(best.accuracy = best.accuracy,
+      best.fit = best.fit,
+      best.project = best.project,
+      best.yhat = best.yhat))
+}
+
+
+# q: random projection dimension, could be a vector
+
+# delta: |r|^delta
+
+rprforest = function(x,y,xtest=NULL,ytest=NULL,ntree=100,mtry=floor(sqrt(ncol(x))),
+                     replace=TRUE,samplesize = if (replace) nrow(x) else ceiling(.632*nrow(x)),
+                     control = rpart.control(),
+                     keepforest = FALSE,n_project=30,printevery=100,
+                     q=round(seq(log(ncol(x)),mtry,length.out = ntree/10)),
+                     #q=mtry,
+                     s=3,delta=max(c(0,(1+log(ncol(x)/nrow(x)))/2))){
+  x = as.matrix(x)
+  xtest = as.matrix(xtest)
+  y = as.factor(y)
+  ytest = as.factor(ytest)
+  
+  p = ncol(x)
+  n = nrow(x)
+  
+  if (mtry &gt;= p) stop(&quot;mtry should be smaller than the number of columns in x&quot;)
+  
+  forest = list()
+  
+  # find r
+  
+  ms.idx = y==1
+  ms = apply(x,2,function(z){abs(mean(z[ms.idx])-mean(z[-ms.idx]))})
+  
+  r = abs(ms)/max(abs(ms))
+  
+  r = r^delta
+  
+  yhat = matrix(nrow=n,ncol=ntree)
+  ypred = matrix(nrow=n,ncol=ntree)
+  oob_accuracy = c()
+  
+  for(t in 1:ntree){
+    
+   if(t%%printevery==0){print(sprintf(&quot;done %d (out of %d)&quot;,t,ntree))}
+    
+    #select variables to split
+    var_idx = sample(1:p,mtry)
+    #select samples 
+    sample_idx = sample(1:n,samplesize,replace = replace)
+    
+    x_t = x[sample_idx,var_idx]
+    y_t = y[sample_idx]
+    x_t_oob = x[-unique(sample_idx),var_idx]
+    y_t_oob = y[-unique(sample_idx)]
+    
+    if(length(q)&gt;1){
+      qt = sample(q,1)
+    }else{
+      qt=q
+    }
+    
+    tree.fit = project_tree(x_t,y_t,x_t_oob,y_t_oob,n_project=n_project,control=control,r=r[var_idx],q=qt,s=s)
+    
+    
+    oob_accuracy[t] = tree.fit$best.accuracy
+    yhat[sample_idx,t] = as.numeric.factor(tree.fit$best.yhat)
+    
+    if(!is.null(xtest)){
+      ypred[,t] = as.numeric.factor(predict(tree.fit$best.fit, data.frame(x=xtest[,var_idx]%*%tree.fit$best.project),type=&#39;class&#39;))
+    }
+    
+    if(keepforest){
+      forest[[t]] = tree.fit
+    }
+    
+  }
+  vote_hat = 1*(apply(yhat,1,mean,na.rm=TRUE) &gt; 0.5)
+  vote_pred = 1*(apply(ypred,1,mean,na.rm=TRUE) &gt; 0.5)
+  
+  accuracy_train = sum(y == vote_hat)/n
+  accuracy_test = ifelse(is.null(ytest),ytest,sum(ytest==vote_pred)/length(ytest))
+  
+  return(list(accuracy_train=accuracy_train,
+              accuracy_test =accuracy_test, 
+              yhat = yhat, 
+              ypred = ypred, 
+              vote_hat = vote_hat,
+              vote_pred = vote_pred,
+              oob_accuracy = oob_accuracy,
+              forest = forest))
+}</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
