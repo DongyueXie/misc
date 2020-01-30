@@ -1,0 +1,78 @@
+---
+title: "AdaBart"
+author: "Dongyue Xie"
+date: "2020-01-29"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r, eval=FALSE}
+f_linear = function(x){
+  ey=-2.50*x[,1] + 2.0*x[,2] -1.60*x[,3] + 1.2*x[,4] +0.9*x[,5] 
+  as.factor(rbinom(nrow(x),1,pnorm(ey)))
+}
+
+f_friedman=function(x){
+  ey = (((sin(pi*x[,1]*x[,2]) + 2*(x[,3]-.5)^2+x[,4]-2*x[,5])))
+  as.factor(rbinom(nrow(x),1,pnorm(ey)))
+}
+
+library(rotationForest)
+library(JOUSBoost)
+library(bartMachine)
+library(pROC)
+
+
+set.seed(1234)
+n=100
+p=10
+x = matrix(runif(n*p),nrow=n)
+y = f_friedman(x)
+xtest = matrix(runif(n*p),nrow=n)
+ytest = f_friedman(xtest)
+
+f_chisquare = function(x){
+  as.factor(1*(rowSums(x^2)>qchisq(0.5,ncol(x))))
+}
+as.numeric.factor <- function(x) {as.numeric(levels(x))[x]}
+
+set.seed(12345)
+n=2000
+nt = 10000
+p=10
+x = matrix(rnorm(n*p),nrow=n)
+y = f_chisquare(x)
+xtest = matrix(rnorm(nt*p),nrow=nt)
+ytest = f_chisquare(xtest)
+
+
+
+bart.fit = bartMachine(data.frame(x),y,verbose = T,num_trees = 50)
+sum(bart.fit$y_hat_train==y)/n
+ypred = 1*(predict(bart.fit,data.frame(xtest))<0.5)
+sum(ypred==ytest)/nt
+roc_obj = roc(as.numeric.factor(ytest),ypred)
+auc(roc_obj)
+
+bart.fit = BART::pbart(x,as.numeric.factor(y),xtest)
+roc_obj = roc(as.numeric.factor(ytest),1*(bart.fit$prob.test.mean>0.5))
+auc(roc_obj)
+
+
+rot.fit = rotationForest(data.frame(x),(y),L=700)
+roc_obj <- roc(as.numeric.factor(ytest), 1*(predict(rot.fit,data.frame(xtest)) > 0.5))
+auc(roc_obj)
+
+adaboost.fit = adaboost(x,2*as.numeric.factor(y)-1,tree_depth = 1,n_rounds = 5000)
+roc_obj = roc(as.numeric.factor(ytest),(predict(adaboost.fit,xtest)+1)/2)
+auc(roc_obj)
+
+
+library(bCART)
+bartr.fit = adaBARTr(x,y,xtest)
+accuracy(bartr.fit$ypred,ytest)
+```
+
