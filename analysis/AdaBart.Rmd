@@ -1,5 +1,5 @@
 ---
-title: "AdaBart"
+title: "Classification on real data set"
 author: "Dongyue Xie"
 date: "2020-01-29"
 output: workflowr::wflow_html
@@ -9,7 +9,78 @@ editor_options:
 
 ## Introduction
 
-```{r, eval=FALSE}
+Compared 8 ensemble learners on 9 real datasets.
+
+```{r}
+getres = function(x){
+  m = round(apply(x, 2, mean,na.rm=T),4)
+  s = round(apply(x, 2, sd,na.rm=T),4)
+  o = rank(-m)
+  ms = rbind(m,s,o)
+  rownames(ms) = c('auc', 'sd','rank')
+  ms
+}
+
+load('data/Banknote_result.RData')
+Bank = getres(Banknote_result)
+Bank
+```
+
+```{r}
+load("~/misc/data/BreastCancer_result.RData")
+BC = getres(BreastCancer_result)
+BC
+```
+
+```{r}
+load("~/misc/data/Haberman_result.RData")
+Haber = getres(Haberman_result)
+Haber
+```
+
+```{r}
+load("~/misc/data/Ionosphere_result.RData")
+Iono = getres(Ionosphere_result)
+Iono
+```
+
+```{r}
+load("~/misc/data/liver_result.RData")
+Liver = getres(liver_result)
+Liver
+```
+
+```{r}
+load("~/misc/data/Mice_result.RData")
+Mice = getres(Mice_result)
+Mice
+```
+
+```{r}
+load("~/misc/data/PimaIndiansDiabetes_result.RData")
+Pima = getres(PimaIndiansDiabetes_result)
+Pima
+```
+
+```{r}
+load("~/misc/data/Seeds_result.RData")
+Seeds = getres(Seeds_result)
+Seeds
+```
+
+```{r}
+load("~/misc/data/Sonar_result.RData")
+Sonar = getres(Sonar_result)
+Sonar
+```
+
+```{r}
+round((Bank[3,] + BC[3,] + Haber[3,] + Iono[3,] + Liver[3,] + Mice[3,] + Pima[3,] + Seeds[3,] + Sonar[3,])/9)
+```
+
+
+
+```{r, eval=FALSE, include=FALSE}
 f_linear = function(x){
   ey=-2.50*x[,1] + 2.0*x[,2] -1.60*x[,3] + 1.2*x[,4] +0.9*x[,5] 
   as.factor(rbinom(nrow(x),1,pnorm(ey)))
