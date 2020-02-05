@@ -7,14 +7,13 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Dongyue Xie" />
 
 <meta name="date" content="2020-01-29" />
 
-<title>AdaBart</title>
+<title>Classification on real data set</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,8 +27,9 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -77,7 +77,9 @@ h6 {
 </style>
 
 
+</head>
 
+<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,6 +93,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -100,9 +103,6 @@ img {
 }
 button.code-folding-btn:focus {
   outline: none;
-}
-summary {
-  display: list-item;
 }
 </style>
 
@@ -118,6 +118,7 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
+
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -137,43 +138,6 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
-}
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -195,65 +159,47 @@ $(document).ready(function () {
 });
 </script>
 
+
+<div class="container-fluid main-container">
+
 <!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
 
 <!-- code folding -->
 
 
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -302,6 +248,8 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -310,16 +258,6 @@ div.tocify {
 
 
 </style>
-
-
-
-</head>
-
-<body>
-
-
-<div class="container-fluid main-container">
-
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -379,16 +317,16 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">AdaBart</h1>
-<h4 class="author">Dongyue Xie</h4>
-<h4 class="date">2020-01-29</h4>
+<h1 class="title toc-ignore">Classification on real data set</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2020-01-29</em></h4>
 
 </div>
 
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -397,7 +335,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -406,10 +344,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-01-30
+<strong>Last updated:</strong> 2020-02-05
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>misc/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -485,39 +423,123 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
 </p>
 </div>
-<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+~/misc/data/BreastCancer_result.RData
+</td>
+<td style="text-align:left;">
+data/BreastCancer_result.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/Haberman_result.RData
+</td>
+<td style="text-align:left;">
+data/Haberman_result.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/Ionosphere_result.RData
+</td>
+<td style="text-align:left;">
+data/Ionosphere_result.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/liver_result.RData
+</td>
+<td style="text-align:left;">
+data/liver_result.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/Mice_result.RData
+</td>
+<td style="text-align:left;">
+data/Mice_result.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/PimaIndiansDiabetes_result.RData
+</td>
+<td style="text-align:left;">
+data/PimaIndiansDiabetes_result.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/Seeds_result.RData
+</td>
+<td style="text-align:left;">
+data/Seeds_result.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/Sonar_result.RData
+</td>
+<td style="text-align:left;">
+data/Sonar_result.RData
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef1b8cf681fc38f61c7ca1788c396556938e84bcftargetblankf1b8cf6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/f1b8cf681fc38f61c7ca1788c396556938e84bcf" target="_blank">f1b8cf6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9f0944281555cf6438c499993d850c967e50a180targetblank9f09442a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/9f0944281555cf6438c499993d850c967e50a180" target="_blank">9f09442</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef1b8cf681fc38f61c7ca1788c396556938e84bcftargetblankf1b8cf6a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9f0944281555cf6438c499993d850c967e50a180targetblank9f09442a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
-    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  analysis/methylation.Rmd
+    Untracked:  data/Banknote_result.RData
+    Untracked:  data/BreastCancer_result.RData
+    Untracked:  data/Haberman_result.RData
+    Untracked:  data/Ionosphere_result.RData
+    Untracked:  data/Mice_result.RData
+    Untracked:  data/PimaIndiansDiabetes_result.RData
     Untracked:  data/ROTS_results.RData
-    Untracked:  data/pbmc.rds
-    Untracked:  data/pbmc_counts.rds
-
-Unstaged changes:
-    Modified:   analysis/selectrotation.Rmd
+    Untracked:  data/Seeds_result.RData
+    Untracked:  data/Sonar_result.RData
+    Untracked:  data/liver_result.RData
 
 </code></pre>
 <p>
@@ -561,6 +583,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/9f0944281555cf6438c499993d850c967e50a180/analysis/AdaBart.Rmd" target="_blank">9f09442</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-05
+</td>
+<td>
+wflow_publish(“analysis/AdaBart.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/6361626c9092a704262f513a77e0e4de3656546e/docs/AdaBart.html" target="_blank">6361626</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/f1b8cf681fc38f61c7ca1788c396556938e84bcf/analysis/AdaBart.Rmd" target="_blank">f1b8cf6</a>
 </td>
 <td>
@@ -582,70 +638,82 @@ wflow_publish(“analysis/AdaBart.Rmd”)
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<pre class="r"><code>f_linear = function(x){
-  ey=-2.50*x[,1] + 2.0*x[,2] -1.60*x[,3] + 1.2*x[,4] +0.9*x[,5] 
-  as.factor(rbinom(nrow(x),1,pnorm(ey)))
+<p>Compared 8 ensemble learners on 9 real datasets.</p>
+<pre class="r"><code>getres = function(x){
+  m = round(apply(x, 2, mean,na.rm=T),4)
+  s = round(apply(x, 2, sd,na.rm=T),4)
+  o = rank(-m)
+  ms = rbind(m,s,o)
+  rownames(ms) = c(&#39;auc&#39;, &#39;sd&#39;,&#39;rank&#39;)
+  ms
 }
 
-f_friedman=function(x){
-  ey = (((sin(pi*x[,1]*x[,2]) + 2*(x[,3]-.5)^2+x[,4]-2*x[,5])))
-  as.factor(rbinom(nrow(x),1,pnorm(ey)))
-}
-
-library(rotationForest)
-library(JOUSBoost)
-library(bartMachine)
-library(pROC)
-
-
-set.seed(1234)
-n=100
-p=10
-x = matrix(runif(n*p),nrow=n)
-y = f_friedman(x)
-xtest = matrix(runif(n*p),nrow=n)
-ytest = f_friedman(xtest)
-
-f_chisquare = function(x){
-  as.factor(1*(rowSums(x^2)&gt;qchisq(0.5,ncol(x))))
-}
-as.numeric.factor &lt;- function(x) {as.numeric(levels(x))[x]}
-
-set.seed(12345)
-n=2000
-nt = 10000
-p=10
-x = matrix(rnorm(n*p),nrow=n)
-y = f_chisquare(x)
-xtest = matrix(rnorm(nt*p),nrow=nt)
-ytest = f_chisquare(xtest)
-
-
-
-bart.fit = bartMachine(data.frame(x),y,verbose = T,num_trees = 50)
-sum(bart.fit$y_hat_train==y)/n
-ypred = 1*(predict(bart.fit,data.frame(xtest))&lt;0.5)
-sum(ypred==ytest)/nt
-roc_obj = roc(as.numeric.factor(ytest),ypred)
-auc(roc_obj)
-
-bart.fit = BART::pbart(x,as.numeric.factor(y),xtest)
-roc_obj = roc(as.numeric.factor(ytest),1*(bart.fit$prob.test.mean&gt;0.5))
-auc(roc_obj)
-
-
-rot.fit = rotationForest(data.frame(x),(y),L=700)
-roc_obj &lt;- roc(as.numeric.factor(ytest), 1*(predict(rot.fit,data.frame(xtest)) &gt; 0.5))
-auc(roc_obj)
-
-adaboost.fit = adaboost(x,2*as.numeric.factor(y)-1,tree_depth = 1,n_rounds = 5000)
-roc_obj = roc(as.numeric.factor(ytest),(predict(adaboost.fit,xtest)+1)/2)
-auc(roc_obj)
-
-
-library(bCART)
-bartr.fit = adaBARTr(x,y,xtest)
-accuracy(bartr.fit$ypred,ytest)</code></pre>
+load(&#39;data/Banknote_result.RData&#39;)
+Bank = getres(Banknote_result)
+Bank</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.9989  0.9981  0.9997 0.9904 0.9909 0.9928   0.9932  0.9919
+sd   0.0015  0.0037  0.0008 0.0045 0.0041 0.0057   0.0057  0.0051
+rank 2.0000  3.0000  1.0000 8.0000 7.0000 5.0000   4.0000  6.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/BreastCancer_result.RData&quot;)
+BC = getres(BreastCancer_result)
+BC</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.9742  0.9741  0.9603 0.9734 0.9721 0.9767   0.9658  0.9590
+sd   0.0088  0.0093  0.0129 0.0084 0.0095 0.0069   0.0104  0.0123
+rank 2.0000  3.0000  7.0000 4.0000 5.0000 1.0000   6.0000  8.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/Haberman_result.RData&quot;)
+Haber = getres(Haberman_result)
+Haber</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.6443  0.6444  0.5998 0.6315 0.6186 0.6366   0.5883  0.5937
+sd   0.0356  0.0322  0.0537 0.0343 0.0427 0.0388   0.0471  0.0340
+rank 2.0000  1.0000  6.0000 4.0000 5.0000 3.0000   8.0000  7.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/Ionosphere_result.RData&quot;)
+Iono = getres(Ionosphere_result)
+Iono</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.8981  0.9132  0.9029 0.9069 0.9120 0.9070   0.9068  0.8947
+sd   0.0228  0.0262  0.0184 0.0204 0.0201 0.0272   0.0220  0.0244
+rank 7.0000  1.0000  6.0000 4.0000 2.0000 3.0000   5.0000  8.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/liver_result.RData&quot;)
+Liver = getres(liver_result)
+Liver</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.6698  0.6872  0.6423 0.6785 0.6750 0.6663   0.6497  0.6435
+sd   0.0200  0.0272  0.0278 0.0193 0.0252 0.0282   0.0301  0.0290
+rank 4.0000  1.0000  8.0000 2.0000 3.0000 5.0000   6.0000  7.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/Mice_result.RData&quot;)
+Mice = getres(Mice_result)
+Mice</code></pre>
+<pre><code>     oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.975  0.9888       1 0.9922 0.9974 0.9970   0.9881  0.9914
+sd   0.021  0.0136       0 0.0101 0.0070 0.0074   0.0144  0.0122
+rank 8.000  6.0000       1 4.0000 2.0000 3.0000   7.0000  5.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/PimaIndiansDiabetes_result.RData&quot;)
+Pima = getres(PimaIndiansDiabetes_result)
+Pima</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.7326  0.7512  0.7152 0.7499 0.7447 0.7443   0.7146  0.7062
+sd   0.0197  0.0137  0.0158 0.0145 0.0157 0.0209   0.0179  0.0198
+rank 5.0000  1.0000  6.0000 2.0000 3.0000 4.0000   7.0000  8.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/Seeds_result.RData&quot;)
+Seeds = getres(Seeds_result)
+Seeds</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.9371  0.9386  0.9536 0.9493 0.9536 0.9500   0.9600  0.9607
+sd   0.0256  0.0282  0.0321 0.0225 0.0240 0.0276   0.0261  0.0262
+rank 8.0000  7.0000  3.5000 6.0000 3.5000 5.0000   2.0000  1.0000</code></pre>
+<pre class="r"><code>load(&quot;~/misc/data/Sonar_result.RData&quot;)
+Sonar = getres(Sonar_result)
+Sonar</code></pre>
+<pre><code>      oBART rotBART adaBART   BART     RF  rotRF adaboost xgboost
+auc  0.7794  0.7990  0.8214 0.7984 0.8010 0.7920   0.8175  0.8067
+sd   0.0393  0.0325  0.0312 0.0299 0.0363 0.0323   0.0399  0.0467
+rank 8.0000  5.0000  1.0000 6.0000 4.0000 7.0000   2.0000  3.0000</code></pre>
+<pre class="r"><code>round((Bank[3,] + BC[3,] + Haber[3,] + Iono[3,] + Liver[3,] + Mice[3,] + Pima[3,] + Seeds[3,] + Sonar[3,])/9)</code></pre>
+<pre><code>   oBART  rotBART  adaBART     BART       RF    rotRF adaboost  xgboost 
+       5        3        4        4        4        4        5        6 </code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -654,28 +722,31 @@ accuracy(bartr.fit$ypred,ytest)</code></pre>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.6.1 (2019-07-05)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS High Sierra 10.13.6
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Scientific Linux 7.4 (Nitrogen)
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
- [1] workflowr_1.5.0 Rcpp_1.0.2      rprojroot_1.3-2 digest_0.6.21  
- [5] later_1.0.0     R6_2.4.0        backports_1.1.5 git2r_0.26.1   
- [9] magrittr_1.5    evaluate_0.14   stringi_1.4.3   rlang_0.4.0    
-[13] fs_1.3.1        promises_1.1.0  whisker_0.4     rmarkdown_1.16 
-[17] tools_3.6.1     stringr_1.4.0   glue_1.3.1      httpuv_1.5.2   
-[21] xfun_0.10       yaml_2.2.0      compiler_3.6.1  htmltools_0.4.0
-[25] knitr_1.25     </code></pre>
+ [1] workflowr_1.5.0 Rcpp_1.0.2      digest_0.6.18   later_0.7.5    
+ [5] rprojroot_1.3-2 R6_2.3.0        backports_1.1.2 git2r_0.26.1   
+ [9] magrittr_1.5    evaluate_0.12   highr_0.7       stringi_1.2.4  
+[13] fs_1.3.1        promises_1.0.1  whisker_0.3-2   rmarkdown_1.10 
+[17] tools_3.5.1     stringr_1.3.1   glue_1.3.0      httpuv_1.4.5   
+[21] yaml_2.2.0      compiler_3.5.1  htmltools_0.3.6 knitr_1.20     </code></pre>
 </div>
 </div>
 
@@ -709,49 +780,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
