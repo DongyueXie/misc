@@ -406,7 +406,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-01-15
+<strong>Last updated:</strong> 2020-02-19
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,20 +497,40 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree605578a6e852656a37a8bde96ce4f6ee95850ba1targetblank605578aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/605578a6e852656a37a8bde96ce4f6ee95850ba1" target="_blank">605578a</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree460fe4b34ca45dff916e0fc629da02ae62127311targetblank460fe4ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/460fe4b34ca45dff916e0fc629da02ae62127311" target="_blank">460fe4b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree605578a6e852656a37a8bde96ce4f6ee95850ba1targetblank605578aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree460fe4b34ca45dff916e0fc629da02ae62127311targetblank460fe4ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
 
+Untracked files:
+    Untracked:  data/ROTS_results.RData
+    Untracked:  data/ROTS_results2.RData
+    Untracked:  data/cate_cate_high.RData
+    Untracked:  data/cate_cate_low.RData
+    Untracked:  data/cate_cate_mid.RData
+    Untracked:  data/cate_cate_null.RData
+    Untracked:  data/mout_high.RData
+    Untracked:  data/mout_low.RData
+    Untracked:  data/mout_mid.RData
+    Untracked:  data/mout_null.RData
+    Untracked:  data/pbmc.rds
+    Untracked:  data/pbmc_counts.rds
+    Untracked:  data/sva_sva_high.RData
+    Untracked:  data/sva_sva_low.RData
+    Untracked:  data/sva_sva_mid.RData
+    Untracked:  data/sva_sva_null.RData
+
 Unstaged changes:
+    Modified:   analysis/deconvolution.Rmd
     Modified:   analysis/index.Rmd
 
 </code></pre>
@@ -550,6 +570,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/460fe4b34ca45dff916e0fc629da02ae62127311/analysis/GTEX.Rmd" target="_blank">460fe4b</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-02-19
+</td>
+<td>
+wflow_publish(“analysis/GTEX.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/b85c283db6ae31f04d22f7a43ebdd8e4ff639e8b/docs/GTEX.html" target="_blank">b85c283</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -596,11 +650,12 @@ rm *.13;
 rm *.8;
 
 done</code></pre>
-<p>An easier one:</p>
+<p>An easier one(could try later):</p>
 <pre class="linux"><code>cat your_accession_list.txt | while read i
 do  
 fasterq-dump ${i} &lt;options&gt;
 done</code></pre>
+<p>try for loop…too slow</p>
 <pre class="linux"><code>for i in {SRR1069690,SRR1069802,SRR1071692,SRR1072650,SRR1075631,SRR1075997,SRR1076779,SRR1077115,SRR1077528,SRR1077643};
 
 do
@@ -609,8 +664,8 @@ sam-dump $i.sra | samtools view -Sb &gt; /project2/mstephens/dongyue/gtex/$i.bam
 
 done
 </code></pre>
+<p>try the parallel version</p>
 <pre class="linux"><code>find *.sra | parallel &#39;sam-dump {} | samtools view -Sb &gt; /project2/mstephens/dongyue/gtex/{/.}.bam&#39;</code></pre>
-<p>sam-dump SRR1077115.sra | samtools view -Sb &gt; /project2/mstephens/dongyue/gtex/SRR1077115.bam ;</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
