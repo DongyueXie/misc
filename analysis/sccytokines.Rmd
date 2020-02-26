@@ -17,18 +17,7 @@ knitr::opts_chunk$set(message = FALSE,warning = FALSE)
 
 See if sva works when comparing two control groups in single cell cytokine study.
 
-Take a look at the annotation file:
-
-```{r}
-data_ann = read.csv('/project2/mstephens/chevrier-stephens/data/whole_cyto_annot.csv.gz')
-data_ann[1:5,]
-```
-
-sample: treatment or cytokines, including two controls.
-
-well?  There are 25 wells, each of which contains two samples.
-
-cell_type: focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cells, Dendritic-cells, Ly6C+, Ly6C-,Neutrolphils.
+Focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cells, Dendritic-cells, Ly6C+, Ly6C-,Neutrolphils.
 
 ```{r}
 #read data matrix
@@ -84,7 +73,7 @@ for(cell in names(output)){
 ```
 
 
-Plot of principle component that has maximum absolute correlation with groups for each cell. Vertical line seperates two groups.
+Plot of principle component that has maximum absolute correlation with groups for each cell. Vertical line separates two groups.
 
 ```{r,fig.width=9,fig.height=7}
 par(mfrow=c(3,3))
@@ -116,6 +105,19 @@ for(cell in names(output)){
   hist(output[[cell]]$pvalue_sva_limma,main=paste(cell, ',sva-limma'),xlab='')
 }
 ```
+
+Number of surrogate variables: based on the default method in `sva` - a permutation procedure originally prooposed by Buja and Eyuboglu 1992
+
+```{r}
+n.sv = c()
+for(cell in names(output)){
+  n.sv = rbind(n.sv,output[[cell]]$sva_sva$n.sv)
+}
+rownames(n.sv) = names(output)
+colnames(n.sv) = '#sv'
+knitr::kable(n.sv,caption = 'Number of surrogate variables')
+```
+
 
 ## Compare the number of significant genes
 
