@@ -45,9 +45,16 @@ editor_options:
 
 [ruv4](ruv4.html)
 
-[single cell DE](scde.html), [single cell DE PBMC](scdePBMC.html)
-
 [select rr in rf using oob](selectrotation.html)
+
+## single-cell
+
+[single cell DE](scde.html)
+
+[single cell DE PBMC](scdePBMC.html)
+
+[single cell cytokine, two controls](sccytokines.html)
+
 
 # Seb and Kevin
 
