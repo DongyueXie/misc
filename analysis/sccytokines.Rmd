@@ -43,7 +43,7 @@ cell_type: focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cell
 # x <- out[["data"]][]
 #library(SparseM)
 # X.csr = new('matrix.csr',ra=x,ja=as.integer(i+1),ia=as.integer(j+1),dimension=h5attributes(out)$h5sparse_shape)
-#load("~/misc/data/cytokine_normalized.RData")
+#load("data/cytokine_normalized.RData")
 load('data/cytokine/DE_controls_output.RData')
 ```
 
