@@ -6,10 +6,13 @@ output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
+```{r,include=FALSE}
+knitr::opts_chunk$set(warning = FALSE,message = FALSE)
+```
 
 ## Introduction
 
-In my previous [analysis](scde.html), I tried RUV methods on single-cell RNA-Seq data. I only used top 1000 expressed genes from the dataset. So only a few of gene expressions are 0. This is not what typically scRNA data are. Also, I tried only in total 50 cells. 
+In my previous [analysis](scde.html), I tried RUV methods on single-cell RNA-Seq data. I only tried top 1000 expressed genes from the dataset. So only a few of gene expressions are 0. This is not what typically scRNA-Seq data are. Also, I tried only 50 cells. 
 
 This time, I'm going to try PBMC data prepared by [Satjia Lab](https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html). 
 
@@ -30,7 +33,7 @@ sum(datax==0)/(dim(datax)[1]*dim(datax)[2])
 ```
 
 
-Let's only use the Naive CD4+ T cells, which corresponds to the first cluster.
+Let's only use the Naive CD4+ T cells, which corresponds to the first cluster. Total 709 cells.
 
 ```{r}
 CDT_idx = which(cell_cluster == 1)
@@ -52,7 +55,7 @@ hist(p_values1,breaks = 15)
 summary(p_values1)
 ```
 
-There are 1225 genes that have no expression in any Naive CD4+ T cells. Remove these genes. Now we have not filtered out any genes.
+There are 1225 genes that have no expression in any Naive CD4+ T cells. Remove these genes. 
 
 ```{r}
 CDT = CDT[-which((rowSums(CDT)==0)),]
@@ -98,16 +101,357 @@ Let's reduce the number of cells in each group. Reudce from 355 to 50.
 
 ```{r}
 n_cell = 100
-set.seed(12345)
+set.seed(1234)
 CDT_subset = CDT[,sample(1:ncol(CDT),n_cell)]
 tmm = calcNormFactors(CDT_subset,method='TMM')
 CDTnorm_subset = cpm(CDT_subset,tmm)
 group = rep(0,ncol(CDTnorm_subset))
 group1_idx = sample(1:n_cell,n_cell/2)
 group[group1_idx] = 1
-ROTS_results2 = ROTS(data = CDTnorm_subset, groups = group , B = 100 , K = 500 , seed = 1234)
+#ROTS_results2 = ROTS(data = CDTnorm_subset, groups = group , B = 100 , K = 500 , seed = 1234)
+load('data/ROTS_results2.RData')
 summary(ROTS_results2, fdr = 0.05)
 hist(ROTS_results2$pvalue,breaks = 15)
 ```
 
+One false discovery. Lots of p-values concentrate at 1.
 
+## RUV methods 
+
+First apply on NULL data then add signals to genes using Poisson thinning.
+
+Randomly split 709 cells to two groups.
+
+```{r}
+library(vicar)
+
+set.seed(12345)
+group1_idx = sample(1:ncol(CDT),ncol(CDT)/2)
+group1 = CDT[,group1_idx]
+group2 = CDT[,-group1_idx]
+
+group_indicator = rep(0,ncol(CDT))
+group_indicator[group1_idx] = 1
+
+X = model.matrix(~group_indicator)
+CDT = as.matrix(CDT)
+
+Y = t(CDT)
+
+#num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
+#num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
+
+num_sv = 3
+#num_sv_l
+```
+
+The number of estimated surrogate variables is 3.
+
+```{r}
+#mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+#save(mout,file = 'data/mout_null.RData')
+load('data/mout_null.RData')
+mout$pi0
+library(cate)
+#library(leapp)
+
+#cate_cate   <- cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+#                              Y = Y, r = num_sv, adj.method = "rr")
+#save(cate_cate,file = 'data/cate_cate_null.RData')
+load('data/cate_cate_null.RData')
+# this method is vey slow!
+#leapp_leapp <- leapp::leapp(data = t(Y), pred.prim = X[, 2, drop = FALSE], 
+#                            pred.covar = X[, -2, drop = FALSE], num.fac = num_sv)
+
+#sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+#save(sva_sva,file = 'data/sva_sva_null.RData')
+load('data/sva_sva_null.RData')
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+hist(svaout$pvalues,breaks=15)
+ks.test(svaout$pvalues,'punif',0,1)
+
+hist(cate_cate$beta.p.value,breaks = 15)
+ks.test(cate_cate$beta.p.value,'punif',0,1)
+
+```
+
+Add some signal to the NULL dataset.
+
+```{r}
+library(seqgendiff)
+#tt = thin_diff(round(cell16), design_fixed = X[,2,drop=FALSE])
+set.seed(12345)
+thinout = thin_2group(round(CDT),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.5))
+
+#check null groups
+
+group1 = CDT[,which(thinout$designmat==1)]
+group2 = CDT[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(CDT)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative='two.sided')$p.value
+}
+ks.test(p_values1,'punif',0,1)
+hist(p_values1,breaks = 15)
+
+Y = t(thinout$mat)
+
+remove.idx = which(colSums(Y)==0)
+
+Y = Y[,-remove.idx]
+
+X = model.matrix(~thinout$designmat)
+
+#num_sv     <- sva::num.sv(dat = t(Y), mod = X, method = "be")
+#num_sv_l   <- sva::num.sv(dat = t(Y), mod = X, method = "leek")
+
+num_sv = 3
+#num_sv_l
+
+mean(abs(thinout$coef) < 10^-6)
+
+#mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+#save(mout,file = 'data/mout_mid.RData')
+#mout$pi0
+
+load('data/mout_mid.RData')
+
+#bout <- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+#save(bout,file = 'data/bout_mid.RData')
+#bout$pi0
+
+
+#cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+#                              Y = Y, r = num_sv, adj.method = "rr")
+#save(cate_cate,file = 'data/cate_cate_mid.RData')
+load('data/cate_cate_mid.RData')
+#sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+#save(sva_sva,file = 'data/sva_sva_mid.RData')
+load('data/sva_sva_mid.RData')
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef[-remove.idx]) < 10^-6))
+
+
+
+# plot ROC curve
+roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  #pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec <- c("MOUTHWASH", "CATErr", "SVA")
+names(roc_out) <- name_vec
+
+sout <- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method <- name_vec[index]
+}
+longdat <- do.call(rbind, sout)
+
+shortdat <- dplyr::filter(longdat, Method == "MOUTHWASH" |
+                            Method == "CATErr" | Method == "SVA" | Method == "LEAPP")
+library(ggplot2)
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle("ROC Curves")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+
+# estimate pi0
+method_list <- list()
+method_list$CATErr           <- list()
+method_list$CATErr$betahat   <- c(cate_cate$beta)
+method_list$CATErr$sebetahat <- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             <- list()
+method_list$SVA$betahat     <- c(svaout$betahat)
+method_list$SVA$sebetahat   <- c(svaout$sebetahat)
+
+ashfit <- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 <- sapply(ashfit, FUN = ashr::get_pi0)
+api0 <- c(api0, MOUTHWASH = mout$pi0)
+#api0 <- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = "Estimate of Pi0")
+```
+
+
+Weaker signal: rexp(,rate=1)
+
+```{r}
+set.seed(12345)
+thinout = thin_2group(round(CDT),0.9,signal_fun = stats::rexp,signal_params = list(rate=1))
+
+Y = t(thinout$mat)
+
+remove.idx = which(colSums(Y)==0)
+
+Y = Y[,-remove.idx]
+
+X = model.matrix(~thinout$designmat)
+
+
+mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+save(mout,file = 'data/mout_low.RData')
+mout$pi0
+
+#bout <- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+#save(bout,file = 'data/bout_low.RData')
+#bout$pi0
+
+
+cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = "rr")
+save(cate_cate,file = 'data/cate_cate_low.RData')
+sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+save(sva_sva,file = 'data/sva_sva_low.RData')
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef[-remove.idx]) < 10^-6))
+
+roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  #pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec <- c("MOUTHWASH", "CATErr", "SVA")
+names(roc_out) <- name_vec
+
+sout <- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method <- name_vec[index]
+}
+longdat <- do.call(rbind, sout)
+
+shortdat <- dplyr::filter(longdat, Method == "MOUTHWASH" | 
+                            Method == "CATErr" | Method == "SVA" | Method == "LEAPP")
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle("ROC Curves")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+method_list <- list()
+method_list$CATErr           <- list()
+method_list$CATErr$betahat   <- c(cate_cate$beta)
+method_list$CATErr$sebetahat <- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             <- list()
+method_list$SVA$betahat     <- c(svaout$betahat)
+method_list$SVA$sebetahat   <- c(svaout$sebetahat)
+
+ashfit <- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 <- sapply(ashfit, FUN = ashr::get_pi0)
+api0 <- c(api0, MOUTHWASH = mout$pi0)
+#api0 <- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = "Estimate of Pi0")
+```
+
+
+
+Stronger signal: rexp(,rate = 0.2)
+
+```{r}
+set.seed(12345)
+thinout = thin_2group(round(CDT),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.2))
+
+
+
+Y = t(thinout$mat)
+
+remove.idx = which(colSums(Y)==0)
+
+Y = Y[,-remove.idx]
+
+X = model.matrix(~thinout$designmat)
+
+
+
+mean(abs(thinout$coef) < 10^-6)
+
+mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+save(mout,file = 'data/mout_high.RData')
+mout$pi0
+
+#bout <- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+#save(bout,file = 'data/bout_high.RData')
+#bout$pi0
+
+
+cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = "rr")
+save(cate_cate,file = 'data/cate_cate_high.RData')
+sva_sva     <- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+save(sva_sva,file = 'data/sva_sva_high.RData')
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef[-remove.idx]) < 10^-6))
+
+roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  #pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec <- c("MOUTHWASH", "CATErr", "SVA")
+names(roc_out) <- name_vec
+
+sout <- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method <- name_vec[index]
+}
+longdat <- do.call(rbind, sout)
+
+shortdat <- dplyr::filter(longdat, Method == "MOUTHWASH" | 
+                            Method == "CATErr" | Method == "SVA" | Method == "LEAPP")
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle("ROC Curves")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+method_list <- list()
+method_list$CATErr           <- list()
+method_list$CATErr$betahat   <- c(cate_cate$beta)
+method_list$CATErr$sebetahat <- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             <- list()
+method_list$SVA$betahat     <- c(svaout$betahat)
+method_list$SVA$sebetahat   <- c(svaout$sebetahat)
+
+ashfit <- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 <- sapply(ashfit, FUN = ashr::get_pi0)
+api0 <- c(api0, MOUTHWASH = mout$pi0)
+#api0 <- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = "Estimate of Pi0")
+```

@@ -41,7 +41,7 @@ rm *.8;
 done
 ```
 
-An easier one:
+An easier one(could try later):
 
 ```{linux}
 cat your_accession_list.txt | while read i
@@ -50,7 +50,7 @@ fasterq-dump ${i} <options>
 done
 ```
 
-
+try for loop...too slow
 ```{linux}
 for i in {SRR1069690,SRR1069802,SRR1071692,SRR1072650,SRR1075631,SRR1075997,SRR1076779,SRR1077115,SRR1077528,SRR1077643};
 
@@ -62,11 +62,11 @@ done
 
 ```
 
+
+try the parallel version
 ```{linux}
 find *.sra | parallel 'sam-dump {} | samtools view -Sb > /project2/mstephens/dongyue/gtex/{/.}.bam'
 ```
 
 
-
-sam-dump SRR1077115.sra | samtools view -Sb > /project2/mstephens/dongyue/gtex/SRR1077115.bam ;
 

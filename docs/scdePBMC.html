@@ -406,7 +406,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-01-16
+<strong>Last updated:</strong> 2020-02-12
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,10 +497,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree3b6f80dfe933678589aaa9e6bc061fda623ca358targetblank3b6f80da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/3b6f80dfe933678589aaa9e6bc061fda623ca358" target="_blank">3b6f80d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree02f00227f32298d2111c5e0d24cc64476fe3e3e3targetblank02f0022a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/02f00227f32298d2111c5e0d24cc64476fe3e3e3" target="_blank">02f0022</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree3b6f80dfe933678589aaa9e6bc061fda623ca358targetblank3b6f80da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree02f00227f32298d2111c5e0d24cc64476fe3e3e3targetblank02f0022a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -510,14 +510,28 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
 
 Untracked files:
-    Untracked:  analysis/pbmcdata.Rmd
     Untracked:  data/ROTS_results.RData
+    Untracked:  data/ROTS_results2.RData
+    Untracked:  data/cate_cate_high.RData
+    Untracked:  data/cate_cate_low.RData
+    Untracked:  data/cate_cate_mid.RData
+    Untracked:  data/cate_cate_null.RData
+    Untracked:  data/mout_high.RData
+    Untracked:  data/mout_low.RData
+    Untracked:  data/mout_mid.RData
+    Untracked:  data/mout_null.RData
     Untracked:  data/pbmc.rds
     Untracked:  data/pbmc_counts.rds
+    Untracked:  data/sva_sva_high.RData
+    Untracked:  data/sva_sva_low.RData
+    Untracked:  data/sva_sva_mid.RData
+    Untracked:  data/sva_sva_null.RData
 
 Unstaged changes:
+    Modified:   analysis/deconvolution.Rmd
     Modified:   analysis/index.Rmd
 
 </code></pre>
@@ -562,6 +576,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/02f00227f32298d2111c5e0d24cc64476fe3e3e3/analysis/scdePBMC.Rmd" target="_blank">02f0022</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-02-12
+</td>
+<td>
+wflow_publish(“analysis/scdePBMC.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/14a014438c7f11003bb2ed929ed9f78b7c701a19/docs/scdePBMC.html" target="_blank">14a0144</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/3b6f80dfe933678589aaa9e6bc061fda623ca358/analysis/scdePBMC.Rmd" target="_blank">3b6f80d</a>
 </td>
 <td>
@@ -583,76 +631,11 @@ wflow_publish(“analysis/scdePBMC.Rmd”)
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>In my previous <a href="scde.html">analysis</a>, I tried RUV methods on single-cell RNA-Seq data. I only used top 1000 expressed genes from the dataset. So only a few of gene expressions are 0. This is not what typically scRNA data are. Also, I tried only in total 50 cells.</p>
+<p>In my previous <a href="scde.html">analysis</a>, I tried RUV methods on single-cell RNA-Seq data. I only tried top 1000 expressed genes from the dataset. So only a few of gene expressions are 0. This is not what typically scRNA-Seq data are. Also, I tried only 50 cells.</p>
 <p>This time, I’m going to try PBMC data prepared by <a href="https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html">Satjia Lab</a>.</p>
-<pre class="r"><code>library(MAST)</code></pre>
-<pre><code>Loading required package: SingleCellExperiment</code></pre>
-<pre><code>Loading required package: SummarizedExperiment</code></pre>
-<pre><code>Loading required package: GenomicRanges</code></pre>
-<pre><code>Loading required package: stats4</code></pre>
-<pre><code>Loading required package: BiocGenerics</code></pre>
-<pre><code>Loading required package: parallel</code></pre>
-<pre><code>
-Attaching package: &#39;BiocGenerics&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:parallel&#39;:
-
-    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    clusterExport, clusterMap, parApply, parCapply, parLapply,
-    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
-<pre><code>The following objects are masked from &#39;package:stats&#39;:
-
-    IQR, mad, sd, var, xtabs</code></pre>
-<pre><code>The following objects are masked from &#39;package:base&#39;:
-
-    anyDuplicated, append, as.data.frame, basename, cbind,
-    colnames, dirname, do.call, duplicated, eval, evalq, Filter,
-    Find, get, grep, grepl, intersect, is.unsorted, lapply, Map,
-    mapply, match, mget, order, paste, pmax, pmax.int, pmin,
-    pmin.int, Position, rank, rbind, Reduce, rownames, sapply,
-    setdiff, sort, table, tapply, union, unique, unsplit, which,
-    which.max, which.min</code></pre>
-<pre><code>Loading required package: S4Vectors</code></pre>
-<pre><code>
-Attaching package: &#39;S4Vectors&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:base&#39;:
-
-    expand.grid</code></pre>
-<pre><code>Loading required package: IRanges</code></pre>
-<pre><code>Loading required package: GenomeInfoDb</code></pre>
-<pre><code>Loading required package: Biobase</code></pre>
-<pre><code>Welcome to Bioconductor
-
-    Vignettes contain introductory material; view with
-    &#39;browseVignettes()&#39;. To cite Bioconductor, see
-    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
-<pre><code>Loading required package: DelayedArray</code></pre>
-<pre><code>Loading required package: matrixStats</code></pre>
-<pre><code>
-Attaching package: &#39;matrixStats&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:Biobase&#39;:
-
-    anyMissing, rowMedians</code></pre>
-<pre><code>Loading required package: BiocParallel</code></pre>
-<pre><code>
-Attaching package: &#39;DelayedArray&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:matrixStats&#39;:
-
-    colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges</code></pre>
-<pre><code>The following objects are masked from &#39;package:base&#39;:
-
-    aperm, apply, rowsum</code></pre>
-<pre><code>
-Attaching package: &#39;MAST&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:stats&#39;:
-
-    filter</code></pre>
-<pre class="r"><code>library(Seurat)</code></pre>
-<pre><code>
-Attaching package: &#39;Seurat&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:SummarizedExperiment&#39;:
-
-    Assays</code></pre>
-<pre class="r"><code>datax = readRDS(&#39;data/pbmc_counts.rds&#39;)@assays$RNA
+<pre class="r"><code>library(MAST)
+library(Seurat)
+datax = readRDS(&#39;data/pbmc_counts.rds&#39;)@assays$RNA
 datax = datax[rowSums(datax)&gt;0,]
 clusters = readRDS(&#39;data/pbmc.rds&#39;)
 
@@ -660,7 +643,7 @@ cell_cluster = clusters@colData$seurat</code></pre>
 <p>How many zeros are there? A lot</p>
 <pre class="r"><code>sum(datax==0)/(dim(datax)[1]*dim(datax)[2])</code></pre>
 <pre><code>[1] 0.9381137</code></pre>
-<p>Let’s only use the Naive CD4+ T cells, which corresponds to the first cluster.</p>
+<p>Let’s only use the Naive CD4+ T cells, which corresponds to the first cluster. Total 709 cells.</p>
 <pre class="r"><code>CDT_idx = which(cell_cluster == 1)
 CDT = datax[,CDT_idx]
 
@@ -675,27 +658,16 @@ for(i in 1:nrow(CDT)){
   p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative=&#39;two.sided&#39;)$p.value
 }
 hist(p_values1,breaks = 15)</code></pre>
-<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>summary(p_values1)</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
  0.0001  0.2539  0.4368  0.4842  0.7154  0.9997    1225 </code></pre>
-<p>There are 1225 genes that have no expression in any Naive CD4+ T cells. Remove these genes. Now we have not filtered out any genes.</p>
+<p>There are 1225 genes that have no expression in any Naive CD4+ T cells. Remove these genes.</p>
 <pre class="r"><code>CDT = CDT[-which((rowSums(CDT)==0)),]</code></pre>
 <p>Again, t-test does not apply here since for a lot of genes, only one cell has non-zero read counts among two groups.</p>
 <p>How about apply TMM then t-test?</p>
-<pre class="r"><code>library(edgeR)</code></pre>
-<pre><code>Loading required package: limma</code></pre>
-<pre><code>
-Attaching package: &#39;limma&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:BiocGenerics&#39;:
-
-    plotMA</code></pre>
-<pre><code>
-Attaching package: &#39;edgeR&#39;</code></pre>
-<pre><code>The following object is masked from &#39;package:SingleCellExperiment&#39;:
-
-    cpm</code></pre>
-<pre class="r"><code>tmm = calcNormFactors(CDT,method=&#39;TMM&#39;)
+<pre class="r"><code>library(edgeR)
+tmm = calcNormFactors(CDT,method=&#39;TMM&#39;)
 CDTnorm = cpm(CDT,tmm)
 group1 = CDTnorm[,group1_idx]
 group2 = CDTnorm[,-group1_idx]
@@ -706,7 +678,44 @@ for(i in 1:nrow(CDT)){
   p_values1[i] = t.test(log(group1[i,]+1),log(group2[i,]+1),alternative=&#39;two.sided&#39;)$p.value
 }
 hist(p_values1,breaks = 15)</code></pre>
-<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/14a014438c7f11003bb2ed929ed9f78b7c701a19/docs/figure/scdePBMC.Rmd/unnamed-chunk-6-1.png" target="_blank">14a0144</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>summary(p_values1)</code></pre>
 <pre><code>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
 0.0001423 0.2534142 0.4427949 0.4865154 0.7256823 0.9999975 </code></pre>
@@ -731,36 +740,566 @@ Z-score:                5.651558
 0 rows satisfy the condition.
      Row ROTS-statistic pvalue FDR</code></pre>
 <pre class="r"><code>hist(ROTS_results$pvalue,breaks = 15)</code></pre>
-<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/14a014438c7f11003bb2ed929ed9f78b7c701a19/docs/figure/scdePBMC.Rmd/unnamed-chunk-7-1.png" target="_blank">14a0144</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2020-01-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s reduce the number of cells in each group. Reudce from 355 to 50.</p>
 <pre class="r"><code>n_cell = 100
-set.seed(12345)
+set.seed(1234)
 CDT_subset = CDT[,sample(1:ncol(CDT),n_cell)]
 tmm = calcNormFactors(CDT_subset,method=&#39;TMM&#39;)
 CDTnorm_subset = cpm(CDT_subset,tmm)
 group = rep(0,ncol(CDTnorm_subset))
 group1_idx = sample(1:n_cell,n_cell/2)
 group[group1_idx] = 1
-ROTS_results2 = ROTS(data = CDTnorm_subset, groups = group , B = 100 , K = 500 , seed = 1234)</code></pre>
-<pre><code>Bootstrapping samples</code></pre>
-<pre><code>Optimizing parameters</code></pre>
-<pre><code>Calculating p-values</code></pre>
-<pre><code>Calculating FDR</code></pre>
-<pre class="r"><code>summary(ROTS_results2, fdr = 0.05)</code></pre>
+#ROTS_results2 = ROTS(data = CDTnorm_subset, groups = group , B = 100 , K = 500 , seed = 1234)
+load(&#39;data/ROTS_results2.RData&#39;)
+summary(ROTS_results2, fdr = 0.05)</code></pre>
 <pre><code>ROTS results: 
 
 Number of resamplings:  100 
 
-a1:                     3 
+a1:                     4.8 
 a2:                     1 
-Top list size:          190 
-Reproducibility value:  0.1723158 
-Z-score:                2.933863 
+Top list size:          350 
+Reproducibility value:  0.2001143 
+Z-score:                2.900302 
 
-0 rows satisfy the condition.
-     Row ROTS-statistic pvalue FDR</code></pre>
+1 rows satisfy the condition.
+        Row ROTS-statistic       pvalue FDR
+MRPL18 4436      -3.618599 4.043882e-05   0</code></pre>
 <pre class="r"><code>hist(ROTS_results2$pvalue,breaks = 15)</code></pre>
-<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>One false discovery. Lots of p-values concentrate at 1.</p>
+</div>
+<div id="ruv-methods" class="section level2">
+<h2>RUV methods</h2>
+<p>First apply on NULL data then add signals to genes using Poisson thinning.</p>
+<p>Randomly split 709 cells to two groups.</p>
+<pre class="r"><code>library(vicar)
+
+set.seed(12345)
+group1_idx = sample(1:ncol(CDT),ncol(CDT)/2)
+group1 = CDT[,group1_idx]
+group2 = CDT[,-group1_idx]
+
+group_indicator = rep(0,ncol(CDT))
+group_indicator[group1_idx] = 1
+
+X = model.matrix(~group_indicator)
+CDT = as.matrix(CDT)
+
+Y = t(CDT)
+
+#num_sv     &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;be&quot;)
+#num_sv_l   &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;leek&quot;)
+
+num_sv = 3
+#num_sv_l</code></pre>
+<p>The number of estimated surrogate variables is 3.</p>
+<pre class="r"><code>#mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+#save(mout,file = &#39;data/mout_null.RData&#39;)
+load(&#39;data/mout_null.RData&#39;)
+mout$pi0</code></pre>
+<pre><code>[1] 0.9999172</code></pre>
+<pre class="r"><code>library(cate)
+#library(leapp)
+
+#cate_cate   &lt;- cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+#                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+#save(cate_cate,file = &#39;data/cate_cate_null.RData&#39;)
+load(&#39;data/cate_cate_null.RData&#39;)
+# this method is vey slow!
+#leapp_leapp &lt;- leapp::leapp(data = t(Y), pred.prim = X[, 2, drop = FALSE], 
+#                            pred.covar = X[, -2, drop = FALSE], num.fac = num_sv)
+
+#sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+#save(sva_sva,file = &#39;data/sva_sva_null.RData&#39;)
+load(&#39;data/sva_sva_null.RData&#39;)
+X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+hist(svaout$pvalues,breaks=15)</code></pre>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(svaout$pvalues,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  svaout$pvalues
+D = 0.075746, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(cate_cate$beta.p.value,breaks = 15)</code></pre>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(cate_cate$beta.p.value,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  cate_cate$beta.p.value
+D = 0.094454, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<p>Add some signal to the NULL dataset.</p>
+<pre class="r"><code>library(seqgendiff)
+#tt = thin_diff(round(cell16), design_fixed = X[,2,drop=FALSE])
+set.seed(12345)
+thinout = thin_2group(round(CDT),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.5))
+
+#check null groups
+
+group1 = CDT[,which(thinout$designmat==1)]
+group2 = CDT[,which(thinout$designmat==0)]
+## for each gene, run a two-sample t test
+
+p_values1 = c()
+for(i in 1:nrow(CDT)){
+  p_values1[i] = t.test(group1[i,],group2[i,],alternative=&#39;two.sided&#39;)$p.value
+}
+ks.test(p_values1,&#39;punif&#39;,0,1)</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  p_values1
+D = 0.10457, p-value &lt; 2.2e-16
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>hist(p_values1,breaks = 15)</code></pre>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Y = t(thinout$mat)
+
+remove.idx = which(colSums(Y)==0)
+
+Y = Y[,-remove.idx]
+
+X = model.matrix(~thinout$designmat)
+
+#num_sv     &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;be&quot;)
+#num_sv_l   &lt;- sva::num.sv(dat = t(Y), mod = X, method = &quot;leek&quot;)
+
+num_sv = 3
+#num_sv_l
+
+mean(abs(thinout$coef) &lt; 10^-6)</code></pre>
+<pre><code>[1] 0.899984</code></pre>
+<pre class="r"><code>#mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)
+#save(mout,file = &#39;data/mout_mid.RData&#39;)
+#mout$pi0
+
+load(&#39;data/mout_mid.RData&#39;)
+
+#bout &lt;- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+#save(bout,file = &#39;data/bout_mid.RData&#39;)
+#bout$pi0
+
+
+#cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+#                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+#save(cate_cate,file = &#39;data/cate_cate_mid.RData&#39;)
+load(&#39;data/cate_cate_mid.RData&#39;)
+#sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+#save(sva_sva,file = &#39;data/sva_sva_mid.RData&#39;)
+load(&#39;data/sva_sva_mid.RData&#39;)
+X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef[-remove.idx]) &lt; 10^-6))
+
+
+
+# plot ROC curve
+roc_out &lt;- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  #pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec &lt;- c(&quot;MOUTHWASH&quot;, &quot;CATErr&quot;, &quot;SVA&quot;)
+names(roc_out) &lt;- name_vec
+
+sout &lt;- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method &lt;- name_vec[index]
+}
+longdat &lt;- do.call(rbind, sout)
+
+shortdat &lt;- dplyr::filter(longdat, Method == &quot;MOUTHWASH&quot; |
+                            Method == &quot;CATErr&quot; | Method == &quot;SVA&quot; | Method == &quot;LEAPP&quot;)
+library(ggplot2)
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle(&quot;ROC Curves&quot;)</code></pre>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="center">0.739</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="center">0.710</td>
+</tr>
+<tr class="odd">
+<td>MOUTHWASH</td>
+<td align="center">0.622</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># estimate pi0
+method_list &lt;- list()
+method_list$CATErr           &lt;- list()
+method_list$CATErr$betahat   &lt;- c(cate_cate$beta)
+method_list$CATErr$sebetahat &lt;- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             &lt;- list()
+method_list$SVA$betahat     &lt;- c(svaout$betahat)
+method_list$SVA$sebetahat   &lt;- c(svaout$sebetahat)
+
+ashfit &lt;- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 &lt;- sapply(ashfit, FUN = ashr::get_pi0)
+api0 &lt;- c(api0, MOUTHWASH = mout$pi0)
+#api0 &lt;- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = &quot;Estimate of Pi0&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">E</th>
+<th align="left">stimate of Pi0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">MOUTHWASH</td>
+<td align="left">0.9842729</td>
+</tr>
+<tr class="even">
+<td align="right">CATErr</td>
+<td align="left">0.8818215</td>
+</tr>
+<tr class="odd">
+<td align="right">SVA</td>
+<td align="left">0.8546489</td>
+</tr>
+</tbody>
+</table>
+<p>Weaker signal: rexp(,rate=1)</p>
+<pre class="r"><code>set.seed(12345)
+thinout = thin_2group(round(CDT),0.9,signal_fun = stats::rexp,signal_params = list(rate=1))
+
+Y = t(thinout$mat)
+
+remove.idx = which(colSums(Y)==0)
+
+Y = Y[,-remove.idx]
+
+X = model.matrix(~thinout$designmat)
+
+
+mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)</code></pre>
+<pre><code>Running mouthwash on 709 x 2 matrix X and 709 x 12467 matrix Y.
+ - Computing independent basis using QR decomposition.
+ - Computation took 21.178 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0.002 seconds.
+ - Running second step of mouthwash:
+    + Estimating model parameters using EM.
+    + Computation took 133.457 seconds.
+    + Generating adaptive shrinkage (ash) output.
+    + Computation took 1.646 seconds.
+ - Second step took 136.034 seconds.
+ - Estimating additional hidden confounders.
+ - Computation took 2.243 seconds.</code></pre>
+<pre class="r"><code>save(mout,file = &#39;data/mout_low.RData&#39;)
+mout$pi0</code></pre>
+<pre><code>[1] 0.9936696</code></pre>
+<pre class="r"><code>#bout &lt;- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+#save(bout,file = &#39;data/bout_low.RData&#39;)
+#bout$pi0
+
+
+cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+save(cate_cate,file = &#39;data/cate_cate_low.RData&#39;)
+sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)</code></pre>
+<pre><code>Number of significant surrogate variables is:  3 
+Iteration (out of 5 ):1  2  3  4  5  </code></pre>
+<pre class="r"><code>save(sva_sva,file = &#39;data/sva_sva_low.RData&#39;)
+X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef[-remove.idx]) &lt; 10^-6))
+
+roc_out &lt;- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  #pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec &lt;- c(&quot;MOUTHWASH&quot;, &quot;CATErr&quot;, &quot;SVA&quot;)
+names(roc_out) &lt;- name_vec
+
+sout &lt;- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method &lt;- name_vec[index]
+}
+longdat &lt;- do.call(rbind, sout)
+
+shortdat &lt;- dplyr::filter(longdat, Method == &quot;MOUTHWASH&quot; | 
+                            Method == &quot;CATErr&quot; | Method == &quot;SVA&quot; | Method == &quot;LEAPP&quot;)
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle(&quot;ROC Curves&quot;)</code></pre>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="center">0.659</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="center">0.643</td>
+</tr>
+<tr class="odd">
+<td>MOUTHWASH</td>
+<td align="center">0.571</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>method_list &lt;- list()
+method_list$CATErr           &lt;- list()
+method_list$CATErr$betahat   &lt;- c(cate_cate$beta)
+method_list$CATErr$sebetahat &lt;- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             &lt;- list()
+method_list$SVA$betahat     &lt;- c(svaout$betahat)
+method_list$SVA$sebetahat   &lt;- c(svaout$sebetahat)
+
+ashfit &lt;- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 &lt;- sapply(ashfit, FUN = ashr::get_pi0)
+api0 &lt;- c(api0, MOUTHWASH = mout$pi0)
+#api0 &lt;- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = &quot;Estimate of Pi0&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">E</th>
+<th align="left">stimate of Pi0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">MOUTHWASH</td>
+<td align="left">0.9936696</td>
+</tr>
+<tr class="even">
+<td align="right">SVA</td>
+<td align="left">0.9915021</td>
+</tr>
+<tr class="odd">
+<td align="right">CATErr</td>
+<td align="left">0.9112687</td>
+</tr>
+</tbody>
+</table>
+<p>Stronger signal: rexp(,rate = 0.2)</p>
+<pre class="r"><code>set.seed(12345)
+thinout = thin_2group(round(CDT),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.2))
+
+
+
+Y = t(thinout$mat)
+
+remove.idx = which(colSums(Y)==0)
+
+Y = Y[,-remove.idx]
+
+X = model.matrix(~thinout$designmat)
+
+
+
+mean(abs(thinout$coef) &lt; 10^-6)</code></pre>
+<pre><code>[1] 0.899984</code></pre>
+<pre class="r"><code>mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE)</code></pre>
+<pre><code>Running mouthwash on 709 x 2 matrix X and 709 x 12431 matrix Y.
+ - Computing independent basis using QR decomposition.
+ - Computation took 22.058 seconds.
+ - Running additional preprocessing steps.
+ - Computation took 0 seconds.
+ - Running second step of mouthwash:
+    + Estimating model parameters using EM.
+    + Computation took 177.22 seconds.
+    + Generating adaptive shrinkage (ash) output.
+    + Computation took 1.593 seconds.
+ - Second step took 179.728 seconds.
+ - Estimating additional hidden confounders.
+ - Computation took 2.246 seconds.</code></pre>
+<pre class="r"><code>save(mout,file = &#39;data/mout_high.RData&#39;)
+mout$pi0</code></pre>
+<pre><code>[1] 0.969738</code></pre>
+<pre class="r"><code>#bout &lt;- backwash(Y = Y, X = X, k = num_sv, cov_of_interest = 2, include_intercept = FALSE)
+#save(bout,file = &#39;data/bout_high.RData&#39;)
+#bout$pi0
+
+
+cate_cate = cate::cate.fit(X.primary = X[, 2, drop = FALSE], X.nuis = X[, -2, drop = FALSE],
+                              Y = Y, r = num_sv, adj.method = &quot;rr&quot;)
+save(cate_cate,file = &#39;data/cate_cate_high.RData&#39;)
+sva_sva     &lt;- sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)</code></pre>
+<pre><code>Number of significant surrogate variables is:  3 
+Iteration (out of 5 ):1  2  3  4  5  </code></pre>
+<pre class="r"><code>save(sva_sva,file = &#39;data/sva_sva_high.RData&#39;)
+X.sva &lt;- cbind(X, sva_sva$sv)
+lmout &lt;- limma::lmFit(object = t(Y), design = X.sva)
+eout  &lt;- limma::eBayes(lmout)
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+which_null = c(1*(abs(thinout$coef[-remove.idx]) &lt; 10^-6))
+
+roc_out &lt;- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfdr)),
+  #pROC::roc(response = which_null, predictor = c(bout$result$lfdr)),
+  pROC::roc(response = which_null, predictor = c(cate_cate$beta.p.value)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)))
+name_vec &lt;- c(&quot;MOUTHWASH&quot;, &quot;CATErr&quot;, &quot;SVA&quot;)
+names(roc_out) &lt;- name_vec
+
+sout &lt;- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method &lt;- name_vec[index]
+}
+longdat &lt;- do.call(rbind, sout)
+
+shortdat &lt;- dplyr::filter(longdat, Method == &quot;MOUTHWASH&quot; | 
+                            Method == &quot;CATErr&quot; | Method == &quot;SVA&quot; | Method == &quot;LEAPP&quot;)
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle(&quot;ROC Curves&quot;)</code></pre>
+<p><img src="figure/scdePBMC.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SVA</td>
+<td align="center">0.825</td>
+</tr>
+<tr class="even">
+<td>CATErr</td>
+<td align="center">0.790</td>
+</tr>
+<tr class="odd">
+<td>MOUTHWASH</td>
+<td align="center">0.680</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>method_list &lt;- list()
+method_list$CATErr           &lt;- list()
+method_list$CATErr$betahat   &lt;- c(cate_cate$beta)
+method_list$CATErr$sebetahat &lt;- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+
+method_list$SVA             &lt;- list()
+method_list$SVA$betahat     &lt;- c(svaout$betahat)
+method_list$SVA$sebetahat   &lt;- c(svaout$sebetahat)
+
+ashfit &lt;- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+api0 &lt;- sapply(ashfit, FUN = ashr::get_pi0)
+api0 &lt;- c(api0, MOUTHWASH = mout$pi0)
+#api0 &lt;- c(api0, BACKWASH = bout$pi0)
+
+knitr::kable(sort(api0, decreasing = TRUE), col.names = &quot;Estimate of Pi0&quot;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">E</th>
+<th align="left">stimate of Pi0</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">MOUTHWASH</td>
+<td align="left">0.9697380</td>
+</tr>
+<tr class="even">
+<td align="right">CATErr</td>
+<td align="left">0.8662544</td>
+</tr>
+<tr class="odd">
+<td align="right">SVA</td>
+<td align="left">0.5494651</td>
+</tr>
+</tbody>
+</table>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -785,59 +1324,70 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] ROTS_1.12.0                 edgeR_3.26.8               
- [3] limma_3.40.6                Seurat_3.1.2               
- [5] MAST_1.10.0                 SingleCellExperiment_1.6.0 
- [7] SummarizedExperiment_1.14.1 DelayedArray_0.10.0        
- [9] BiocParallel_1.18.1         matrixStats_0.55.0         
-[11] Biobase_2.44.0              GenomicRanges_1.36.1       
-[13] GenomeInfoDb_1.20.0         IRanges_2.18.3             
-[15] S4Vectors_0.22.1            BiocGenerics_0.30.0        
+ [1] ggplot2_3.2.1               seqgendiff_1.1.1           
+ [3] cate_1.1                    vicar_0.1-10               
+ [5] ROTS_1.12.0                 edgeR_3.26.8               
+ [7] limma_3.40.6                Seurat_3.1.2               
+ [9] MAST_1.10.0                 SingleCellExperiment_1.6.0 
+[11] SummarizedExperiment_1.14.1 DelayedArray_0.10.0        
+[13] BiocParallel_1.18.1         matrixStats_0.55.0         
+[15] Biobase_2.44.0              GenomicRanges_1.36.1       
+[17] GenomeInfoDb_1.20.0         IRanges_2.18.3             
+[19] S4Vectors_0.22.1            BiocGenerics_0.30.0        
 
 loaded via a namespace (and not attached):
-  [1] backports_1.1.5        blme_1.0-4             workflowr_1.5.0       
-  [4] sn_1.5-4               plyr_1.8.4             igraph_1.2.4.1        
-  [7] lazyeval_0.2.2         splines_3.6.1          listenv_0.8.0         
- [10] ggplot2_3.2.1          TH.data_1.0-10         digest_0.6.21         
- [13] htmltools_0.4.0        gdata_2.18.0           magrittr_1.5          
- [16] cluster_2.1.0          ROCR_1.0-7             globals_0.12.5        
- [19] RcppParallel_4.4.4     R.utils_2.9.0          sandwich_2.5-1        
- [22] colorspace_1.4-1       ggrepel_0.8.1          xfun_0.10             
- [25] dplyr_0.8.3            crayon_1.3.4           RCurl_1.95-4.12       
- [28] jsonlite_1.6           lme4_1.1-21            zeallot_0.1.0         
- [31] survival_2.44-1.1      zoo_1.8-6              ape_5.3               
- [34] glue_1.3.1             gtable_0.3.0           zlibbioc_1.30.0       
- [37] XVector_0.24.0         leiden_0.3.1           future.apply_1.4.0    
- [40] abind_1.4-5            scales_1.0.0           mvtnorm_1.0-11        
- [43] bibtex_0.4.2           Rcpp_1.0.2             metap_1.2             
- [46] plotrix_3.7-7          viridisLite_0.3.0      reticulate_1.13       
- [49] rsvd_1.0.2             SDMTools_1.1-221.2     tsne_0.1-3            
- [52] htmlwidgets_1.5.1      httr_1.4.1             gplots_3.0.1.1        
- [55] RColorBrewer_1.1-2     TFisher_0.2.0          ica_1.0-2             
- [58] pkgconfig_2.0.3        R.methodsS3_1.7.1      uwot_0.1.5            
- [61] locfit_1.5-9.1         tidyselect_0.2.5       rlang_0.4.0           
- [64] reshape2_1.4.3         later_1.0.0            munsell_0.5.0         
- [67] tools_3.6.1            ggridges_0.5.2         evaluate_0.14         
- [70] stringr_1.4.0          yaml_2.2.0             npsurv_0.4-0          
- [73] knitr_1.25             fs_1.3.1               fitdistrplus_1.0-14   
- [76] caTools_1.17.1.2       purrr_0.3.2            RANN_2.6.1            
- [79] pbapply_1.4-2          future_1.15.1          nlme_3.1-141          
- [82] whisker_0.4            R.oo_1.23.0            compiler_3.6.1        
- [85] plotly_4.9.1           png_0.1-7              lsei_1.2-0            
- [88] tibble_2.1.3           stringi_1.4.3          lattice_0.20-38       
- [91] Matrix_1.2-17          nloptr_1.2.1           multtest_2.40.0       
- [94] vctrs_0.2.0            mutoss_0.1-12          pillar_1.4.2          
- [97] lifecycle_0.1.0        Rdpack_0.11-0          lmtest_0.9-37         
-[100] RcppAnnoy_0.0.13       data.table_1.12.6      cowplot_1.0.0         
-[103] bitops_1.0-6           irlba_2.3.3            gbRd_0.4-11           
-[106] httpuv_1.5.2           R6_2.4.0               promises_1.1.0        
-[109] KernSmooth_2.23-15     gridExtra_2.3          codetools_0.2-16      
-[112] boot_1.3-23            MASS_7.3-51.4          gtools_3.8.1          
-[115] assertthat_0.2.1       rprojroot_1.3-2        sctransform_0.2.1     
-[118] mnormt_1.5-5           multcomp_1.4-12        GenomeInfoDbData_1.2.1
-[121] grid_3.6.1             tidyr_1.0.0            minqa_1.2.4           
-[124] rmarkdown_1.16         Rtsne_0.15             git2r_0.26.1          
-[127] numDeriv_2016.8-1.1   </code></pre>
+  [1] reticulate_1.13        R.utils_2.9.0          tidyselect_0.2.5      
+  [4] lme4_1.1-21            RSQLite_2.1.2          AnnotationDbi_1.46.1  
+  [7] htmlwidgets_1.5.1      grid_3.6.1             Rtsne_0.15            
+ [10] pROC_1.15.3            munsell_0.5.0          codetools_0.2-16      
+ [13] mutoss_0.1-12          ica_1.0-2              future_1.15.1         
+ [16] withr_2.1.2            colorspace_1.4-1       leapp_1.2             
+ [19] highr_0.8              knitr_1.25             pscl_1.5.2            
+ [22] ROCR_1.0-7             gbRd_0.4-11            listenv_0.8.0         
+ [25] labeling_0.3           Rdpack_0.11-0          git2r_0.26.1          
+ [28] GenomeInfoDbData_1.2.1 mixsqp_0.1-97          mnormt_1.5-5          
+ [31] bit64_0.9-7            rprojroot_1.3-2        vctrs_0.2.0           
+ [34] TH.data_1.0-10         xfun_0.10              R6_2.4.0              
+ [37] doParallel_1.0.15      rsvd_1.0.2             locfit_1.5-9.1        
+ [40] bitops_1.0-6           assertthat_0.2.1       promises_1.1.0        
+ [43] SDMTools_1.1-221.2     scales_1.0.0           multcomp_1.4-12       
+ [46] gtable_0.3.0           npsurv_0.4-0           globals_0.12.5        
+ [49] sva_3.32.1             sandwich_2.5-1         svd_0.5               
+ [52] workflowr_1.5.0        rlang_0.4.0            zeallot_0.1.0         
+ [55] genefilter_1.66.0      splines_3.6.1          lazyeval_0.2.2        
+ [58] yaml_2.2.0             reshape2_1.4.3         abind_1.4-5           
+ [61] backports_1.1.5        httpuv_1.5.2           tools_3.6.1           
+ [64] gplots_3.0.1.1         RColorBrewer_1.1-2     ggridges_0.5.2        
+ [67] TFisher_0.2.0          Rcpp_1.0.2             plyr_1.8.4            
+ [70] zlibbioc_1.30.0        purrr_0.3.2            RCurl_1.95-4.12       
+ [73] pbapply_1.4-2          ashr_2.2-38            cowplot_1.0.0         
+ [76] zoo_1.8-6              ggrepel_0.8.1          cluster_2.1.0         
+ [79] fs_1.3.1               magrittr_1.5           data.table_1.12.6     
+ [82] lmtest_0.9-37          RANN_2.6.1             truncnorm_1.0-8       
+ [85] mvtnorm_1.0-11         SQUAREM_2017.10-1      whisker_0.4           
+ [88] fitdistrplus_1.0-14    lsei_1.2-0             evaluate_0.14         
+ [91] xtable_1.8-4           XML_3.98-1.20          gridExtra_2.3         
+ [94] compiler_3.6.1         tibble_2.1.3           KernSmooth_2.23-15    
+ [97] crayon_1.3.4           minqa_1.2.4            R.oo_1.23.0           
+[100] htmltools_0.4.0        mgcv_1.8-29            corpcor_1.6.9         
+[103] later_1.0.0            tidyr_1.0.0            RcppParallel_4.4.4    
+[106] DBI_1.0.0              MASS_7.3-51.4          boot_1.3-23           
+[109] Matrix_1.2-17          R.methodsS3_1.7.1      gdata_2.18.0          
+[112] metap_1.2              igraph_1.2.4.1         pkgconfig_2.0.3       
+[115] sn_1.5-4               numDeriv_2016.8-1.1    plotly_4.9.1          
+[118] foreach_1.4.7          annotate_1.62.0        blme_1.0-4            
+[121] multtest_2.40.0        XVector_0.24.0         ruv_0.9.7.1           
+[124] bibtex_0.4.2           stringr_1.4.0          digest_0.6.21         
+[127] sctransform_0.2.1      RcppAnnoy_0.0.13       tsne_0.1-3            
+[130] rmarkdown_1.16         leiden_0.3.1           uwot_0.1.5            
+[133] gtools_3.8.1           nloptr_1.2.1           lifecycle_0.1.0       
+[136] nlme_3.1-141           jsonlite_1.6           viridisLite_0.3.0     
+[139] pillar_1.4.2           lattice_0.20-38        httr_1.4.1            
+[142] plotrix_3.7-7          survival_2.44-1.1      glue_1.3.1            
+[145] esaBcv_1.2.1           png_0.1-7              iterators_1.0.12      
+[148] bit_1.1-14             stringi_1.4.3          blob_1.2.0            
+[151] memoise_1.1.0          caTools_1.17.1.2       dplyr_0.8.3           
+[154] irlba_2.3.3            future.apply_1.4.0     ape_5.3               </code></pre>
 </div>
 </div>
 
