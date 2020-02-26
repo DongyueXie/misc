@@ -452,10 +452,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed672b69877e579c17308989b3a58ccffd8c17f48targetblankd672b69a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/d672b69877e579c17308989b3a58ccffd8c17f48" target="_blank">d672b69</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2e7d137975e782ab122fa6d91fd2758ad74ab6cftargetblank2e7d137a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/2e7d137975e782ab122fa6d91fd2758ad74ab6cf" target="_blank">2e7d137</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed672b69877e579c17308989b3a58ccffd8c17f48targetblankd672b69a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2e7d137975e782ab122fa6d91fd2758ad74ab6cftargetblank2e7d137a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -481,9 +481,6 @@ Untracked files:
     Untracked:  data/cytokine/
     Untracked:  data/cytokine_normalized.RData
     Untracked:  data/liver_result.RData
-
-Unstaged changes:
-    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -522,6 +519,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/2e7d137975e782ab122fa6d91fd2758ad74ab6cf/analysis/sccytokines.Rmd" target="_blank">2e7d137</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-26
+</td>
+<td>
+wflow_publish(“analysis/sccytokines.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/4a440d690e7848f2c021f59c3c4bf590ac4124bb/docs/sccytokines.html" target="_blank">4a440d6</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -583,24 +614,7 @@ wflow_publish(“analysis/sccytokines.Rmd”)
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>See if sva works when comparing two control groups in single cell cytokine study.</p>
-<p>Take a look at the annotation file:</p>
-<pre class="r"><code>data_ann = read.csv(&#39;/project2/mstephens/chevrier-stephens/data/whole_cyto_annot.csv.gz&#39;)
-data_ann[1:5,]</code></pre>
-<pre><code>                  X0 sample well n_counts log_counts n_genes     mt_frac
-1 AAACCTGAGAATAGGG-1  CCL20    1     1611   7.384610     852 0.030415890
-2 AAACCTGAGAGTAAGG-1  CXCL1    1     6482   8.776784    2340 0.032860227
-3 AAACCTGAGTGGCACA-1  CCL20    1     1940   7.570443    1058 0.048453607
-4 AAACCTGCAAGCTGGA-1  CXCL1    1     2186   7.689829    1014 0.030192131
-5 AAACCTGCAAGGACAC-1  CCL20    1      849   6.744059     469 0.001177856
-  louvain louvain_sub_5 louvain_sub_9 subclustered   cell_type
-1       0             0             0            0     B_cells
-2       0             0             0            0     B_cells
-3       1             1             1            1     B_cells
-4       0             0             0            0     B_cells
-5       3             3             3            3 Neutrophils</code></pre>
-<p>sample: treatment or cytokines, including two controls.</p>
-<p>well? There are 25 wells, each of which contains two samples.</p>
-<p>cell_type: focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cells, Dendritic-cells, Ly6C+, Ly6C-,Neutrolphils.</p>
+<p>Focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cells, Dendritic-cells, Ly6C+, Ly6C-,Neutrolphils.</p>
 <pre class="r"><code>#read data matrix
 # library(hdf5r)
 # library(Matrix)
@@ -738,6 +752,14 @@ for(cell in names(output)){
   plot(output[[cell]]$pc.cor[1:20],xlab=&#39;PCs&#39;,ylab=&#39;corr&#39;,main=paste(cell),ylim = c(-0.5,0.6),pch=20)
   abline(h=0,lty=3)
 }</code></pre>
+<p><img src="figure/sccytokines.Rmd/unnamed-chunk-4-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>Plot of principle component that has maximum absolute correlation with groups for each cell. Vertical line separates two groups.</p>
+<pre class="r"><code>par(mfrow=c(3,3))
+for(cell in names(output)){
+  plot(output[[cell]]$pc.cor.max,xlab=&#39;&#39;,ylab=&#39;&#39;,
+       main=paste(cell,&#39;, PC:&#39;,which.max(abs(output[[cell]]$pc.cor)),&#39;, corr:&#39;,round(max(abs(output[[cell]]$pc.cor)),2),sep=&#39;&#39;),pch=1,col=&#39;grey50&#39;)
+  abline(v=sum(output[[cell]]$group_idx),lty=3)
+}</code></pre>
 <p><img src="figure/sccytokines.Rmd/unnamed-chunk-5-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
@@ -776,14 +798,14 @@ DongyueXie
 </table>
 </div>
 </div>
-<p>Plot of principle component that has maximum absolute correlation with groups for each cell. Vertical line seperates two groups.</p>
-<pre class="r"><code>par(mfrow=c(3,3))
-for(cell in names(output)){
-  plot(output[[cell]]$pc.cor.max,xlab=&#39;&#39;,ylab=&#39;&#39;,
-       main=paste(cell,&#39;, PC:&#39;,which.max(abs(output[[cell]]$pc.cor)),&#39;, corr:&#39;,round(max(abs(output[[cell]]$pc.cor)),2),sep=&#39;&#39;),pch=1,col=&#39;grey50&#39;)
-  abline(v=sum(output[[cell]]$group_idx),lty=3)
-}</code></pre>
-<p><img src="figure/sccytokines.Rmd/unnamed-chunk-6-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="compare-p-value-distributions-t-test-and-sva-limma" class="section level2">
+<h2>Compare p-value distributions, t-test and sva-limma</h2>
+<p>Note: We will see a lot of p-values from t-test around 0.3-0.4. In single cell DE study, some genes are only measured once in one group while have no observation in another group. For example, gene expression in group 1 <span class="math inline">\(= (0,0,...,0,0)\)</span> and gene expression in group 2 <span class="math inline">\(= (x,0,...,0,0)\)</span>. So in this case, unequal variance two-sample t-test always gives t-statistic = <span class="math inline">\(1\)</span> with <span class="math inline">\(df=n_2-1\)</span>, where <span class="math inline">\(n_2\)</span> is the number of samples in group 2. Let’s plot p-value vs df.</p>
+<p>Suppose we have at least 5 samples in group 2, then p-value starts at 0.3739(df=4) and converges to 0.3173 as df goes to infinite.</p>
+<pre class="r"><code>par(mfrow=c(1,1))
+plot(4:1e3,(1-pt(1,4:1e3))*2,xlab=&#39;df&#39;,ylab=&#39;p-value&#39;,main=&#39;t-statistics = 1&#39;,pch=20)</code></pre>
+<p><img src="figure/sccytokines.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
 Past versions of unnamed-chunk-6-1.png
@@ -821,14 +843,13 @@ DongyueXie
 </table>
 </div>
 </div>
-</div>
-<div id="compare-p-value-distributions-t-test-and-sva-limma" class="section level2">
-<h2>Compare p-value distributions, t-test and sva-limma</h2>
-<p>Note: We will see a lot of p-values from t-test around 0.3-0.4. In single cell DE study, some genes are only measured once in one group while have no observation in another group. For example, gene expression in group 1 <span class="math inline">\(= (0,0,...,0,0)\)</span> and gene expression in group 2 <span class="math inline">\(= (x,0,...,0,0)\)</span>. So in this case, unequal variance two-sample t-test always gives t-statistic = <span class="math inline">\(1\)</span> with <span class="math inline">\(df=n_2-1\)</span>, where <span class="math inline">\(n_2\)</span> is the number of samples in group 2. Let’s plot p-value vs df.</p>
-<p>Suppose we have at least 5 samples in group 2, then p-value starts at 0.3739(df=4) and converges to 0.3173 as df goes to infinite.</p>
-<pre class="r"><code>par(mfrow=c(1,1))
-plot(4:1e3,(1-pt(1,4:1e3))*2,xlab=&#39;df&#39;,ylab=&#39;p-value&#39;,main=&#39;t-statistics = 1&#39;,pch=20)</code></pre>
-<p><img src="figure/sccytokines.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now compare distributions of p-values from t-test and sva-limma:</p>
+<pre class="r"><code>par(mfrow=c(8,2))
+for(cell in names(output)){
+  hist(output[[cell]]$pvalue_t,main=paste(cell, &#39;,t test&#39;),xlab=&#39;&#39;)
+  hist(output[[cell]]$pvalue_sva_limma,main=paste(cell, &#39;,sva-limma&#39;),xlab=&#39;&#39;)
+}</code></pre>
+<p><img src="figure/sccytokines.Rmd/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
 Past versions of unnamed-chunk-7-1.png
@@ -866,50 +887,57 @@ DongyueXie
 </table>
 </div>
 </div>
-<p>Now compare distributions of p-values from t-test and sva-limma:</p>
-<pre class="r"><code>par(mfrow=c(8,2))
+<p>Number of surrogate variables: based on the default method in <code>sva</code> - a permutation procedure originally prooposed by Buja and Eyuboglu 1992</p>
+<pre class="r"><code>n.sv = c()
 for(cell in names(output)){
-  hist(output[[cell]]$pvalue_t,main=paste(cell, &#39;,t test&#39;),xlab=&#39;&#39;)
-  hist(output[[cell]]$pvalue_sva_limma,main=paste(cell, &#39;,sva-limma&#39;),xlab=&#39;&#39;)
-}</code></pre>
-<p><img src="figure/sccytokines.Rmd/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+  n.sv = rbind(n.sv,output[[cell]]$sva_sva$n.sv)
+}
+rownames(n.sv) = names(output)
+colnames(n.sv) = &#39;#sv&#39;
+knitr::kable(n.sv,caption = &#39;Number of surrogate variables&#39;)</code></pre>
+<table>
+<caption>Number of surrogate variables</caption>
 <thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
+<tr class="header">
+<th></th>
+<th align="right">#sv</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/f9a67242162acd5dda1df6d2be1164007019bc6e/docs/figure/sccytokines.Rmd/unnamed-chunk-8-1.png" target="_blank">f9a6724</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-02-26
-</td>
+<tr class="odd">
+<td>B_cells</td>
+<td align="right">25</td>
+</tr>
+<tr class="even">
+<td>CD4_T_cells</td>
+<td align="right">108</td>
+</tr>
+<tr class="odd">
+<td>CD8_T_cells</td>
+<td align="right">123</td>
+</tr>
+<tr class="even">
+<td>NK_cells</td>
+<td align="right">26</td>
+</tr>
+<tr class="odd">
+<td>Dendritic_cells</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td>Ly6C+_Monocytes</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td>Ly6C-_Monocytes</td>
+<td align="right">66</td>
+</tr>
+<tr class="even">
+<td>Neutrophils</td>
+<td align="right">66</td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
 </div>
 <div id="compare-the-number-of-significant-genes" class="section level2">
 <h2>Compare the number of significant genes</h2>
