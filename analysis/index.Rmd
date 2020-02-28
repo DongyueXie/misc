@@ -51,7 +51,7 @@ editor_options:
 
 [single cell DE](scde.html)
 
-[single cell DE PBMC](scdePBMC.html)
+[single cell DE PBMC](scdePBMC2.html)
 
 [single cell cytokine, two controls](sccytokines.html)
 
