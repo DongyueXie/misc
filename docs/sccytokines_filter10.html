@@ -452,10 +452,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9bf572227871df64fc2719ecf411c4aed5ea3a7etargetblank9bf5722a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/9bf572227871df64fc2719ecf411c4aed5ea3a7e" target="_blank">9bf5722</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6b77cc322a5e93a6b4f467c436447c09871e9378targetblank6b77cc3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/6b77cc322a5e93a6b4f467c436447c09871e9378" target="_blank">6b77cc3</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9bf572227871df64fc2719ecf411c4aed5ea3a7etargetblank9bf5722a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6b77cc322a5e93a6b4f467c436447c09871e9378targetblank6b77cc3a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -482,6 +482,9 @@ Untracked files:
     Untracked:  data/cytokine/test.RData
     Untracked:  data/cytokine_normalized.RData
     Untracked:  data/liver_result.RData
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -520,6 +523,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/6b77cc322a5e93a6b4f467c436447c09871e9378/analysis/sccytokines_filter10.Rmd" target="_blank">6b77cc3</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-28
+</td>
+<td>
+wflow_publish(“analysis/sccytokines_filter10.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/eebc92db526db71cb4c49fb05bbc731bb702d958/docs/sccytokines_filter10.html" target="_blank">eebc92d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -609,7 +646,7 @@ knitr::kable(n.sample,caption = &#39;Number of samples&#39;)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Number of genes that have at least one measurement in two control groups.</p>
+<p>Number of genes with &gt;= 10 non-zero elements in two control groups.</p>
 <pre class="r"><code>n.gene = c(14853)
 for(cell in names(output)){
   n.gene = rbind(n.gene,c(14853-length(output[[cell]]$rm.idx)))
@@ -673,6 +710,43 @@ for(cell in names(output)){
   abline(h=0,lty=3)
 }</code></pre>
 <p><img src="figure/sccytokines_filter10.Rmd/unnamed-chunk-3-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/eebc92db526db71cb4c49fb05bbc731bb702d958/docs/figure/sccytokines_filter10.Rmd/unnamed-chunk-3-1.png" target="_blank">eebc92d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Plot of principle component that has maximum absolute correlation with groups for each cell. Vertical line separates two groups.</p>
 <pre class="r"><code>par(mfrow=c(3,3))
 for(cell in names(output)){
@@ -681,21 +755,90 @@ for(cell in names(output)){
   abline(v=sum(output[[cell]]$group_idx),lty=3)
 }</code></pre>
 <p><img src="figure/sccytokines_filter10.Rmd/unnamed-chunk-4-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/eebc92db526db71cb4c49fb05bbc731bb702d958/docs/figure/sccytokines_filter10.Rmd/unnamed-chunk-4-1.png" target="_blank">eebc92d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="compare-p-value-distributions-t-test-and-sva-limma" class="section level2">
 <h2>Compare p-value distributions, t-test and sva-limma</h2>
-<p>Note: We will see a lot of p-values from t-test around 0.3-0.4. In single cell DE study, some genes are only measured once in one group while have no observation in another group. For example, gene expression in group 1 <span class="math inline">\(= (0,0,...,0,0)\)</span> and gene expression in group 2 <span class="math inline">\(= (x,0,...,0,0)\)</span>. So in this case, unequal variance two-sample t-test always gives t-statistic = <span class="math inline">\(1\)</span> with <span class="math inline">\(df=n_2-1\)</span>, where <span class="math inline">\(n_2\)</span> is the number of samples in group 2. Let’s plot p-value vs df.</p>
-<p>Suppose we have at least 5 samples in group 2, then p-value starts at 0.3739(df=4) and converges to 0.3173 as df goes to infinite.</p>
-<pre class="r"><code>par(mfrow=c(1,1))
-plot(4:1e3,(1-pt(1,4:1e3))*2,xlab=&#39;df&#39;,ylab=&#39;p-value&#39;,main=&#39;t-statistics = 1&#39;,pch=20)</code></pre>
-<p><img src="figure/sccytokines_filter10.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Now compare distributions of p-values from t-test and sva-limma:</p>
 <pre class="r"><code>par(mfrow=c(8,2))
 for(cell in names(output)){
   hist(output[[cell]]$pvalue_t,main=paste(cell, &#39;,t test&#39;),xlab=&#39;&#39;)
   hist(output[[cell]]$pvalue_sva_limma,main=paste(cell, &#39;,sva-limma&#39;),xlab=&#39;&#39;)
 }</code></pre>
-<p><img src="figure/sccytokines_filter10.Rmd/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="figure/sccytokines_filter10.Rmd/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/eebc92db526db71cb4c49fb05bbc731bb702d958/docs/figure/sccytokines_filter10.Rmd/unnamed-chunk-5-1.png" target="_blank">eebc92d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Number of surrogate variables: based on the default method in <code>sva</code> - a permutation procedure originally prooposed by Buja and Eyuboglu 1992</p>
 <pre class="r"><code>n.sv = c()
 for(cell in names(output)){
