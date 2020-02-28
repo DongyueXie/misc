@@ -1,0 +1,276 @@
+---
+title: "Single cell cytokines data"
+author: "DongyueXie"
+date: "2020-02-17"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE,warning = FALSE)
+```
+
+## Introduction
+
+See if sva works when comparing two control groups in single cell cytokine study.
+
+Focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cells, Dendritic-cells, Ly6C+, Ly6C-,Neutrolphils.
+
+```{r,eval=FALSE}
+########read normalized data matrix########
+library(hdf5r)
+library(Matrix)
+f <- H5File$new("/project2/mstephens/chevrier-stephens/data/whole_cyto_normalized.h5ad",mode = "r")
+print(names(f))
+out <- f[["X"]]
+print(h5attributes(out))
+i <- out[["indices"]][]
+j <- out[["indptr"]][]
+x <- out[["data"]][]
+library(SparseM)
+X.csr = new('matrix.csr',ra=x,ja=as.integer(i+1),ia=as.integer(j+1),dimension=h5attributes(out)$h5sparse_shape)
+```
+
+```{r,eval=FALSE}
+data_ann = read.csv('/project2/mstephens/chevrier-stephens/data/whole_cyto_annot.csv.gz')
+library(SparseM)
+
+
+#'@param p a vector of p-values
+#'@param alpha fdr level
+BH = function(p,alpha=0.05){
+  n=length(p)
+  i=rank(p)
+  idx = which(p<=(i/n*alpha))
+  if(length(idx)==0){
+    NULL
+  }else{
+    i0= max(i[idx])
+    rej.idx = which(i<=i0)
+    rej.idx
+  }
+}
+
+library(sva)
+library(Matrix)
+#perform sva for each cell type
+#'@param X.csr csr sparse matrix, cells by genes.
+#'@param X.ann annotations of cells
+#'@param cell_types a vector of cell types
+#'@param path.save path to save results
+#'@param alpha fdr level
+
+sva_cytokine = function(X.csr, cell_types, X.ann,
+                        path.save = '~/misc/data/cytokine',alpha=0.05){
+
+  output = list()
+
+  for(cell in cell_types){
+
+    print(paste('Running',cell))
+
+    C1.idx = which((X.ann$cell_type==cell)&(X.ann$sample=='Ctrl_1'))
+    C2.idx = which((X.ann$cell_type==cell)&(X.ann$sample=='Ctrl_2'))
+    # Y is a cell by gene matrix.
+    Y = as.matrix(X.csr[c(C1.idx,C2.idx),])
+    group_idx = c(rep(1,length(C1.idx)),rep(0,length(C2.idx)))
+    X = model.matrix(~group_idx)
+
+    output[[cell]]$Y = as(Y,"sparseMatrix")
+    output[[cell]]$group_idx = group_idx
+
+
+    # a number of Y columns sum up to 0. remove them.
+
+    rm.idx = which(colSums(Y)==0)
+
+    output[[cell]]$rm.idx = rm.idx
+
+    # run pca
+
+    Y.pca = prcomp(Y[,-rm.idx])
+    pc.cor = apply(Y.pca$x,2,cor,group_idx)
+    print(paste(cell,'Correlation of group and PCs:',round(pc.cor[1:20],2),sep=''))
+    print(paste('Plot of PC',which.max(abs(pc.cor)),sep = ' '))
+    plot(Y.pca$x[,which.max(abs(pc.cor))],xlab='',ylab='')
+
+    output[[cell]]$pc.cor = pc.cor
+    output[[cell]]$pc.cor.max = Y.pca$x[,which.max(abs(pc.cor))]
+
+
+    #perform two sample t-test
+    pvalue_t = apply(Y[,-rm.idx],2,
+                     function(z){
+                       t.test(z[1:length(C1.idx)],z[-(1:length(C1.idx))],
+                              alternative='two.sided')$p.value})
+    output[[cell]]$pvalue_t = pvalue_t
+    # save t results
+    #save(pvalue_t,file=paste(path.save,'/ttest_pvalue_ctrls_',cell,'.RData',sep = ''))
+    # BH adjust for fdr
+    rej.idx.ttest = BH(pvalue_t,alpha)
+    output[[cell]]$rej.idx.ttest = rej.idx.ttest
+
+    # perform sva
+    sva_sva = sva(t(Y[,-rm.idx]), mod = X, mod0 = X[, -2, drop = FALSE])
+    print(paste(cell,'#sv:',sva_sva$n.sv))
+    # save sva results
+    #save(sva_sva,file=paste(path.save,'/sva_output_ctrls_',cell,'.RData',sep = ''))
+
+    output[[cell]]$sva_sva = sva_sva
+
+
+    # perform limma including surrogate variable
+
+    X.sva = cbind(X, sva_sva$sv)
+    lmout = limma::lmFit(object = t(Y[,-rm.idx]), design = X.sva)
+    eout  = limma::eBayes(lmout)
+    pvalue_sva_limma = eout$p.value[, 2]
+    #save(pvalue_sva_limma,file=paste(path.save,'/sva_limma_pvalue_ctrls_',cell,'.RData',sep = ''))
+
+    output[[cell]]$pvalue_sva_limma = pvalue_sva_limma
+
+    rej.idx.sva = BH(pvalue_sva_limma,alpha)
+
+    output[[cell]]$rej.idx.sva = rej.idx.sva
+
+
+    #de.result = list(rej.idx.t = rej.idx.t,rej.idx.sva=rej.idx.sva,rm.idx=rm.idx)
+    save(output,file=paste(path.save,'/DE_controls_output.RData',sep=''))
+  }
+}
+
+cell_types = c('B_cells', 'CD4_T_cells', 'CD8_T_cells', 'NK_cells',
+               'Dendritic_cells','Ly6C+_Monocytes','Ly6C-_Monocytes','Neutrophils')
+
+sva_cytokine(X.csr,cell_types,data_ann)
+
+```
+
+Number of cells in each control group:
+
+```{r}
+load('data/cytokine/DE_controls_output.RData')
+n.sample = c()
+for(cell in names(output)){
+  n.sample = rbind(n.sample,c(sum(output[[cell]]$group_idx),sum(1-output[[cell]]$group_idx)))
+}
+rownames(n.sample) = names(output)
+colnames(n.sample) = c('Ctrl-1','Ctrl-2')
+knitr::kable(n.sample,caption = 'Number of samples')
+```
+
+Number of genes that have at least one measurement in two control groups.
+
+```{r}
+n.gene = c(14853)
+for(cell in names(output)){
+  n.gene = rbind(n.gene,c(14853-length(output[[cell]]$rm.idx)))
+}
+rownames(n.gene) = c('Total',names(output))
+knitr::kable(n.gene,caption = 'Number of genes considered',col.names = '#genes')
+```
+
+
+## Correlations between PCs and groups
+
+Plot of correlations between groups and first 20 principle components.
+
+```{r,fig.width=9,fig.height=7}
+par(mfrow=c(3,3))
+for(cell in names(output)){
+  plot(output[[cell]]$pc.cor[1:20],xlab='PCs',ylab='corr',main=paste(cell),ylim = c(-0.5,0.6),pch=20)
+  abline(h=0,lty=3)
+}
+```
+
+
+Plot of principle component that has maximum absolute correlation with groups for each cell. Vertical line separates two groups.
+
+```{r,fig.width=9,fig.height=7}
+par(mfrow=c(3,3))
+for(cell in names(output)){
+  plot(output[[cell]]$pc.cor.max,xlab='',ylab='',
+       main=paste(cell,', PC:',which.max(abs(output[[cell]]$pc.cor)),', corr:',round(max(abs(output[[cell]]$pc.cor)),2),sep=''),pch=1,col='grey50')
+  abline(v=sum(output[[cell]]$group_idx),lty=3)
+}
+```
+
+## Compare p-value distributions, t-test and sva-limma
+
+Note: We will see a lot of p-values from t-test around 0.3-0.4. In single cell DE study, some genes are only measured once in one group while have no observation in another group. For example, gene expression in group 1 $= (0,0,...,0,0)$ and gene expression in group 2 $= (x,0,...,0,0)$. So in this case, unequal variance two-sample t-test always gives t-statistic = $1$ with $df=n_2-1$, where $n_2$ is the number of samples in group 2. Let's plot p-value vs df.
+
+Suppose we have at least 5 samples in group 2, then p-value starts at 0.3739(df=4) and converges to 0.3173 as df goes to infinite.
+
+```{r}
+par(mfrow=c(1,1))
+plot(4:1e3,(1-pt(1,4:1e3))*2,xlab='df',ylab='p-value',main='t-statistics = 1',pch=20)
+```
+
+
+Now compare distributions of p-values from t-test and sva-limma:
+
+```{r,fig.width=6,fig.height=20}
+par(mfrow=c(8,2))
+for(cell in names(output)){
+  hist(output[[cell]]$pvalue_t,main=paste(cell, ',t test'),xlab='')
+  hist(output[[cell]]$pvalue_sva_limma,main=paste(cell, ',sva-limma'),xlab='')
+}
+```
+
+Number of surrogate variables: based on the default method in `sva` - a permutation procedure originally prooposed by Buja and Eyuboglu 1992
+
+```{r}
+n.sv = c()
+for(cell in names(output)){
+  n.sv = rbind(n.sv,output[[cell]]$sva_sva$n.sv)
+}
+rownames(n.sv) = names(output)
+colnames(n.sv) = '#sv'
+knitr::kable(n.sv,caption = 'Number of surrogate variables')
+```
+
+
+## Compare the number of significant genes
+
+The number of significant genes at $fdr=0.05$ by BH procedure.
+
+```{r}
+par(mfrow=c(1,1))
+n.sig = c()
+for(cell in names(output)){
+  n.sig = rbind(n.sig,c(length(output[[cell]]$rej.idx.ttest),length(output[[cell]]$rej.idx.sva)))
+}
+rownames(n.sig) = names(output)
+colnames(n.sig) = c('t-test','sva')
+knitr::kable(n.sig,caption = 'Number of significant genes at fdr=0.05')
+```
+
+
+The number of significant genes at $fdr=0.01$ by BH procedure.
+
+```{r}
+BH = function(p,alpha=0.05){
+  n=length(p)
+  i=rank(p)
+  idx = which(p<=(i/n*alpha))
+  if(length(idx)==0){
+    NULL
+  }else{
+    i0= max(i[idx])
+    rej.idx = which(i<=i0)
+    rej.idx
+  }
+}
+
+n.sig = c()
+for(cell in names(output)){
+  n.sig = rbind(n.sig,c(length(BH(output[[cell]]$pvalue_t,0.01)),length(BH(output[[cell]]$pvalue_sva_limma,0.01))))
+}
+rownames(n.sig) = names(output)
+colnames(n.sig) = c('t-test','sva')
+knitr::kable(n.sig,caption = 'Number of significant genes at fdr=0.01')
+```
+

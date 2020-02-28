@@ -45,9 +45,18 @@ editor_options:
 
 [ruv4](ruv4.html)
 
-[single cell DE](scde.html), [single cell DE PBMC](scdePBMC.html)
-
 [select rr in rf using oob](selectrotation.html)
+
+## single-cell
+
+[single cell DE](scde.html)
+
+[single cell DE PBMC](scdePBMC.html)
+
+[single cell cytokine, two controls](sccytokines.html)
+
+[single cell cytokine, two controls](sccytokines_filter10.html):  filter out genes with < 10 non-zero elements
+
 
 # Seb and Kevin
 
