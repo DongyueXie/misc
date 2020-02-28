@@ -32,7 +32,7 @@ colnames(n.sample) = c('Ctrl-1','Ctrl-2')
 knitr::kable(n.sample,caption = 'Number of samples')
 ```
 
-Number of genes that have at least one measurement in two control groups.
+Number of genes with >= 10 non-zero elements in two control groups.
 
 ```{r}
 n.gene = c(14853)
@@ -69,16 +69,6 @@ for(cell in names(output)){
 ```
 
 ## Compare p-value distributions, t-test and sva-limma
-
-Note: We will see a lot of p-values from t-test around 0.3-0.4. In single cell DE study, some genes are only measured once in one group while have no observation in another group. For example, gene expression in group 1 $= (0,0,...,0,0)$ and gene expression in group 2 $= (x,0,...,0,0)$. So in this case, unequal variance two-sample t-test always gives t-statistic = $1$ with $df=n_2-1$, where $n_2$ is the number of samples in group 2. Let's plot p-value vs df.
-
-Suppose we have at least 5 samples in group 2, then p-value starts at 0.3739(df=4) and converges to 0.3173 as df goes to infinite.
-
-```{r}
-par(mfrow=c(1,1))
-plot(4:1e3,(1-pt(1,4:1e3))*2,xlab='df',ylab='p-value',main='t-statistics = 1',pch=20)
-```
-
 
 Now compare distributions of p-values from t-test and sva-limma:
 
