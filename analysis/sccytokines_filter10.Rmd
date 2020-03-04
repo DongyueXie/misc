@@ -22,7 +22,7 @@ Focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cells, Dendriti
 Number of cells in each control group:
 
 ```{r}
-load('data/cytokine/DE_controls_output_filter10.RData')
+load('data/cytokine/DE_controls_output_filter10_addlimma.RData')
 n.sample = c()
 for(cell in names(output)){
   n.sample = rbind(n.sample,c(sum(output[[cell]]$group_idx),sum(1-output[[cell]]$group_idx)))
@@ -68,14 +68,15 @@ for(cell in names(output)){
 }
 ```
 
-## Compare p-value distributions, t-test and sva-limma
+## Compare p-value distributions from t-test, limma and sva-limma
 
-Now compare distributions of p-values from t-test and sva-limma:
+Now compare distributions of p-values from t-test, limma and sva-limma:
 
 ```{r,fig.width=6,fig.height=20}
-par(mfrow=c(8,2))
+par(mfrow=c(8,3))
 for(cell in names(output)){
   hist(output[[cell]]$pvalue_t,main=paste(cell, ',t test'),xlab='')
+  hist(output[[cell]]$pvalue_limma,main=paste(cell, ',limma'),xlab='')
   hist(output[[cell]]$pvalue_sva_limma,main=paste(cell, ',sva-limma'),xlab='')
 }
 ```
@@ -101,10 +102,10 @@ The number of significant genes at $fdr=0.05$ by BH procedure.
 par(mfrow=c(1,1))
 n.sig = c()
 for(cell in names(output)){
-  n.sig = rbind(n.sig,c(length(output[[cell]]$rej.idx.ttest),length(output[[cell]]$rej.idx.sva)))
+  n.sig = rbind(n.sig,c(length(output[[cell]]$rej.idx.ttest),length(output[[cell]]$rej.idx.limma),length(output[[cell]]$rej.idx.sva)))
 }
 rownames(n.sig) = names(output)
-colnames(n.sig) = c('t-test','sva')
+colnames(n.sig) = c('t-test','limma','sva-limma')
 knitr::kable(n.sig,caption = 'Number of significant genes at fdr=0.05')
 ```
 
@@ -127,10 +128,11 @@ BH = function(p,alpha=0.05){
 
 n.sig = c()
 for(cell in names(output)){
-  n.sig = rbind(n.sig,c(length(BH(output[[cell]]$pvalue_t,0.01)),length(BH(output[[cell]]$pvalue_sva_limma,0.01))))
+  n.sig = rbind(n.sig,c(length(BH(output[[cell]]$pvalue_t,0.01)),length(BH(output[[cell]]$pvalue_limma,0.01)),
+                        length(BH(output[[cell]]$pvalue_sva_limma,0.01))))
 }
 rownames(n.sig) = names(output)
-colnames(n.sig) = c('t-test','sva')
+colnames(n.sig) = c('t-test','limma','sva-limma')
 knitr::kable(n.sig,caption = 'Number of significant genes at fdr=0.01')
 ```
 
