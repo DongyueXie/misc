@@ -1,0 +1,190 @@
+---
+title: "scde - check Mouthwash"
+author: "DongyueXie"
+date: "2020-02-28"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Investigate why MOUTHWASH did not perform well in my previous [analysis](https://dongyuexie.github.io/misc/scdePBMC2.html).
+
+Matthew suggested to look at the $\alpha$ value in `ash`. 
+
+For each gene $j=1,2,...,G$, $\hat\beta_j$, estimated effect size and $\hat s_j$, standard error of the estimator are avaialbe from a statistical procedure like linear modelling. The t-statistics for testing $H_0: \beta_j = 0$  is $\frac{\hat\beta_j}{\hat s_j}$. 
+
+`ash` prior: $\frac{\beta_j}{\hat{s}_j^\alpha}|\hat s_j \sim g(\cdot)$, $\alpha\geq 0$. When $\alpha>0$, this prior suggets effects with larger s.e. tend to be larger. When $\alpha=1$, lfsr is monotonic in p-values so ash-lfsr should give the same significant ranking as the one using p-values. 
+
+
+
+```{r,message=FALSE,warning=FALSE}
+library(vicar)
+library(sva)
+library(cate)
+library(seqgendiff)
+load('data/scCDT.RData')
+```
+
+
+```{r}
+set.seed(12345)
+CDT = as.matrix(CDT)
+
+# add signals to null data, 90% are null, 10% signals.
+
+thinout = thin_2group(round(CDT),0.9,signal_fun = stats::rexp,signal_params = list(rate=0.2))
+num_sv=3
+Y = t(thinout$mat)
+
+# for now just remove genes with no observations. 
+
+#### could also try to remove genes with less than 10 non-zero appearances.###
+
+remove.idx = which(colSums(Y)==0)
+eps=0.5
+Y = log(Y[,-remove.idx]+eps)
+X = model.matrix(~thinout$designmat)
+which_null = c(1*(abs(thinout$coef[-remove.idx]) < 10^-6))
+
+# directly apply ash to sva-limma with alpha=0 or 1 and compare results with mouthwash(alpha=0 or 1) and sva
+# rank genes by p value and lfsr
+
+# mouthwash alpha = 0
+#mout = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE,sprop = 0,scale_var = FALSE)
+#save(mout,file = 'data/mout_high_alpha0.RData')
+load('data/mout_high_alpha0.RData')
+
+# mouthwash alpha = 1
+#mout1 = mouthwash(Y,X,k=num_sv,cov_of_interest = 2,include_intercept = FALSE,sprop = 1,scale_var = FALSE)
+#save(mout1,file = 'data/mout_high_alpha1.RData')
+load('data/mout_high_alpha1.RData')
+
+# sva-limma
+#sva_sva = sva::sva(dat = t(Y), mod = X, mod0 = X[, -2, drop = FALSE], n.sv = num_sv)
+#save(sva_sva,file = 'data/sva_sva_high.RData')
+load('data/sva_sva_high.RData')
+
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = t(Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+# sva-limma-ash-alpha 0
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+
+# sva-limma-ash-alpha 1
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+```
+
+Let's look at the relationship between $\hat s_j$ and $\hat\beta_j$, from limma. The plot indeed suggests effects with larger s.e. tend to be larger.
+
+```{r}
+plot(svaout$sebetahat,abs(svaout$betahat),col=4,pch='.', xlab='standard error', ylab='estimated effects(absolute value)')
+```
+
+## ROC
+
+Compare the following methods:
+
+`MOUTHWASH0`: Mouthwash, sprop=0 (corresonds to alpha=0 in ash), output lfsr
+
+`MOUTHWASH1`: Mouthwash, sprop=1 (corresonds to alpha=1 in ash), output lfsr
+
+`SVA-limma`: Run sva and limma , output p-value
+
+`SVA-limma-ash0`: Run sva and limma, then run ash(alpha=0) with betahat and sehat, output lfsr
+
+`SVA-limma-ash1`: Run sva and limma, then run ash(alpha=1) with betahat and sehat, output lfsr
+
+
+```{r}
+library(ggplot2)
+################
+roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(mout1$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash0$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash1$result$lfsr)))
+name_vec <- c("MOUTHWASH0","MOUTHWASH1","SVA-limma","SVA-limma-ash0","SVA-limma-ash1")
+names(roc_out) <- name_vec
+
+sout <- lapply(roc_out, function(x) { data.frame(TPR = x$sensitivities, FPR = 1 - x$specificities)})
+for (index in 1:length(sout)) {
+  sout[[index]]$Method <- name_vec[index]
+}
+longdat <- do.call(rbind, sout)
+
+shortdat <- dplyr::filter(longdat, Method == "MOUTHWASH0" | Method == "MOUTHWASH1" | 
+                            Method == "SVA-limma" | Method == "SVA-limma-ash0" | Method == "SVA-limma-ash1")
+ggplot(data = shortdat, mapping = aes(x = FPR, y = TPR, col = Method)) +
+  geom_path() + theme_bw() + ggtitle("ROC Curves")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+# method_list <- list()
+# method_list$CATErr           <- list()
+# method_list$CATErr$betahat   <- c(cate_cate$beta)
+# method_list$CATErr$sebetahat <- c(sqrt(cate_cate$beta.cov.row * c(cate_cate$beta.cov.col)) / sqrt(nrow(X)))
+# 
+# method_list$SVA             <- list()
+# method_list$SVA$betahat     <- c(svaout$betahat)
+# method_list$SVA$sebetahat   <- c(svaout$sebetahat)
+# 
+# ashfit <- lapply(method_list, FUN = function(x) { ashr::ash(x$betahat, x$sebetahat)})
+# api0 <- sapply(ashfit, FUN = ashr::get_pi0)
+# api0 <- c(api0, MOUTHWASH = mout$pi0)
+# #api0 <- c(api0, BACKWASH = bout$pi0)
+# 
+# knitr::kable(sort(api0, decreasing = TRUE), col.names = "Estimate of Pi0")
+```
+
+## Rank genes
+
+Rank genes based on lfsr and p-values.
+
+```{r}
+mout0_rank = order(mout$result$lfsr,decreasing = F)
+mout1_rank = order(mout1$result$lfsr,decreasing = F)
+svalimma_rank = order(svaout$pvalues,decreasing = F)
+svalimma_ash0_rank = order(sva_limma_ash0$result$lfsr,decreasing = F)
+svalimma_ash1_rank = order(sva_limma_ash1$result$lfsr,decreasing = F)
+```
+
+Compare top 10 genes ranked by `sva-limma` and `sva-limma-ash1`.
+
+```{r}
+ng=10
+ranks = cbind(svalimma_rank[1:ng],svalimma_ash1_rank[1:ng])
+colnames(ranks) = c('sva-limma','sva-limma-ash1')
+rownames(ranks) = 1:ng
+knitr::kable(ranks)
+```
+
+The first 6 are different. How about the rest genes? From the plot below, the ranks are the same. 
+
+```{r}
+plot(svalimma_rank[-c(1:6)],svalimma_ash1_rank[-c(1:6)],xlab = 'gene ranks - sva_limma_p-value',ylab = 'gene ranks - sva_limma_ash1')
+```
+
+Why the first 6 genes are different? Let's look at the p-values and lfsr. The first 6 genes have 0 lfsr due to numerical precision limit I guess. 
+
+```{r}
+svaout$pvalues[svalimma_rank[1:6]]
+sva_limma_ash1$result$lfsr[svalimma_ash1_rank[1:6]]
+```
+
+
+
+
+
