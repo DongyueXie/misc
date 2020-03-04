@@ -361,7 +361,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-02-28
+<strong>Last updated:</strong> 2020-03-04
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -452,10 +452,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6b77cc322a5e93a6b4f467c436447c09871e9378targetblank6b77cc3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/6b77cc322a5e93a6b4f467c436447c09871e9378" target="_blank">6b77cc3</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree346e0d29f7b06802aae3c0583f8841d6b85a3daatargetblank346e0d2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/346e0d29f7b06802aae3c0583f8841d6b85a3daa" target="_blank">346e0d2</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6b77cc322a5e93a6b4f467c436447c09871e9378targetblank6b77cc3a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree346e0d29f7b06802aae3c0583f8841d6b85a3daatargetblank346e0d2a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -469,22 +469,17 @@ Untracked files:
     Untracked:  analysis/methylation.Rmd
     Untracked:  code/Rplots.pdf
     Untracked:  code/sccytokines.R
-    Untracked:  data/Banknote_result.RData
-    Untracked:  data/BreastCancer_result.RData
-    Untracked:  data/Haberman_result.RData
-    Untracked:  data/Ionosphere_result.RData
-    Untracked:  data/Mice_result.RData
-    Untracked:  data/PimaIndiansDiabetes_result.RData
-    Untracked:  data/ROTS_results.RData
-    Untracked:  data/Seeds_result.RData
-    Untracked:  data/Sonar_result.RData
+    Untracked:  data/bart/
     Untracked:  data/cytokine/DE_controls_output_filter10.RData
+    Untracked:  data/cytokine/DE_controls_output_filter10_addlimma.RData
     Untracked:  data/cytokine/test.RData
     Untracked:  data/cytokine_normalized.RData
-    Untracked:  data/liver_result.RData
+    Untracked:  data/mout_high_alpha0.RData
+    Untracked:  data/mout_high_alpha1.RData
 
 Unstaged changes:
-    Modified:   analysis/index.Rmd
+    Deleted:    data/mout_high.RData
+    Modified:   data/sva_sva_high.RData
 
 </code></pre>
 <p>
@@ -523,6 +518,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/346e0d29f7b06802aae3c0583f8841d6b85a3daa/analysis/sccytokines_filter10.Rmd" target="_blank">346e0d2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-04
+</td>
+<td>
+wflow_publish(“analysis/sccytokines_filter10.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/c84ea1131e10966d6df92ca674df03494eef5ac5/docs/sccytokines_filter10.html" target="_blank">c84ea11</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -586,7 +615,7 @@ wflow_publish(“analysis/sccytokines_filter10.Rmd”)
 <p>See if sva works when comparing two control groups in single cell cytokine study.</p>
 <p>Focus on 8 types of cells, B_cells, CD4_T_cells, CD8_T_cells, NK_cells, Dendritic-cells, Ly6C+, Ly6C-,Neutrolphils.</p>
 <p>Number of cells in each control group:</p>
-<pre class="r"><code>load(&#39;data/cytokine/DE_controls_output_filter10.RData&#39;)
+<pre class="r"><code>load(&#39;data/cytokine/DE_controls_output_filter10_addlimma.RData&#39;)
 n.sample = c()
 for(cell in names(output)){
   n.sample = rbind(n.sample,c(sum(output[[cell]]$group_idx),sum(1-output[[cell]]$group_idx)))
@@ -793,12 +822,13 @@ DongyueXie
 </div>
 </div>
 </div>
-<div id="compare-p-value-distributions-t-test-and-sva-limma" class="section level2">
-<h2>Compare p-value distributions, t-test and sva-limma</h2>
-<p>Now compare distributions of p-values from t-test and sva-limma:</p>
-<pre class="r"><code>par(mfrow=c(8,2))
+<div id="compare-p-value-distributions-from-t-test-limma-and-sva-limma" class="section level2">
+<h2>Compare p-value distributions from t-test, limma and sva-limma</h2>
+<p>Now compare distributions of p-values from t-test, limma and sva-limma:</p>
+<pre class="r"><code>par(mfrow=c(8,3))
 for(cell in names(output)){
   hist(output[[cell]]$pvalue_t,main=paste(cell, &#39;,t test&#39;),xlab=&#39;&#39;)
+  hist(output[[cell]]$pvalue_limma,main=paste(cell, &#39;,limma&#39;),xlab=&#39;&#39;)
   hist(output[[cell]]$pvalue_sva_limma,main=paste(cell, &#39;,sva-limma&#39;),xlab=&#39;&#39;)
 }</code></pre>
 <p><img src="figure/sccytokines_filter10.Rmd/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;" /></p>
@@ -824,6 +854,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/c84ea1131e10966d6df92ca674df03494eef5ac5/docs/figure/sccytokines_filter10.Rmd/unnamed-chunk-5-1.png" target="_blank">c84ea11</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-02-28
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/DongyueXie/misc/blob/eebc92db526db71cb4c49fb05bbc731bb702d958/docs/figure/sccytokines_filter10.Rmd/unnamed-chunk-5-1.png" target="_blank">eebc92d</a>
@@ -897,10 +938,10 @@ knitr::kable(n.sv,caption = &#39;Number of surrogate variables&#39;)</code></pre
 <pre class="r"><code>par(mfrow=c(1,1))
 n.sig = c()
 for(cell in names(output)){
-  n.sig = rbind(n.sig,c(length(output[[cell]]$rej.idx.ttest),length(output[[cell]]$rej.idx.sva)))
+  n.sig = rbind(n.sig,c(length(output[[cell]]$rej.idx.ttest),length(output[[cell]]$rej.idx.limma),length(output[[cell]]$rej.idx.sva)))
 }
 rownames(n.sig) = names(output)
-colnames(n.sig) = c(&#39;t-test&#39;,&#39;sva&#39;)
+colnames(n.sig) = c(&#39;t-test&#39;,&#39;limma&#39;,&#39;sva-limma&#39;)
 knitr::kable(n.sig,caption = &#39;Number of significant genes at fdr=0.05&#39;)</code></pre>
 <table>
 <caption>Number of significant genes at fdr=0.05</caption>
@@ -908,27 +949,32 @@ knitr::kable(n.sig,caption = &#39;Number of significant genes at fdr=0.05&#39;)<
 <tr class="header">
 <th></th>
 <th align="right">t-test</th>
-<th align="right">sva</th>
+<th align="right">limma</th>
+<th align="right">sva-limma</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>B_cells</td>
 <td align="right">948</td>
+<td align="right">949</td>
 <td align="right">926</td>
 </tr>
 <tr class="even">
 <td>CD4_T_cells</td>
 <td align="right">30</td>
+<td align="right">40</td>
 <td align="right">15</td>
 </tr>
 <tr class="odd">
 <td>CD8_T_cells</td>
 <td align="right">107</td>
+<td align="right">105</td>
 <td align="right">73</td>
 </tr>
 <tr class="even">
 <td>NK_cells</td>
+<td align="right">2</td>
 <td align="right">2</td>
 <td align="right">0</td>
 </tr>
@@ -936,20 +982,24 @@ knitr::kable(n.sig,caption = &#39;Number of significant genes at fdr=0.05&#39;)<
 <td>Dendritic_cells</td>
 <td align="right">0</td>
 <td align="right">0</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td>Ly6C+_Monocytes</td>
 <td align="right">34</td>
+<td align="right">44</td>
 <td align="right">5</td>
 </tr>
 <tr class="odd">
 <td>Ly6C-_Monocytes</td>
+<td align="right">18</td>
 <td align="right">18</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
 <td>Neutrophils</td>
 <td align="right">6</td>
+<td align="right">8</td>
 <td align="right">0</td>
 </tr>
 </tbody>
@@ -970,10 +1020,11 @@ knitr::kable(n.sig,caption = &#39;Number of significant genes at fdr=0.05&#39;)<
 
 n.sig = c()
 for(cell in names(output)){
-  n.sig = rbind(n.sig,c(length(BH(output[[cell]]$pvalue_t,0.01)),length(BH(output[[cell]]$pvalue_sva_limma,0.01))))
+  n.sig = rbind(n.sig,c(length(BH(output[[cell]]$pvalue_t,0.01)),length(BH(output[[cell]]$pvalue_limma,0.01)),
+                        length(BH(output[[cell]]$pvalue_sva_limma,0.01))))
 }
 rownames(n.sig) = names(output)
-colnames(n.sig) = c(&#39;t-test&#39;,&#39;sva&#39;)
+colnames(n.sig) = c(&#39;t-test&#39;,&#39;limma&#39;,&#39;sva-limma&#39;)
 knitr::kable(n.sig,caption = &#39;Number of significant genes at fdr=0.01&#39;)</code></pre>
 <table>
 <caption>Number of significant genes at fdr=0.01</caption>
@@ -981,27 +1032,32 @@ knitr::kable(n.sig,caption = &#39;Number of significant genes at fdr=0.01&#39;)<
 <tr class="header">
 <th></th>
 <th align="right">t-test</th>
-<th align="right">sva</th>
+<th align="right">limma</th>
+<th align="right">sva-limma</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>B_cells</td>
 <td align="right">512</td>
+<td align="right">511</td>
 <td align="right">512</td>
 </tr>
 <tr class="even">
 <td>CD4_T_cells</td>
 <td align="right">20</td>
+<td align="right">23</td>
 <td align="right">9</td>
 </tr>
 <tr class="odd">
 <td>CD8_T_cells</td>
 <td align="right">59</td>
+<td align="right">61</td>
 <td align="right">45</td>
 </tr>
 <tr class="even">
 <td>NK_cells</td>
+<td align="right">2</td>
 <td align="right">2</td>
 <td align="right">0</td>
 </tr>
@@ -1009,19 +1065,23 @@ knitr::kable(n.sig,caption = &#39;Number of significant genes at fdr=0.01&#39;)<
 <td>Dendritic_cells</td>
 <td align="right">0</td>
 <td align="right">0</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td>Ly6C+_Monocytes</td>
 <td align="right">14</td>
+<td align="right">16</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">
 <td>Ly6C-_Monocytes</td>
 <td align="right">12</td>
+<td align="right">11</td>
 <td align="right">1</td>
 </tr>
 <tr class="even">
 <td>Neutrophils</td>
+<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
