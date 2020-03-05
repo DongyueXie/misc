@@ -1,0 +1,23 @@
+---
+title: "binomial thinning"
+author: "DongyueXie"
+date: "2020-03-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Investigate why effects with larger se are bigger. 
+
+Assume we have $n$ samples and a fraction $p$ of them belong to group 1 and the rest belong to group 2. So $x = (1,1,1,...,1,0,0,0,...,0)^T\in R^n$ and $\sum_ix_i=np$. Under this setting, in simple linear regression $y = a+\beta x + \epsilon$, $\epsilon\sim N(0,\sigma^2)$,  the variance of $\hat\beta_j$ is $\hat s^2 = \frac{n\sigma^2}{n\sum_ix_i^2-(\sum_ix_i)^2}=\frac{\sigma^2}{np-np^2}$. For fixed $n$ and $p$, if $\hat s$ is large, then this means $\hat\sigma^2$ is large hence $\sigma^2$ is large. 
+
+We now need to figure out the relationship between $\beta$ and $\sigma^2$.
+
+Let's assume we have RNA-Seq count data $z_i\sim Poisson(\lambda)$ for $i=1,2,...,n$. In binomial thinning, $\beta$ is the log2 fold change between groups. Now assume $\beta>0$, according to  Gerard and Stephens(2017), the new(thinned) data vector is $w_i\sim Poisson(\mu_i)$, where $\mu_i=2^{-\beta(1-x_i)}\lambda$. The response $y$ in the simple linear regression is the log transformation of $w$, $y_i=\log(w_i)$, $i=1,2,...n$. 
+
+The Taylor series expansion of $\log w_i$ around $\mu_i$ is $\log(w_i)\approx \log(\mu_i)+\frac{w_i-\mu_i}{\mu_i}$. So the mean of $\log(w_i)$ is $\log(\mu_i) = \lambda - \beta(1-x_i)$ and variance $\frac{1}{\mu_i} = \frac{1}{2^{-\beta(1-x_i)}\lambda}$. So if $\beta$ is large, then $Var(\log(w_i))$ is large if $x_i=0$. This explains the why effects with larger se are bigger.
+
+
+
