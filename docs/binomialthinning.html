@@ -375,10 +375,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree7cb27416cd90940409422f5824a07fb49409cbdbtargetblank7cb2741a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/7cb27416cd90940409422f5824a07fb49409cbdb" target="_blank">7cb2741</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef55aff69d3c06fff23ed4813e0f72fc5f4444b86targetblankf55aff6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/f55aff69d3c06fff23ed4813e0f72fc5f4444b86" target="_blank">f55aff6</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree7cb27416cd90940409422f5824a07fb49409cbdbtargetblank7cb2741a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef55aff69d3c06fff23ed4813e0f72fc5f4444b86targetblankf55aff6a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -447,6 +447,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/f55aff69d3c06fff23ed4813e0f72fc5f4444b86/analysis/binomialthinning.Rmd" target="_blank">f55aff6</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-04
+</td>
+<td>
+wflow_publish(“analysis/binomialthinning.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/74d8e403d71e9280dc223cc3868077edd8d47879/docs/binomialthinning.html" target="_blank">74d8e40</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/7cb27416cd90940409422f5824a07fb49409cbdb/analysis/binomialthinning.Rmd" target="_blank">7cb2741</a>
 </td>
 <td>
@@ -469,7 +503,7 @@ wflow_publish(“analysis/binomialthinning.Rmd”)
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>Investigate why effects with larger se are bigger.</p>
-<p>Assume we have <span class="math inline">\(n\)</span> samples and a fraction <span class="math inline">\(p\)</span> of them belong to group 1 and the rest belong to group 2. So <span class="math inline">\(x = (1,1,1,...,1,0,0,0,...,0)^T\in R^n\)</span> and <span class="math inline">\(\sum_ix_i=np\)</span>. Under this setting, in simple linear regression <span class="math inline">\(y = a+\beta x + \epsilon\)</span>, <span class="math inline">\(\epsilon\sim N(0,\sigma^2)\)</span>, the variance of <span class="math inline">\(\hat\beta_j\)</span> is <span class="math inline">\(\hat s^2 = \frac{n\sigma^2}{n\sum_ix_i^2-(\sum_ix_i)^2}=\frac{\sigma^2}{np-np^2}\)</span>. For fixed <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span>, if <span class="math inline">\(\hat s\)</span> is large, then this means <span class="math inline">\(\hat\sigma^2\)</span> is large hence <span class="math inline">\(\sigma^2\)</span> is large.</p>
+<p>Assume we have <span class="math inline">\(n\)</span> samples and a fraction <span class="math inline">\(p\)</span> of them belong to group 1 and the rest belong to group 2. So <span class="math inline">\(x = (1,1,1,...,1,0,0,0,...,0)^T\in R^n\)</span> and <span class="math inline">\(\sum_ix_i=np\)</span>. Under this setting, in simple linear regression <span class="math inline">\(y = a+\beta x + \epsilon\)</span>, <span class="math inline">\(\epsilon\sim N(0,\sigma^2)\)</span>, the variance of <span class="math inline">\(\hat\beta\)</span> is <span class="math inline">\(\hat s^2 = \frac{n\sigma^2}{n\sum_ix_i^2-(\sum_ix_i)^2}=\frac{\sigma^2}{np-np^2}\)</span>. For fixed <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span>, if <span class="math inline">\(\hat s\)</span> is large, then this means <span class="math inline">\(\hat\sigma^2\)</span> is large hence <span class="math inline">\(\sigma^2\)</span> is large.</p>
 <p>We now need to figure out the relationship between <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\sigma^2\)</span>.</p>
 <p>Let’s assume we have RNA-Seq count data <span class="math inline">\(z_i\sim Poisson(\lambda)\)</span> for <span class="math inline">\(i=1,2,...,n\)</span>. In binomial thinning, <span class="math inline">\(\beta\)</span> is the log2 fold change between groups. Now assume <span class="math inline">\(\beta&gt;0\)</span>, according to Gerard and Stephens(2017), the new(thinned) data vector is <span class="math inline">\(w_i\sim Poisson(\mu_i)\)</span>, where <span class="math inline">\(\mu_i=2^{-\beta(1-x_i)}\lambda\)</span>. The response <span class="math inline">\(y\)</span> in the simple linear regression is the log transformation of <span class="math inline">\(w\)</span>, <span class="math inline">\(y_i=\log(w_i)\)</span>, <span class="math inline">\(i=1,2,...n\)</span>.</p>
 <p>The Taylor series expansion of <span class="math inline">\(\log w_i\)</span> around <span class="math inline">\(\mu_i\)</span> is <span class="math inline">\(\log(w_i)\approx \log(\mu_i)+\frac{w_i-\mu_i}{\mu_i}\)</span>. So the mean of <span class="math inline">\(\log(w_i)\)</span> is <span class="math inline">\(\log(\mu_i) = \lambda - \beta(1-x_i)\)</span> and variance <span class="math inline">\(\frac{1}{\mu_i} = \frac{1}{2^{-\beta(1-x_i)}\lambda}\)</span>. So if <span class="math inline">\(\beta\)</span> is large, then <span class="math inline">\(Var(\log(w_i))\)</span> is large if <span class="math inline">\(x_i=0\)</span>. This explains the why effects with larger se are bigger.</p>
