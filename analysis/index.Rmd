@@ -11,6 +11,8 @@ editor_options:
 
 # Bio-related
 
+[gene set enrichment analysis](gsea.html)
+
 [Expression units](CPM.html)
 
 [GWAS](GWAS.html)
@@ -35,6 +37,8 @@ editor_options:
 
 # Methods
 
+[susie summary](susie.html)
+
 [Deconvolution](deconvolution.html)
 
 [limma](limma.html)
@@ -58,9 +62,6 @@ editor_options:
 [single cell cytokine, two controls](sccytokines.html)
 
 [single cell cytokine, two controls](sccytokines_filter10.html):  filter out genes with < 10 non-zero elements
-
-
-# Seb and Kevin
 
 [cisTopic scATAC-Seq](cisTopic.html)
 
