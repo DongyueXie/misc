@@ -242,7 +242,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-03-04
+<strong>Last updated:</strong> 2020-03-08
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -273,10 +273,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9abde4590f9eb26343a1c53b234b223d14968f49targetblank9abde45a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/9abde4590f9eb26343a1c53b234b223d14968f49" target="_blank">9abde45</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree54eb0209f1096c5a721eb4238d272c39e52a65datargetblank54eb020a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/54eb0209f1096c5a721eb4238d272c39e52a65da" target="_blank">54eb020</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9abde4590f9eb26343a1c53b234b223d14968f49targetblank9abde45a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree54eb0209f1096c5a721eb4238d272c39e52a65datargetblank54eb020a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -287,19 +287,23 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  analysis/gsea.Rmd
     Untracked:  analysis/methylation.Rmd
+    Untracked:  analysis/susie.Rmd
     Untracked:  code/Rplots.pdf
     Untracked:  code/sccytokines.R
     Untracked:  data/bart/
     Untracked:  data/cytokine/DE_controls_output_filter10.RData
+    Untracked:  data/cytokine/DE_controls_output_filter10_addlimma.RData
+    Untracked:  data/cytokine/README
     Untracked:  data/cytokine/test.RData
     Untracked:  data/cytokine_normalized.RData
-    Untracked:  data/mout_high_alpha0.RData
-    Untracked:  data/mout_high_alpha1.RData
+    Untracked:  data/scde/
 
 Unstaged changes:
     Deleted:    data/mout_high.RData
-    Modified:   data/sva_sva_high.RData
+    Deleted:    data/scCDT.RData
+    Deleted:    data/sva_sva_high.RData
 
 </code></pre>
 <p>
@@ -338,6 +342,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/54eb0209f1096c5a721eb4238d272c39e52a65da/analysis/index.Rmd" target="_blank">54eb020</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-08
+</td>
+<td>
+wflow_publish(“analysis/index.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/38a46c610e9a4af9b746b239b2717c44be3f7611/docs/index.html" target="_blank">38a46c6</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -670,6 +708,7 @@ Start workflowr project.
 </div>
 <div id="bio-related" class="section level1">
 <h1>Bio-related</h1>
+<p><a href="gsea.html">gene set enrichment analysis</a></p>
 <p><a href="CPM.html">Expression units</a></p>
 <p><a href="GWAS.html">GWAS</a></p>
 <p><a href="terminology.html">terminology</a></p>
@@ -688,6 +727,7 @@ Start workflowr project.
 </div>
 <div id="methods" class="section level1">
 <h1>Methods</h1>
+<p><a href="susie.html">susie summary</a></p>
 <p><a href="deconvolution.html">Deconvolution</a></p>
 <p><a href="limma.html">limma</a></p>
 <p><a href="MAST.html">MAST</a></p>
@@ -701,11 +741,8 @@ Start workflowr project.
 <p><a href="scdeMouthwash.html">Check MOUTHWASH</a></p>
 <p><a href="sccytokines.html">single cell cytokine, two controls</a></p>
 <p><a href="sccytokines_filter10.html">single cell cytokine, two controls</a>: filter out genes with &lt; 10 non-zero elements</p>
-</div>
-</div>
-<div id="seb-and-kevin" class="section level1">
-<h1>Seb and Kevin</h1>
 <p><a href="cisTopic.html">cisTopic scATAC-Seq</a></p>
+</div>
 </div>
 
 
