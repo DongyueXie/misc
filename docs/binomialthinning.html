@@ -25,6 +25,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
@@ -170,6 +171,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -315,6 +324,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">binomial thinning</h1>
@@ -344,10 +361,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-03-04
+<strong>Last updated:</strong> 2020-03-11
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>misc/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -375,10 +392,70 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef55aff69d3c06fff23ed4813e0f72fc5f4444b86targetblankf55aff6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/f55aff69d3c06fff23ed4813e0f72fc5f4444b86" target="_blank">f55aff6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreef55aff69d3c06fff23ed4813e0f72fc5f4444b86targetblankf55aff6a" class="panel-collapse collapse">
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20191122code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20191122)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20191122code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20191122)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9e60ba9600a9bc999e81c66cdbac1cde48740b7dtargetblank9e60ba9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/9e60ba9600a9bc999e81c66cdbac1cde48740b7d" target="_blank">9e60ba9</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9e60ba9600a9bc999e81c66cdbac1cde48740b7dtargetblank9e60ba9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -387,23 +464,30 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
 
 Untracked files:
+    Untracked:  analysis/gsea.Rmd
     Untracked:  analysis/methylation.Rmd
+    Untracked:  analysis/scdeCalibration.Rmd
+    Untracked:  analysis/susie.Rmd
     Untracked:  code/Rplots.pdf
     Untracked:  code/sccytokines.R
     Untracked:  data/bart/
     Untracked:  data/cytokine/DE_controls_output_filter10.RData
     Untracked:  data/cytokine/DE_controls_output_filter10_addlimma.RData
+    Untracked:  data/cytokine/README
     Untracked:  data/cytokine/test.RData
     Untracked:  data/cytokine_normalized.RData
-    Untracked:  data/mout_high_alpha0.RData
-    Untracked:  data/mout_high_alpha1.RData
+    Untracked:  data/deconv/
+    Untracked:  data/scde/
 
 Unstaged changes:
-    Modified:   analysis/scdeMouthwash.Rmd
+    Modified:   analysis/deconvolution.Rmd
+    Modified:   analysis/index.Rmd
     Deleted:    data/mout_high.RData
-    Modified:   data/sva_sva_high.RData
+    Deleted:    data/scCDT.RData
+    Deleted:    data/sva_sva_high.RData
 
 </code></pre>
 <p>
@@ -442,6 +526,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/9e60ba9600a9bc999e81c66cdbac1cde48740b7d/analysis/binomialthinning.Rmd" target="_blank">9e60ba9</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-11
+</td>
+<td>
+wflow_publish(“analysis/binomialthinning.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/1aaef3128e4164d242da22d98c4c541daf590ee7/docs/binomialthinning.html" target="_blank">1aaef31</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-04
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -503,10 +621,177 @@ wflow_publish(“analysis/binomialthinning.Rmd”)
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>Investigate why effects with larger se are bigger.</p>
-<p>Assume we have <span class="math inline">\(n\)</span> samples and a fraction <span class="math inline">\(p\)</span> of them belong to group 1 and the rest belong to group 2. So <span class="math inline">\(x = (1,1,1,...,1,0,0,0,...,0)^T\in R^n\)</span> and <span class="math inline">\(\sum_ix_i=np\)</span>. Under this setting, in simple linear regression <span class="math inline">\(y = a+\beta x + \epsilon\)</span>, <span class="math inline">\(\epsilon\sim N(0,\sigma^2)\)</span>, the variance of <span class="math inline">\(\hat\beta\)</span> is <span class="math inline">\(\hat s^2 = \frac{n\sigma^2}{n\sum_ix_i^2-(\sum_ix_i)^2}=\frac{\sigma^2}{np-np^2}\)</span>. For fixed <span class="math inline">\(n\)</span> and <span class="math inline">\(p\)</span>, if <span class="math inline">\(\hat s\)</span> is large, then this means <span class="math inline">\(\hat\sigma^2\)</span> is large hence <span class="math inline">\(\sigma^2\)</span> is large.</p>
-<p>We now need to figure out the relationship between <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\sigma^2\)</span>.</p>
-<p>Let’s assume we have RNA-Seq count data <span class="math inline">\(z_i\sim Poisson(\lambda)\)</span> for <span class="math inline">\(i=1,2,...,n\)</span>. In binomial thinning, <span class="math inline">\(\beta\)</span> is the log2 fold change between groups. Now assume <span class="math inline">\(\beta&gt;0\)</span>, according to Gerard and Stephens(2017), the new(thinned) data vector is <span class="math inline">\(w_i\sim Poisson(\mu_i)\)</span>, where <span class="math inline">\(\mu_i=2^{-\beta(1-x_i)}\lambda\)</span>. The response <span class="math inline">\(y\)</span> in the simple linear regression is the log transformation of <span class="math inline">\(w\)</span>, <span class="math inline">\(y_i=\log(w_i)\)</span>, <span class="math inline">\(i=1,2,...n\)</span>.</p>
-<p>The Taylor series expansion of <span class="math inline">\(\log w_i\)</span> around <span class="math inline">\(\mu_i\)</span> is <span class="math inline">\(\log(w_i)\approx \log(\mu_i)+\frac{w_i-\mu_i}{\mu_i}\)</span>. So the mean of <span class="math inline">\(\log(w_i)\)</span> is <span class="math inline">\(\log(\mu_i) = \lambda - \beta(1-x_i)\)</span> and variance <span class="math inline">\(\frac{1}{\mu_i} = \frac{1}{2^{-\beta(1-x_i)}\lambda}\)</span>. So if <span class="math inline">\(\beta\)</span> is large, then <span class="math inline">\(Var(\log(w_i))\)</span> is large if <span class="math inline">\(x_i=0\)</span>. This explains the why effects with larger se are bigger.</p>
+<p>Assume we have <span class="math">\(n\)</span> samples and a fraction <span class="math">\(p\)</span> of them belong to group 1 and the rest belong to group 2. So <span class="math">\(x = (1,1,1,...,1,0,0,0,...,0)^T\in R^n\)</span> and <span class="math">\(\sum_ix_i=np\)</span>. Under this setting, in simple linear regression <span class="math">\(y = a+\beta x + \epsilon\)</span>, <span class="math">\(\epsilon\sim N(0,\sigma^2)\)</span>, the variance of <span class="math">\(\hat\beta\)</span> is <span class="math">\(\hat s^2 = \frac{n\sigma^2}{n\sum_ix_i^2-(\sum_ix_i)^2}=\frac{\sigma^2}{np-np^2}\)</span>. For fixed <span class="math">\(n\)</span> and <span class="math">\(p\)</span>, if <span class="math">\(\hat s\)</span> is large, then this means <span class="math">\(\hat\sigma^2\)</span> is large hence <span class="math">\(\sigma^2\)</span> is large.</p>
+<p>We now need to figure out the relationship between <span class="math">\(\beta\)</span> and <span class="math">\(\sigma^2\)</span>.</p>
+<p>Let’s assume we have RNA-Seq count data <span class="math">\(z_i\sim Poisson(\lambda)\)</span> for <span class="math">\(i=1,2,...,n\)</span>. In binomial thinning, <span class="math">\(\beta\)</span> is the log2 fold change between groups. Now assume <span class="math">\(\beta&gt;0\)</span>, according to Gerard and Stephens(2017), the new(thinned) data vector is <span class="math">\(w_i\sim Poisson(\mu_i)\)</span>, where <span class="math">\(\mu_i=2^{-\beta(1-x_i)}\lambda\)</span>. The response <span class="math">\(y\)</span> in the simple linear regression is the log transformation of <span class="math">\(w\)</span>, <span class="math">\(y_i=\log(w_i)\)</span>, <span class="math">\(i=1,2,...n\)</span>.</p>
+<p>The Taylor series expansion of <span class="math">\(\log w_i\)</span> around <span class="math">\(\mu_i\)</span> is <span class="math">\(\log(w_i)\approx \log(\mu_i)+\frac{w_i-\mu_i}{\mu_i}\)</span>. So the mean of <span class="math">\(\log(w_i)\)</span> is <span class="math">\(\log(\mu_i) = \lambda - \beta(1-x_i)\)</span> and variance <span class="math">\(\frac{1}{\mu_i} = \frac{1}{2^{-\beta(1-x_i)}\lambda}\)</span>. So if <span class="math">\(\beta\)</span> is large, then <span class="math">\(Var(\log(w_i))\)</span> is large if <span class="math">\(x_i=0\)</span>. This explains the why effects with larger se are bigger.</p>
+</div>
+<div id="check" class="section level2">
+<h2>Check</h2>
+<p>For non-null genes <span class="math">\(j\in Non.null.gene.set\)</span>, choose <span class="math">\(p_{1j}+p_{2j}=1\)</span> and <span class="math">\(\frac{p_{1j}}{p_{2j}}=\exp(\beta_j)\)</span>, and thin the counts <span class="math">\(w_{ij}\sim Binomial(z_{ij},p_{\{group.of.i\}j})\)</span>, where <span class="math">\(z_{ij}\)</span> is the observed counts for <span class="math">\(i\)</span>th sample, and group of <span class="math">\(i\)</span> is either 1 or 2.</p>
+<p>For null genes <span class="math">\(j\in Null.gene.set\)</span>, <span class="math">\(w_{ij}\sim Binomial(z_{ij},0.5)\)</span></p>
+<pre class="r"><code>#&#39;@param Z count matrix, sample by features
+#&#39;@param x 1 for group 1, 0 for group 2
+#&#39;@param beta effect of fearures,  0 for null.
+#&#39;@return W, thinned matrix
+bi_thin = function(Z,x,beta){
+
+  n=nrow(Z)
+  p=ncol(Z)
+  
+  # group index
+  g1 = which(x==1)
+  g2 = which(x==0)
+  
+  
+  p2 = 1/(1+exp(beta))
+  p1 = 1-p2
+  P = matrix(nrow = n,ncol = p)
+  P[g1,] = t(replicate(length(g1),p1))
+  P[g2,] = t(replicate(length(g2),p2))
+  
+  W = matrix(rbinom(n*p,Z,P),nrow=n)
+  
+  W
+}
+
+quiet &lt;- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} </code></pre>
+<p><strong>Normal signal, sd=1.5. Run 50 reps.</strong></p>
+<pre class="r"><code>library(sva)
+load(&#39;data/scde/scCDT.RData&#39;)
+Z = t(as.matrix(CDT))
+rm.idx = which(colSums(Z!=0)&lt;10)
+Z = Z[,-rm.idx]
+n = nrow(Z)
+p = ncol(Z)
+
+set.seed(12345)
+
+nreps = 50
+
+loglik=c()
+roc_result = c()
+
+for(rep in 1:nreps){
+  
+x = rbinom(n,1,0.5)
+beta = rnorm(p,0,1.5)
+beta[sample(1:p,p*0.9)]=0
+
+W = bi_thin(Z,x,beta)
+
+Wn = log(W+0.5)
+
+X = model.matrix(~x)
+
+sva_sva = quiet(sva(t(Wn),mod = X, mod0 = X[, -2, drop = FALSE], n.sv = 3))
+
+X.sva = cbind(X, sva_sva$sv)
+lmout = limma::lmFit(object = t(Wn), design = X.sva)
+eout  = limma::eBayes(lmout)
+
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+
+loglik = rbind(loglik,c(sva_limma_ash0$loglik,sva_limma_ash1$loglik))
+
+#knitr::kable(cbind(sva_limma_ash0$loglik,sva_limma_ash1$loglik), 
+#             col.names = c(&#39;alpha=0&#39;,&#39;alpha=1&#39;), digits = 2,caption = &#39;log-lik&#39;)
+
+
+which_null = ifelse(beta==0,1,0)
+################
+roc_out &lt;- list(
+  #pROC::roc(response = which_null, predictor = c(mout$result$lfsr)),
+  #pROC::roc(response = which_null, predictor = c(mout1$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash0$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash1$result$lfsr)))
+#name_vec &lt;- c(&quot;MOUTHWASH0&quot;,&quot;MOUTHWASH1&quot;,&quot;SVA-limma&quot;,&quot;SVA-limma-ash0&quot;,&quot;SVA-limma-ash1&quot;)
+
+auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+roc_result = rbind(roc_result,auc_vec)
+
+#knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)
+
+}
+
+name_vec &lt;- c(&quot;sva-limma&quot;,&quot;sva-limma-ash0&quot;,&quot;sva-limma-ash1&quot;)
+colnames(roc_result) &lt;- name_vec
+
+colnames(loglik) = c(&#39;alpha=0&#39;,&#39;alpha=1&#39;)
+
+boxplot(loglik,ylab = &#39;loglik&#39;)</code></pre>
+<p><img src="figure/binomialthinning.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(roc_result,ylab=&#39;AUC&#39;)</code></pre>
+<p><img src="figure/binomialthinning.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Scientific Linux 7.4 (Nitrogen)
+
+Matrix products: default
+BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] sva_3.30.0          BiocParallel_1.16.0 genefilter_1.64.0  
+[4] mgcv_1.8-25         nlme_3.1-137       
+
+loaded via a namespace (and not attached):
+ [1] Biobase_2.42.0       bit64_0.9-7          splines_3.5.1       
+ [4] foreach_1.4.4        assertthat_0.2.0     mixsqp_0.2-2        
+ [7] stats4_3.5.1         blob_1.1.1           yaml_2.2.0          
+[10] pillar_1.3.1         RSQLite_2.1.1        backports_1.1.2     
+[13] lattice_0.20-38      glue_1.3.0           limma_3.38.2        
+[16] pROC_1.13.0          digest_0.6.18        promises_1.0.1      
+[19] colorspace_1.3-2     htmltools_0.3.6      httpuv_1.4.5        
+[22] Matrix_1.2-15        plyr_1.8.4           XML_3.98-1.16       
+[25] pkgconfig_2.0.2      purrr_0.3.2          xtable_1.8-3        
+[28] scales_1.0.0         whisker_0.3-2        later_0.7.5         
+[31] git2r_0.26.1         tibble_2.1.1         annotate_1.60.0     
+[34] IRanges_2.16.0       ggplot2_3.1.1        ashr_2.2-39         
+[37] BiocGenerics_0.28.0  lazyeval_0.2.1       survival_2.43-1     
+[40] magrittr_1.5         crayon_1.3.4         memoise_1.1.0       
+[43] evaluate_0.12        fs_1.3.1             doParallel_1.0.14   
+[46] MASS_7.3-51.1        truncnorm_1.0-8      tools_3.5.1         
+[49] matrixStats_0.54.0   stringr_1.3.1        S4Vectors_0.20.1    
+[52] munsell_0.5.0        AnnotationDbi_1.44.0 compiler_3.5.1      
+[55] rlang_0.4.0          grid_3.5.1           RCurl_1.95-4.11     
+[58] iterators_1.0.10     bitops_1.0-6         rmarkdown_1.10      
+[61] gtable_0.2.0         codetools_0.2-15     DBI_1.0.0           
+[64] R6_2.3.0             knitr_1.20           dplyr_0.8.0.1       
+[67] bit_1.1-14           workflowr_1.6.0      rprojroot_1.3-2     
+[70] stringi_1.2.4        pscl_1.5.2           parallel_3.5.1      
+[73] SQUAREM_2017.10-1    Rcpp_1.0.2           tidyselect_0.2.5    </code></pre>
+</div>
 </div>
 
 
