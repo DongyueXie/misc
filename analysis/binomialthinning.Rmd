@@ -72,14 +72,14 @@ quiet <- function(x) {
 library(sva)
 load('data/scde/scCDT.RData')
 Z = t(as.matrix(CDT))
-rm.idx = which(colSums(Z!=0)<10)
+rm.idx = which(colSums(Z!=0)<30)
 Z = Z[,-rm.idx]
 n = nrow(Z)
 p = ncol(Z)
 
 set.seed(12345)
 
-nreps = 50
+nreps = 30
 
 loglik=c()
 roc_result = c()
@@ -145,4 +145,85 @@ boxplot(roc_result,ylab='AUC')
 
 ```
 
+
+
+
+```{r}
+library(sva)
+load('data/scde/scCDT.RData')
+Z = t(as.matrix(CDT))
+rm.idx = which(colSums(Z!=0)<30)
+Z = Z[,-rm.idx]
+n = nrow(Z)
+p = ncol(Z)
+
+set.seed(12345)
+
+nreps = 30
+
+loglik=c()
+roc_result = c()
+
+beta = rnorm(p,0,1.5)
+beta[sample(1:p,p*0.9)]=0
+
+for(rep in 1:nreps){
+  
+x = rbinom(n,1,0.5)
+
+
+W = bi_thin(Z,x,beta)
+
+Wn = log(W+0.5)
+
+X = model.matrix(~x)
+
+sva_sva = quiet(sva(t(Wn),mod = X, mod0 = X[, -2, drop = FALSE], n.sv = 3))
+
+X.sva = cbind(X, sva_sva$sv)
+lmout = limma::lmFit(object = t(Wn), design = X.sva)
+eout  = limma::eBayes(lmout)
+
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+
+loglik = rbind(loglik,c(sva_limma_ash0$loglik,sva_limma_ash1$loglik))
+
+#knitr::kable(cbind(sva_limma_ash0$loglik,sva_limma_ash1$loglik), 
+#             col.names = c('alpha=0','alpha=1'), digits = 2,caption = 'log-lik')
+
+
+which_null = ifelse(beta==0,1,0)
+################
+roc_out <- list(
+  #pROC::roc(response = which_null, predictor = c(mout$result$lfsr)),
+  #pROC::roc(response = which_null, predictor = c(mout1$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash0$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash1$result$lfsr)))
+#name_vec <- c("MOUTHWASH0","MOUTHWASH1","SVA-limma","SVA-limma-ash0","SVA-limma-ash1")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+roc_result = rbind(roc_result,auc_vec)
+
+#knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+}
+
+name_vec <- c("sva-limma","sva-limma-ash0","sva-limma-ash1")
+colnames(roc_result) <- name_vec
+
+colnames(loglik) = c('alpha=0','alpha=1')
+
+boxplot(loglik,ylab = 'loglik')
+
+boxplot(roc_result,ylab='AUC')
+
+```
 
