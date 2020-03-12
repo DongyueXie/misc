@@ -55,11 +55,11 @@ editor_options:
 
 [single cell DE](scde.html)
 
-[single cell DE PBMC](scdePBMC2.html)
+[single cell DE PBMC](scdePBMC2.html): 709 CDT cells
 
 [Check MOUTHWASH](scdeMouthwash.html)
 
-[Calibration of methods](scdeCalibration.html)
+[Calibration of ruv methods](scdeCalibration.html)
 
 [single cell cytokine, two controls](sccytokines.html)
 
