@@ -167,8 +167,8 @@ for(rep in 1:nreps){
 
 
 ```{r}
-load("~/misc/data/scde/calibration_auc3.RData")
-load("~/misc/data/scde/calibration_fdr3.RData")
+load("data/scde/calibration_auc3.RData")
+load("data/scde/calibration_fdr3.RData")
 
 name_vec = c('mout0','mout1','sva','sva-ash0','sva-ash1')
 colnames(result_auc) = name_vec
