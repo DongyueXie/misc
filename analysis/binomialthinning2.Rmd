@@ -1,0 +1,129 @@
+---
+title: "binomial thinning2"
+author: "DongyueXie"
+date: "2020-03-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Following previus [post](https://dongyuexie.github.io/misc/binomialthinning.html), what if only remove genes appearning in less than 10 cells. 
+
+
+
+```{r}
+#'@param Z count matrix, sample by features
+#'@param x 1 for group 1, 0 for group 2
+#'@param beta effect of fearures,  0 for null.
+#'@return W, thinned matrix
+bi_thin = function(Z,x,beta){
+
+  n=nrow(Z)
+  p=ncol(Z)
+  
+  # group index
+  g1 = which(x==1)
+  g2 = which(x==0)
+  
+  
+  p2 = 1/(1+exp(beta))
+  p1 = 1-p2
+  P = matrix(nrow = n,ncol = p)
+  P[g1,] = t(replicate(length(g1),p1))
+  P[g2,] = t(replicate(length(g2),p2))
+  
+  W = matrix(rbinom(n*p,Z,P),nrow=n)
+  
+  W
+}
+
+quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} 
+
+```
+
+**Normal signal, sd=1.5. Run 50 reps.**
+
+```{r}
+library(sva)
+load('data/scde/scCDT.RData')
+Z = t(as.matrix(CDT))
+rm.idx = which(colSums(Z!=0)<10)
+Z = Z[,-rm.idx]
+n = nrow(Z)
+p = ncol(Z)
+
+set.seed(12345)
+
+nreps = 50
+
+loglik=c()
+roc_result = c()
+
+for(rep in 1:nreps){
+  
+x = rbinom(n,1,0.5)
+beta = rnorm(p,0,1.5)
+beta[sample(1:p,p*0.9)]=0
+
+W = bi_thin(Z,x,beta)
+
+Wn = log(W+0.5)
+
+X = model.matrix(~x)
+
+sva_sva = quiet(sva(t(Wn),mod = X, mod0 = X[, -2, drop = FALSE], n.sv = 3))
+
+X.sva = cbind(X, sva_sva$sv)
+lmout = limma::lmFit(object = t(Wn), design = X.sva)
+eout  = limma::eBayes(lmout)
+
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+
+loglik = rbind(loglik,c(sva_limma_ash0$loglik,sva_limma_ash1$loglik))
+
+#knitr::kable(cbind(sva_limma_ash0$loglik,sva_limma_ash1$loglik), 
+#             col.names = c('alpha=0','alpha=1'), digits = 2,caption = 'log-lik')
+
+
+which_null = ifelse(beta==0,1,0)
+################
+roc_out <- list(
+  #pROC::roc(response = which_null, predictor = c(mout$result$lfsr)),
+  #pROC::roc(response = which_null, predictor = c(mout1$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash0$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash1$result$lfsr)))
+#name_vec <- c("MOUTHWASH0","MOUTHWASH1","SVA-limma","SVA-limma-ash0","SVA-limma-ash1")
+
+auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+roc_result = rbind(roc_result,auc_vec)
+
+#knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = "AUC", digits = 3)
+
+}
+
+name_vec <- c("sva-limma","sva-limma-ash0","sva-limma-ash1")
+colnames(roc_result) <- name_vec
+
+colnames(loglik) = c('alpha=0','alpha=1')
+
+boxplot(loglik,ylab = 'loglik')
+
+boxplot(roc_result,ylab='AUC')
+
+```
+
+
