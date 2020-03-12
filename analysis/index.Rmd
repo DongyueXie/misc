@@ -59,6 +59,8 @@ editor_options:
 
 [Check MOUTHWASH](scdeMouthwash.html)
 
+[Calibration of methods](scdeCalibration.html)
+
 [single cell cytokine, two controls](sccytokines.html)
 
 [single cell cytokine, two controls](sccytokines_filter10.html):  filter out genes with < 10 non-zero elements
