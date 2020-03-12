@@ -1,0 +1,207 @@
+---
+title: "scde Calibration"
+author: "DongyueXie"
+date: "2020-03-08"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Check if methods control claimed FDR.
+
+Binomial thinning might not work very well in this case: consider a gene with expression $(1,1,1,1,1,1,1,1,0,0,...,0)$ in group 1 and $(1,1,0,0,0,0,0,...,0)$ in group 2 then if the effect is very small, then $p_2$ is close to 1 and $p_2$ is close to 0. So the thinned gene expression is likely to be $(0,0,0,0,0,...,0)$ and $(1,1,0,0,0,0,0,...,0)$. Even if we created signals for this gene, data are not informative enough.
+
+How to avoid? For now just filter out genes appearing in less than 30 cells. (Total 709 cells). 
+
+For fixed non-null gene set and gene effects, repeat 30 times: randomly assign samples to one of two groups and thin the data accordingly. 
+
+```{r,message=FALSE,warning=FALSE,eval=FALSE}
+library(vicar)
+library(sva)
+library(cate)
+library(seqgendiff)
+library(qvalue)
+load('data/scde/scCDT.RData')
+
+#'@param Z count matrix, sample by features
+#'@param x 1 for group 1, 0 for group 2
+#'@param beta effect of fearures,  0 for null.
+#'@return W, thinned matrix
+bi_thin = function(Z,x,beta){
+
+  n=nrow(Z)
+  p=ncol(Z)
+  
+  # group index
+  g1 = which(x==1)
+  g2 = which(x==0)
+  
+  
+  p2 = 1/(1+exp(beta))
+  p1 = 1-p2
+  P = matrix(nrow = n,ncol = p)
+  P[g1,] = t(replicate(length(g1),p1))
+  P[g2,] = t(replicate(length(g2),p2))
+  
+  W = matrix(rbinom(n*p,Z,P),nrow=n)
+  
+  W
+}
+
+quiet <- function(x) { 
+  sink(tempfile()) 
+  on.exit(sink()) 
+  invisible(force(x)) 
+} 
+
+```
+
+```{r,eval=FALSE}
+Z = t(as.matrix(CDT))
+rm.idx = which(colSums(Z!=0)<30)
+Z = Z[,-rm.idx]
+n = nrow(Z)
+p = ncol(Z)
+
+cuts = c(1e-04, 0.001, 0.01, 0.025, 0.05,0.1)
+
+set.seed(12345)
+nreps = 50
+#fix gene sets and effects
+beta = rnorm(p,0,1.5)
+beta[sample(1:p,p*0.9)]=0
+which_null = ifelse(beta==0,1,0)
+
+result_fdr = list()
+result_auc = c()
+
+
+for(rep in 1:nreps){
+  x = rbinom(n,1,0.5)
+  
+  #generate data
+  W = bi_thin(Z,x,beta)
+  W = log(W + 0.5)
+  
+  X = model.matrix(~x)
+
+  # fit sva
+  sva_sva = quiet(sva(t(W),mod = X, mod0 = X[, -2, drop = FALSE], n.sv = 3))
+  
+  # sva-limma
+  X.sva = cbind(X, sva_sva$sv)
+  lmout = limma::lmFit(object = t(Wn), design = X.sva)
+  eout  = limma::eBayes(lmout)
+
+  svaout           <- list()
+  svaout$betahat   <- lmout$coefficients[, 2]
+  svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+  svaout$pvalues   <- eout$p.value[, 2]
+
+  # ash
+  sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+
+  sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+
+  #mouthwash
+  
+  mout1 = mouthwash(W,X,k=3,cov_of_interest = 2,
+                   include_intercept = FALSE,verbose = FALSE,sprop = 1,scale_var = FALSE)
+  
+  mout0 = mouthwash(W,X,k=3,cov_of_interest = 2,
+                   include_intercept = FALSE,verbose = FALSE,sprop = 0)
+  
+  
+  
+  #auc
+  roc_out <- list(
+  pROC::roc(response = which_null, predictor = c(mout$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(mout1$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash0$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash1$result$lfsr)))
+  
+
+ auc_vec <- sapply(roc_out, FUN = function(x) { x$auc })
+ 
+
+ result_auc = rbind(result_auc,auc_vec)
+ name_vec <- c("MOUTHWASH0","MOUTHWASH1","SVA-limma","SVA-limma-ash0","SVA-limma-ash1")
+ colnames(result_auc) <- name_vec
+ 
+  # q value
+  sva_qvalue = qvalue(svaout$pvalues)
+
+  eFDR_sva = c()
+  eFDR_sva_ash0 = c()
+  eFDR_sva_ash1 = c()
+  eFDR_mout1 = c()
+  eFDR_mout0 = c()
+  for(i in 1:length(cuts)){
+    rej = which(sva_qvalue$qvalues<=cuts[i])
+    eFDR_sva[i] = sum(rej%in%which(which_null==1))/length(rej)
+  
+    rej = which(mout1$result$qvalue<=cuts[i])
+    eFDR_mout1[i] = sum(rej%in%which(which_null==1))/length(rej)
+    
+     rej = which(mout0$result$qvalue<=cuts[i])
+    eFDR_mout0[i] = sum(rej%in%which(which_null==1))/length(rej)
+  
+    rej = which(sva_limma_ash1$result$qvalue<=cuts[i])
+    eFDR_sva_ash1[i] = sum(rej%in%which(which_null==1))/length(rej)
+    
+    rej = which(sva_limma_ash0$result$qvalue<=cuts[i])
+    eFDR_sva_ash0[i] = sum(rej%in%which(which_null==1))/length(rej)
+    
+  }
+  
+  result_fdr[[rep]] = rbind(eFDR_mout0,eFDR_mout1,eFDR_sva,eFDR_sva_ash0,eFDR_sva_ash1)
+  save(result_fdr,file='data/scde/calibration_fdr.RData')
+  save(result_auc,file='data/scde/calibration_auc.RData')
+}
+```
+
+
+```{r}
+load("~/misc/data/scde/calibration_auc3.RData")
+load("~/misc/data/scde/calibration_fdr3.RData")
+
+name_vec = c('mout0','mout1','sva','sva-ash0','sva-ash1')
+colnames(result_auc) = name_vec
+boxplot(result_auc,ylab = 'AUC')
+
+cut1 = c()
+cut2 = c()
+cut3 = c()
+cut4 = c()
+for(i in 1:length(result_fdr)){
+  cut1 = rbind(cut1,result_fdr[[i]][,3])
+  cut2 = rbind(cut2,result_fdr[[i]][,4])
+  cut3 = rbind(cut3,result_fdr[[i]][,5])
+  cut4 = rbind(cut4,result_fdr[[i]][,6])
+}
+
+colnames(cut1) = name_vec
+colnames(cut2) = name_vec
+colnames(cut3) = name_vec
+colnames(cut4) = name_vec
+boxplot(cut1,ylab = 'FDP',ylim=c(0,0.03),main='fdr level 0.01')
+abline(h=0.01,lty=3,col=4)
+boxplot(cut2,ylab = 'FDP',ylim=c(0,0.055),main='fdr level 0.025')
+abline(h=0.025,lty=3,col=4)
+boxplot(cut3,ylab = 'FDP',ylim=c(0,0.1),main='fdr level 0.05')
+abline(h=0.05,lty=3,col=4)
+boxplot(cut4,ylab = 'FDP',ylim=c(0,0.2),main='fdr level 0.1')
+abline(h=0.1,lty=3,col=4)
+
+```
+
+
+
+
+
+
