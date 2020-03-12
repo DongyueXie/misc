@@ -452,10 +452,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9e60ba9600a9bc999e81c66cdbac1cde48740b7dtargetblank9e60ba9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/9e60ba9600a9bc999e81c66cdbac1cde48740b7d" target="_blank">9e60ba9</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6b5f6c0efb6de62b70d6be107da80846afc97438targetblank6b5f6c0a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/6b5f6c0efb6de62b70d6be107da80846afc97438" target="_blank">6b5f6c0</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9e60ba9600a9bc999e81c66cdbac1cde48740b7dtargetblank9e60ba9a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6b5f6c0efb6de62b70d6be107da80846afc97438targetblank6b5f6c0a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -464,15 +464,14 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/gsea.Rmd
     Untracked:  analysis/methylation.Rmd
     Untracked:  analysis/scdeCalibration.Rmd
     Untracked:  analysis/susie.Rmd
-    Untracked:  code/Rplots.pdf
     Untracked:  code/sccytokines.R
+    Untracked:  code/scdeCalibration.R
     Untracked:  data/bart/
     Untracked:  data/cytokine/DE_controls_output_filter10.RData
     Untracked:  data/cytokine/DE_controls_output_filter10_addlimma.RData
@@ -526,6 +525,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/6b5f6c0efb6de62b70d6be107da80846afc97438/analysis/binomialthinning.Rmd" target="_blank">6b5f6c0</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-11
+</td>
+<td>
+wflow_publish(“analysis/binomialthinning.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/ab29772bac3bf79de37c16c514044fd74871c699/docs/binomialthinning.html" target="_blank">ab29772</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -664,14 +697,14 @@ quiet &lt;- function(x) {
 <pre class="r"><code>library(sva)
 load(&#39;data/scde/scCDT.RData&#39;)
 Z = t(as.matrix(CDT))
-rm.idx = which(colSums(Z!=0)&lt;10)
+rm.idx = which(colSums(Z!=0)&lt;30)
 Z = Z[,-rm.idx]
 n = nrow(Z)
 p = ncol(Z)
 
 set.seed(12345)
 
-nreps = 50
+nreps = 30
 
 loglik=c()
 roc_result = c()
@@ -733,8 +766,158 @@ colnames(loglik) = c(&#39;alpha=0&#39;,&#39;alpha=1&#39;)
 
 boxplot(loglik,ylab = &#39;loglik&#39;)</code></pre>
 <p><img src="figure/binomialthinning.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/ab29772bac3bf79de37c16c514044fd74871c699/docs/figure/binomialthinning.Rmd/unnamed-chunk-2-1.png" target="_blank">ab29772</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>boxplot(roc_result,ylab=&#39;AUC&#39;)</code></pre>
 <p><img src="figure/binomialthinning.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-2">
+Past versions of unnamed-chunk-2-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/ab29772bac3bf79de37c16c514044fd74871c699/docs/figure/binomialthinning.Rmd/unnamed-chunk-2-2.png" target="_blank">ab29772</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>library(sva)
+load(&#39;data/scde/scCDT.RData&#39;)
+Z = t(as.matrix(CDT))
+rm.idx = which(colSums(Z!=0)&lt;30)
+Z = Z[,-rm.idx]
+n = nrow(Z)
+p = ncol(Z)
+
+set.seed(12345)
+
+nreps = 30
+
+loglik=c()
+roc_result = c()
+
+beta = rnorm(p,0,1.5)
+beta[sample(1:p,p*0.9)]=0
+
+for(rep in 1:nreps){
+  
+x = rbinom(n,1,0.5)
+
+
+W = bi_thin(Z,x,beta)
+
+Wn = log(W+0.5)
+
+X = model.matrix(~x)
+
+sva_sva = quiet(sva(t(Wn),mod = X, mod0 = X[, -2, drop = FALSE], n.sv = 3))
+
+X.sva = cbind(X, sva_sva$sv)
+lmout = limma::lmFit(object = t(Wn), design = X.sva)
+eout  = limma::eBayes(lmout)
+
+svaout           &lt;- list()
+svaout$betahat   &lt;- lmout$coefficients[, 2]
+svaout$sebetahat &lt;- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   &lt;- eout$p.value[, 2]
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+
+loglik = rbind(loglik,c(sva_limma_ash0$loglik,sva_limma_ash1$loglik))
+
+#knitr::kable(cbind(sva_limma_ash0$loglik,sva_limma_ash1$loglik), 
+#             col.names = c(&#39;alpha=0&#39;,&#39;alpha=1&#39;), digits = 2,caption = &#39;log-lik&#39;)
+
+
+which_null = ifelse(beta==0,1,0)
+################
+roc_out &lt;- list(
+  #pROC::roc(response = which_null, predictor = c(mout$result$lfsr)),
+  #pROC::roc(response = which_null, predictor = c(mout1$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(svaout$pvalues)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash0$result$lfsr)),
+  pROC::roc(response = which_null, predictor = c(sva_limma_ash1$result$lfsr)))
+#name_vec &lt;- c(&quot;MOUTHWASH0&quot;,&quot;MOUTHWASH1&quot;,&quot;SVA-limma&quot;,&quot;SVA-limma-ash0&quot;,&quot;SVA-limma-ash1&quot;)
+
+auc_vec &lt;- sapply(roc_out, FUN = function(x) { x$auc })
+roc_result = rbind(roc_result,auc_vec)
+
+#knitr::kable(sort(auc_vec, decreasing = TRUE), col.names = &quot;AUC&quot;, digits = 3)
+
+}
+
+name_vec &lt;- c(&quot;sva-limma&quot;,&quot;sva-limma-ash0&quot;,&quot;sva-limma-ash1&quot;)
+colnames(roc_result) &lt;- name_vec
+
+colnames(loglik) = c(&#39;alpha=0&#39;,&#39;alpha=1&#39;)
+
+boxplot(loglik,ylab = &#39;loglik&#39;)</code></pre>
+<p><img src="figure/binomialthinning.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>boxplot(roc_result,ylab=&#39;AUC&#39;)</code></pre>
+<p><img src="figure/binomialthinning.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
