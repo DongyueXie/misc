@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Dongyue Xie" />
@@ -28,8 +27,9 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -77,7 +77,9 @@ h6 {
 </style>
 
 
+</head>
 
+<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,6 +93,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -100,9 +103,6 @@ img {
 }
 button.code-folding-btn:focus {
   outline: none;
-}
-summary {
-  display: list-item;
 }
 </style>
 
@@ -118,6 +118,7 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
+
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -137,43 +138,6 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
-}
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -195,65 +159,47 @@ $(document).ready(function () {
 });
 </script>
 
+
+<div class="container-fluid main-container">
+
 <!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
 
 <!-- code folding -->
 
 
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -302,6 +248,8 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -310,16 +258,6 @@ div.tocify {
 
 
 </style>
-
-
-
-</head>
-
-<body>
-
-
-<div class="container-fluid main-container">
-
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -380,8 +318,8 @@ div.section {
 
 
 <h1 class="title toc-ignore">Deconvolution</h1>
-<h4 class="author">Dongyue Xie</h4>
-<h4 class="date">2019-12-10</h4>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2019-12-10</em></h4>
 
 </div>
 
@@ -406,7 +344,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-12-10
+<strong>Last updated:</strong> 2020-03-13
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -416,7 +354,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -497,10 +435,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreeaf20c492be164276a63bcf2f1330b0bf99d3ec8btargetblankaf20c49a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/af20c492be164276a63bcf2f1330b0bf99d3ec8b" target="_blank">af20c49</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree73933a7941216795b4a58fc8f6431710a573e281targetblank73933a7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/73933a7941216795b4a58fc8f6431710a573e281" target="_blank">73933a7</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreeaf20c492be164276a63bcf2f1330b0bf99d3ec8btargetblankaf20c49a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree73933a7941216795b4a58fc8f6431710a573e281targetblank73933a7a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -509,6 +447,27 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/gsea.Rmd
+    Untracked:  analysis/ideas.Rmd
+    Untracked:  analysis/methylation.Rmd
+    Untracked:  analysis/susie.Rmd
+    Untracked:  code/sccytokines.R
+    Untracked:  code/scdeCalibration.R
+    Untracked:  data/bart/
+    Untracked:  data/cytokine/DE_controls_output_filter10.RData
+    Untracked:  data/cytokine/DE_controls_output_filter10_addlimma.RData
+    Untracked:  data/cytokine/README
+    Untracked:  data/cytokine/test.RData
+    Untracked:  data/cytokine_normalized.RData
+    Untracked:  data/deconv/
+    Untracked:  data/scde/
+
+Unstaged changes:
+    Deleted:    data/mout_high.RData
+    Deleted:    data/scCDT.RData
+    Deleted:    data/sva_sva_high.RData
 
 </code></pre>
 <p>
@@ -552,13 +511,47 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/73933a7941216795b4a58fc8f6431710a573e281/analysis/deconvolution.Rmd" target="_blank">73933a7</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-13
+</td>
+<td>
+wflow_publish(“analysis/deconvolution.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/53cef0f15bd29ba0cd6cdcd8060868b56b5cf0bd/docs/deconvolution.html" target="_blank">53cef0f</a>
+</td>
+<td>
+Dongyue Xie
+</td>
+<td>
+2019-12-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/af20c492be164276a63bcf2f1330b0bf99d3ec8b/analysis/deconvolution.Rmd" target="_blank">af20c49</a>
 </td>
 <td>
 Dongyue Xie
 </td>
 <td>
-2019-12-11
+2019-12-10
 </td>
 <td>
 wflow_publish(“analysis/deconvolution.Rmd”)
@@ -573,77 +566,294 @@ wflow_publish(“analysis/deconvolution.Rmd”)
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<pre class="r"><code>set.seed(12345)
+<p>We have scRNA-seq data from Segerstolpe et al. (2016) including the 1097 cells from 6 healthy subjects, taken from <a href="https://xuranw.github.io/MuSiC/articles/pages/data.html">here</a>. In the following simulation study, 4 cell types - acinar, alpha, beta, and ductal cells are included.</p>
+<pre class="r"><code>EMTAB.eset = readRDS(&#39;data/deconv/EMTABesethealthy.rds&#39;)
+EMTAB.eset</code></pre>
+<pre><code>Loading required package: Biobase</code></pre>
+<pre><code>Loading required package: BiocGenerics</code></pre>
+<pre><code>Loading required package: parallel</code></pre>
+<pre><code>
+Attaching package: &#39;BiocGenerics&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:parallel&#39;:
 
-library(deconvSeq)
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
 
-data(&quot;data_celltypes_rnaseq&quot;) 
+    IQR, mad, sd, var, xtabs</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
 
-dge.celltypes = getdge(cnts.celltypes, design.rnaseq, ncpm.min=1, nsamp.min=4)</code></pre>
-<pre><code>Disp = 0.29108 , BCV = 0.5395 </code></pre>
-<pre class="r"><code>A = dge.celltypes$counts%*%(design.rnaseq/(outer(rep(1,64),c(14,14,14,22))))
+    anyDuplicated, append, as.data.frame, basename, cbind,
+    colMeans, colnames, colSums, dirname, do.call, duplicated,
+    eval, evalq, Filter, Find, get, grep, grepl, intersect,
+    is.unsorted, lapply, lengths, Map, mapply, match, mget, order,
+    paste, pmax, pmax.int, pmin, pmin.int, Position, rank, rbind,
+    Reduce, rowMeans, rownames, rowSums, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which, which.max,
+    which.min</code></pre>
+<pre><code>Welcome to Bioconductor
 
-w = c(0.1,0.4,0.3,0.2)
+    Vignettes contain introductory material; view with
+    &#39;browseVignettes()&#39;. To cite Bioconductor, see
+    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
+<pre><code>ExpressionSet (storageMode: lockedEnvironment)
+assayData: 25453 features, 1097 samples 
+  element names: exprs 
+protocolData: none
+phenoData
+  sampleNames: AZ_A10 AZ_A11 ... HP1509101_P9 (1097 total)
+  varLabels: sampleID SubjectName cellTypeID cellType
+  varMetadata: labelDescription
+featureData: none
+experimentData: use &#39;experimentData(object)&#39;
+Annotation:  </code></pre>
+<pre class="r"><code>table(EMTAB.eset$cellType)</code></pre>
+<pre><code>
+                acinar                  alpha                   beta 
+                   112                    443                    171 
+         co-expression                  delta                 ductal 
+                    26                     59                    135 
+           endothelial                epsilon                  gamma 
+                    13                      5                     75 
+                  mast           MHC class II                    PSC 
+                     4                      1                     23 
+          unclassified unclassified endocrine 
+                     1                     29 </code></pre>
+<p>Now obtain the true gene relative expression in each cell type.</p>
+<p>Preprocess the data: 1. remove genes appearing in less than 10 cells; 2. remove top <span class="math inline">\(1\%\)</span> expressed genes</p>
+<pre class="r"><code>cell_types = c(&#39;acinar&#39;,&#39;alpha&#39;,&#39;beta&#39;,&#39;ductal&#39;)
 
-######
+#remove genes appeared in too few cells
+#remove genes that are overly expressed
+rm.idx = which(rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)])!=0)&lt;10)
+rr = rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)]))
+#rm.idx = which(rr==0)
+#rm.idx1 = which(rr&lt;=quantile(rr[-rm.idx],0.01))
+rm.idx2 = which(rr&gt;=quantile(rr[-rm.idx],0.95))
+rm.idx = unique(c(rm.idx,rm.idx2))
 
-Ey = A%*%w
-e = rnorm(500,0,0.1)
+acinar = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;acinar&#39;)]
+alpha = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;alpha&#39;)]
+beta = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;beta&#39;)]
+ductal = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;ductal&#39;)]</code></pre>
+<p>Check cell library size: cell library sizes are big</p>
+<pre class="r"><code>summary(colSums(acinar))</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   5565   76099  140386  232418  328637  981553 </code></pre>
+<pre class="r"><code>summary(colSums(alpha))</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   5842   65225  134546  184102  261253 1165737 </code></pre>
+<pre class="r"><code>summary(colSums(beta))</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   4871   79238  164028  206068  316283  846231 </code></pre>
+<pre class="r"><code>summary(colSums(ductal))</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  11119   67514  155453  242885  341715 1333342 </code></pre>
+<pre class="r"><code># cell type specific gene relative expression
+Theta = cbind(rowSums(acinar)/sum(acinar),
+              rowSums(alpha)/sum(alpha),
+              rowSums(beta)/sum(beta),
+              rowSums(ductal)/sum(ductal))
 
-y = Ey + e
+cor(Theta)</code></pre>
+<pre><code>          [,1]      [,2]      [,3]      [,4]
+[1,] 1.0000000 0.5215232 0.4614900 0.6805119
+[2,] 0.5215232 1.0000000 0.7833674 0.5356580
+[3,] 0.4614900 0.7833674 1.0000000 0.4803255
+[4,] 0.6805119 0.5356580 0.4803255 1.0000000</code></pre>
+<pre class="r"><code>kappa(t(Theta)%*%Theta)</code></pre>
+<pre><code>[1] 16.63482</code></pre>
+<pre class="r"><code># cell size
+S = c(sum(acinar)/ncol(acinar),
+      sum(alpha)/ncol(alpha),
+      sum(beta)/ncol(beta),
+      sum(ductal)/ncol(ductal))
 
-# 1. ols est
+S=S/100
 
-what_ols = solve(t(A)%*%A)%*%t(A)%*%y
-what_ols</code></pre>
-<pre><code>                         [,1]
-tissuefBcells       0.1000085
-tissuefTcells       0.3999569
-tissuefMonocytes    0.2999990
-tissuefGranulocytes 0.1999993</code></pre>
-<pre class="r"><code># 2. nnls est
+set.seed(12345)
+# bulk data library size: 50*number of genes.
+bulk_ls = 50*nrow(Theta)
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(1,2,3,4)
+bulk_beta = bulk_beta/sum(bulk_beta)
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
 
-library(nnls)
-what_nnls = nnls(A,y)
-what_nnls$x</code></pre>
-<pre><code>[1] 0.1000085 0.3999569 0.2999990 0.1999993</code></pre>
-<pre class="r"><code>#######
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
 
-c=10
-
-Ey = c*A%*%w
-
-y = Ey + e
-
-what_ols = solve(t(A)%*%A)%*%t(A)%*%y
+w = rep(1,length(bulk_theta))
 
 
-what_nnls = nnls(A,y)$x
+ci_l = c()
+ci_r = c()
+beta_est = c()
 
-D =t(A)%*%A
+for(rep in 1:100){
+  
+  Z = matrix(rpois(prod(dim(ref_X)),ref_X),ncol=ncol(ref_X))
+y = rpois(length(bulk_theta),bulk_ls*bulk_theta)
 
-d = t(A)%*%y
+#W = diag(w)
+#beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
 
-Amat = diag(4)
+beta_hat = solve(t(Z)%*%Z - diag(colSums(Z)))%*%t(Z)%*%y
 
-Amat = rbind(rep(1,4),Amat)
+#beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
 
-b0 = c(1,0,0,0,0)
+#beta_hat
+#beta_hat/sum(beta_hat)
 
-#what_qp = solve.QP(D,d,t(Amat),b0,meq=1)
+Q = 0
+Sigma=0
+for(i in 1:length(y)){
+  ag = Z[i,]%*%t(Z[i,])-diag(Z[i,])
+  Q = Q + ag
+  Delta = (ag%*%beta_hat-y[i]*Z[i,])
+  Sigma = Sigma + Delta%*%t(Delta)
+}
+Q = Q*2/length(y)
+Sigma = Sigma*4/length(y)
 
-#what_glmnet = glmnet(A,y,lambda = 0,lower.limits = 0,upper.limits = 1)
+K = ncol(Z)
+J = matrix(nrow = ncol(Z),ncol=ncol(Z))
+for(i in 1:K){
+  for(j in 1:K){
+    if(i==j){
+      J[i,j] = sum(beta_hat)-beta_hat[i]
+    }else{
+      J[i,j] = -beta_hat[i]
+    }
+  }
+}
 
-#what_bvls = bvls(A,y,rep(0,4),rep(1,4))
+asyV = J%*%solve(Q)%*%Sigma%*%solve(Q)%*%J
 
-########
+beta_est = rbind(beta_est,c(beta_hat))
 
-y = c*(A%*%w+e)
+ci_l = cbind(ci_l,beta_hat/sum(beta_hat)-2*sqrt(diag(asyV)/length(y)))
+ci_r = cbind(ci_r,beta_hat/sum(beta_hat)+2*sqrt(diag(asyV)/length(y)))
+}
 
-what_ols = solve(t(A)%*%A)%*%t(A)%*%y
+for(i in 1:4){
+  plot(ci_l[i,],type=&#39;l&#39;,ylim=range(c(ci_l[i,],ci_r[i,])))
+  lines(ci_r[i,],col=&#39;grey80&#39;)
+  lines(rep(i/10,100),lty = 2)
+}</code></pre>
+<p><img src="figure/deconvolution.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-4-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Another dataset:</p>
+<pre class="r"><code>XinT2D.eset = readRDS(&#39;data/deconv/XinT2Deset.rds&#39;)
+XinT2D.eset</code></pre>
+<pre><code>ExpressionSet (storageMode: lockedEnvironment)
+assayData: 39849 features, 1492 samples 
+  element names: exprs 
+protocolData: none
+phenoData
+  sampleNames: Sample_1 Sample_2 ... Sample_1492 (1492 total)
+  varLabels: sampleID SubjectName ... Disease (5 total)
+  varMetadata: labelDescription
+featureData: none
+experimentData: use &#39;experimentData(object)&#39;
+Annotation:  </code></pre>
+<pre class="r"><code>table(XinT2D.eset$cellType)</code></pre>
+<pre><code>
+alpha  beta delta gamma 
+  886   472    49    85 </code></pre>
+<pre class="r"><code># remove genes 
+rm.idx = which(rowSums((exprs(XinT2D.eset))!=0)&lt;5)
+rr = rowSums((exprs(XinT2D.eset)))
 
-nnls(A,y)$x</code></pre>
-<pre><code>[1] 1.000085 3.999569 2.999990 1.999993</code></pre>
+rm.idx2 = which(rr&gt;=quantile(rr[-rm.idx],0.95))
+rm.idx = unique(c(rm.idx,rm.idx2))
+Theta = c()
+S=c()
+for(i in 1:4){
+  aa = rowSums(exprs(XinT2D.eset)[-rm.idx,which(XinT2D.eset$cellTypeID == i)])
+  Theta = cbind(Theta,aa/sum(aa))
+  S[i] = sum(aa)/length(which(XinT2D.eset$cellTypeID == i))
+}
+
+S=S/100
+
+set.seed(12345)
+# bulk data library size: 50*number of genes.
+bulk_ls = 50*nrow(Theta)
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(1,2,3,4)
+bulk_beta = bulk_beta/sum(bulk_beta)
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,length(bulk_theta))
+
+
+ci_l = c()
+ci_r = c()
+beta_est = c()
+
+for(rep in 1:100){
+  
+  Z = matrix(rpois(prod(dim(ref_X)),ref_X),ncol=ncol(ref_X))
+y = rpois(length(bulk_theta),bulk_ls*bulk_theta)
+
+#W = diag(w)
+#beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+beta_hat = solve(t(Z)%*%Z - diag(colSums(Z)))%*%t(Z)%*%y
+
+#beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+#beta_hat
+#beta_hat/sum(beta_hat)
+
+Q = 0
+Sigma=0
+for(i in 1:length(y)){
+  ag = Z[i,]%*%t(Z[i,])-diag(Z[i,])
+  Q = Q + ag
+  Delta = (ag%*%beta_hat-y[i]*Z[i,])
+  Sigma = Sigma + Delta%*%t(Delta)
+}
+Q = Q*2/length(y)
+Sigma = Sigma*4/length(y)
+
+K = ncol(Z)
+J = matrix(nrow = ncol(Z),ncol=ncol(Z))
+for(i in 1:K){
+  for(j in 1:K){
+    if(i==j){
+      J[i,j] = sum(beta_hat)-beta_hat[i]
+    }else{
+      J[i,j] = -beta_hat[i]
+    }
+  }
+}
+
+asyV = J%*%solve(Q)%*%Sigma%*%solve(Q)%*%J
+
+beta_est = rbind(beta_est,c(beta_hat))
+
+ci_l = cbind(ci_l,beta_hat/sum(beta_hat)-2*sqrt(diag(asyV)/length(y)))
+ci_r = cbind(ci_r,beta_hat/sum(beta_hat)+2*sqrt(diag(asyV)/length(y)))
+}
+
+for(i in 1:4){
+  plot(ci_l[i,],type=&#39;l&#39;,ylim=range(c(ci_l[i,],ci_r[i,])))
+  lines(ci_r[i,],col=&#39;grey80&#39;)
+  lines(rep(i/10,100),lty = 2)
+}</code></pre>
+<p><img src="figure/deconvolution.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -652,91 +862,35 @@ nnls(A,y)$x</code></pre>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.6.1 (2019-07-05)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS High Sierra 10.13.6
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Scientific Linux 7.4 (Nitrogen)
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
-[1] nnls_1.4        deconvSeq_0.1.2
+[1] Biobase_2.42.0      BiocGenerics_0.28.0
 
 loaded via a namespace (and not attached):
-  [1] minqa_1.2.4                 ggbeeswarm_0.6.0           
-  [3] colorspace_1.4-1            mclust_5.4.5               
-  [5] dynamicTreeCut_1.63-1       rprojroot_1.3-2            
-  [7] qvalue_2.16.0               XVector_0.24.0             
-  [9] GenomicRanges_1.36.1        BiocNeighbors_1.2.0        
- [11] fs_1.3.1                    bit64_0.9-7                
- [13] AnnotationDbi_1.46.1        splines_3.6.1              
- [15] R.methodsS3_1.7.1           mnormt_1.5-5               
- [17] knitr_1.25                  scater_1.12.2              
- [19] zeallot_0.1.0               nloptr_1.2.1               
- [21] workflowr_1.5.0             Rsamtools_2.0.3            
- [23] R.oo_1.23.0                 httr_1.4.1                 
- [25] BiocManager_1.30.7          compiler_3.6.1             
- [27] dqrng_0.2.1                 backports_1.1.5            
- [29] assertthat_0.2.1            Matrix_1.2-17              
- [31] lazyeval_0.2.2              limma_3.40.6               
- [33] later_1.0.0                 BiocSingular_1.0.0         
- [35] prettyunits_1.0.2           htmltools_0.4.0            
- [37] tools_3.6.1                 rsvd_1.0.2                 
- [39] igraph_1.2.4.1              coda_0.19-3                
- [41] gtable_0.3.0                glue_1.3.1                 
- [43] GenomeInfoDbData_1.2.1      reshape2_1.4.3             
- [45] dplyr_0.8.3                 Rcpp_1.0.2                 
- [47] bbmle_1.0.20                Biobase_2.44.0             
- [49] vctrs_0.2.0                 Biostrings_2.52.0          
- [51] nlme_3.1-141                rtracklayer_1.44.4         
- [53] DelayedMatrixStats_1.6.1    psych_1.8.12               
- [55] xfun_0.10                   stringr_1.4.0              
- [57] ps_1.3.0                    Rmisc_1.5                  
- [59] fastseg_1.30.0              lme4_1.1-21                
- [61] irlba_2.3.3                 gtools_3.8.1               
- [63] statmod_1.4.32              XML_3.98-1.20              
- [65] edgeR_3.26.8                zlibbioc_1.30.0            
- [67] MASS_7.3-51.4               scales_1.0.0               
- [69] BiocStyle_2.12.0            hms_0.5.2                  
- [71] promises_1.1.0              parallel_3.6.1             
- [73] SummarizedExperiment_1.14.1 SingleCellExperiment_1.6.0 
- [75] yaml_2.2.0                  memoise_1.1.0              
- [77] gridExtra_2.3               ggplot2_3.2.1              
- [79] emdbook_1.3.11              biomaRt_2.40.5             
- [81] stringi_1.4.3               RSQLite_2.1.2              
- [83] S4Vectors_0.22.1            simpleSingleCell_1.8.0     
- [85] scran_1.12.1                BiocGenerics_0.30.0        
- [87] boot_1.3-23                 methylKit_1.10.0           
- [89] BiocParallel_1.18.1         truncnorm_1.0-8            
- [91] GenomeInfoDb_1.20.0         rlang_0.4.0                
- [93] pkgconfig_2.0.3             matrixStats_0.55.0         
- [95] bitops_1.0-6                Rsolnp_1.16                
- [97] evaluate_0.14               lattice_0.20-38            
- [99] purrr_0.3.2                 GenomicAlignments_1.20.1   
-[101] bit_1.1-14                  tidyselect_0.2.5           
-[103] processx_3.4.1              plyr_1.8.4                 
-[105] magrittr_1.5                R6_2.4.0                   
-[107] IRanges_2.18.3              DelayedArray_0.10.0        
-[109] DBI_1.0.0                   foreign_0.8-72             
-[111] pillar_1.4.2                whisker_0.4                
-[113] RCurl_1.95-4.12             tibble_2.1.3               
-[115] crayon_1.3.4                rmarkdown_1.16             
-[117] progress_1.2.2              viridis_0.5.1              
-[119] locfit_1.5-9.1              grid_3.6.1                 
-[121] data.table_1.12.6           blob_1.2.0                 
-[123] callr_3.3.2                 git2r_0.26.1               
-[125] digest_0.6.21               httpuv_1.5.2               
-[127] numDeriv_2016.8-1.1         R.utils_2.9.0              
-[129] stats4_3.6.1                munsell_0.5.0              
-[131] beeswarm_0.2.3              viridisLite_0.3.0          
-[133] vipor_0.4.5                </code></pre>
+ [1] workflowr_1.6.0 Rcpp_1.0.2      digest_0.6.18   later_0.7.5    
+ [5] rprojroot_1.3-2 R6_2.3.0        backports_1.1.2 git2r_0.26.1   
+ [9] magrittr_1.5    evaluate_0.12   stringi_1.2.4   fs_1.3.1       
+[13] promises_1.0.1  whisker_0.3-2   rmarkdown_1.10  tools_3.5.1    
+[17] stringr_1.3.1   glue_1.3.0      httpuv_1.4.5    yaml_2.2.0     
+[21] compiler_3.5.1  htmltools_0.3.6 knitr_1.20     </code></pre>
 </div>
 </div>
 
@@ -770,49 +924,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
