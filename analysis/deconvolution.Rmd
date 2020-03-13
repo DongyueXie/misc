@@ -9,8 +9,245 @@ editor_options:
 
 ## Introduction
 
+We have scRNA-seq data from Segerstolpe et al. (2016) including the 1097 cells from 6 healthy subjects, taken from [here](https://xuranw.github.io/MuSiC/articles/pages/data.html). In the following simulation study, 4 cell types -  acinar, alpha, beta, and ductal cells are included. 
 
 ```{r}
+EMTAB.eset = readRDS('data/deconv/EMTABesethealthy.rds')
+EMTAB.eset
+
+table(EMTAB.eset$cellType)
+```
+
+Now obtain the true gene relative expression in each cell type.
+
+Preprocess the data: 1. remove genes appearing in less than 10 cells; 2. remove top $1\%$ expressed genes  
+
+```{r}
+cell_types = c('acinar','alpha','beta','ductal')
+
+#remove genes appeared in too few cells
+#remove genes that are overly expressed
+rm.idx = which(rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)])!=0)<10)
+rr = rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)]))
+#rm.idx = which(rr==0)
+#rm.idx1 = which(rr<=quantile(rr[-rm.idx],0.01))
+rm.idx2 = which(rr>=quantile(rr[-rm.idx],0.95))
+rm.idx = unique(c(rm.idx,rm.idx2))
+
+acinar = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='acinar')]
+alpha = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='alpha')]
+beta = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='beta')]
+ductal = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='ductal')]
+
+```
+
+Check cell library size: cell library sizes are big 
+
+```{r}
+summary(colSums(acinar))
+summary(colSums(alpha))
+summary(colSums(beta))
+summary(colSums(ductal))
+```
+
+```{r}
+
+# cell type specific gene relative expression
+Theta = cbind(rowSums(acinar)/sum(acinar),
+              rowSums(alpha)/sum(alpha),
+              rowSums(beta)/sum(beta),
+              rowSums(ductal)/sum(ductal))
+
+cor(Theta)
+
+kappa(t(Theta)%*%Theta)
+
+# cell size
+S = c(sum(acinar)/ncol(acinar),
+      sum(alpha)/ncol(alpha),
+      sum(beta)/ncol(beta),
+      sum(ductal)/ncol(ductal))
+
+S=S/100
+
+set.seed(12345)
+# bulk data library size: 50*number of genes.
+bulk_ls = 50*nrow(Theta)
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(1,2,3,4)
+bulk_beta = bulk_beta/sum(bulk_beta)
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,length(bulk_theta))
+
+
+ci_l = c()
+ci_r = c()
+beta_est = c()
+
+for(rep in 1:100){
+  
+  Z = matrix(rpois(prod(dim(ref_X)),ref_X),ncol=ncol(ref_X))
+y = rpois(length(bulk_theta),bulk_ls*bulk_theta)
+
+#W = diag(w)
+#beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+beta_hat = solve(t(Z)%*%Z - diag(colSums(Z)))%*%t(Z)%*%y
+
+#beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+#beta_hat
+#beta_hat/sum(beta_hat)
+
+Q = 0
+Sigma=0
+for(i in 1:length(y)){
+  ag = Z[i,]%*%t(Z[i,])-diag(Z[i,])
+  Q = Q + ag
+  Delta = (ag%*%beta_hat-y[i]*Z[i,])
+  Sigma = Sigma + Delta%*%t(Delta)
+}
+Q = Q*2/length(y)
+Sigma = Sigma*4/length(y)
+
+K = ncol(Z)
+J = matrix(nrow = ncol(Z),ncol=ncol(Z))
+for(i in 1:K){
+  for(j in 1:K){
+    if(i==j){
+      J[i,j] = sum(beta_hat)-beta_hat[i]
+    }else{
+      J[i,j] = -beta_hat[i]
+    }
+  }
+}
+
+asyV = J%*%solve(Q)%*%Sigma%*%solve(Q)%*%J
+
+beta_est = rbind(beta_est,c(beta_hat))
+
+ci_l = cbind(ci_l,beta_hat/sum(beta_hat)-2*sqrt(diag(asyV)/length(y)))
+ci_r = cbind(ci_r,beta_hat/sum(beta_hat)+2*sqrt(diag(asyV)/length(y)))
+}
+
+for(i in 1:4){
+  plot(ci_l[i,],type='l',ylim=range(c(ci_l[i,],ci_r[i,])))
+  lines(ci_r[i,],col='grey80')
+  lines(rep(i/10,100),lty = 2)
+}
+
+
+```
+
+
+Another dataset: 
+
+```{r}
+XinT2D.eset = readRDS('data/deconv/XinT2Deset.rds')
+XinT2D.eset
+table(XinT2D.eset$cellType)
+# remove genes 
+rm.idx = which(rowSums((exprs(XinT2D.eset))!=0)<5)
+rr = rowSums((exprs(XinT2D.eset)))
+
+rm.idx2 = which(rr>=quantile(rr[-rm.idx],0.95))
+rm.idx = unique(c(rm.idx,rm.idx2))
+Theta = c()
+S=c()
+for(i in 1:4){
+  aa = rowSums(exprs(XinT2D.eset)[-rm.idx,which(XinT2D.eset$cellTypeID == i)])
+  Theta = cbind(Theta,aa/sum(aa))
+  S[i] = sum(aa)/length(which(XinT2D.eset$cellTypeID == i))
+}
+
+S=S/100
+
+set.seed(12345)
+# bulk data library size: 50*number of genes.
+bulk_ls = 50*nrow(Theta)
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(1,2,3,4)
+bulk_beta = bulk_beta/sum(bulk_beta)
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,length(bulk_theta))
+
+
+ci_l = c()
+ci_r = c()
+beta_est = c()
+
+for(rep in 1:100){
+  
+  Z = matrix(rpois(prod(dim(ref_X)),ref_X),ncol=ncol(ref_X))
+y = rpois(length(bulk_theta),bulk_ls*bulk_theta)
+
+#W = diag(w)
+#beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+beta_hat = solve(t(Z)%*%Z - diag(colSums(Z)))%*%t(Z)%*%y
+
+#beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+#beta_hat
+#beta_hat/sum(beta_hat)
+
+Q = 0
+Sigma=0
+for(i in 1:length(y)){
+  ag = Z[i,]%*%t(Z[i,])-diag(Z[i,])
+  Q = Q + ag
+  Delta = (ag%*%beta_hat-y[i]*Z[i,])
+  Sigma = Sigma + Delta%*%t(Delta)
+}
+Q = Q*2/length(y)
+Sigma = Sigma*4/length(y)
+
+K = ncol(Z)
+J = matrix(nrow = ncol(Z),ncol=ncol(Z))
+for(i in 1:K){
+  for(j in 1:K){
+    if(i==j){
+      J[i,j] = sum(beta_hat)-beta_hat[i]
+    }else{
+      J[i,j] = -beta_hat[i]
+    }
+  }
+}
+
+asyV = J%*%solve(Q)%*%Sigma%*%solve(Q)%*%J
+
+beta_est = rbind(beta_est,c(beta_hat))
+
+ci_l = cbind(ci_l,beta_hat/sum(beta_hat)-2*sqrt(diag(asyV)/length(y)))
+ci_r = cbind(ci_r,beta_hat/sum(beta_hat)+2*sqrt(diag(asyV)/length(y)))
+}
+
+for(i in 1:4){
+  plot(ci_l[i,],type='l',ylim=range(c(ci_l[i,],ci_r[i,])))
+  lines(ci_r[i,],col='grey80')
+  lines(rep(i/10,100),lty = 2)
+}
+
+```
+
+
+```{r,eval=FALSE,include=FALSE}
 
 set.seed(12345)
 
