@@ -1,0 +1,171 @@
+---
+title: "scde Check Alpha 0/1 on real data"
+author: "DongyueXie"
+date: "2020-03-19"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Compare the loglikelihood from sva-limma-ash, setting $\alpha=0$ and $\alpha=1$, on real data.
+
+```{r}
+library(vicar)
+library(sva)
+library(cate)
+library(seqgendiff)
+load('data/scde/scCD4.RData')
+load('data/scde/scCD8.RData')
+load('data/scde/scCD14.RData')
+load('data/scde/scMB.RData')
+```
+
+CD4, CD8, CD14 and B cells. Look at number of genes and cells.
+
+```{r}
+dim(CD4)
+dim(CD8)
+dim(CD14)
+dim(MB)
+```
+
+
+## CD4 vs MB cells.
+
+```{r}
+Y = as.matrix(cbind(CD4,MB))
+
+group_idx = c(rep(1,dim(CD4)[2]),rep(0,dim(MB)[2]))
+
+# remove genes appearing in less than 10 cells
+
+Y = Y[-which(rowSums(Y!=0)<10),]
+
+X = model.matrix(~group_idx)
+sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
+
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = (Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+# sva-limma-ash-alpha 0
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+sva_limma_ash0$loglik
+
+# sva-limma-ash-alpha 1
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+sva_limma_ash1$loglik
+
+```
+
+
+Take log of Y
+
+```{r}
+Y = log(Y+0.5)
+sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
+
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = (Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+# sva-limma-ash-alpha 0
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+sva_limma_ash0$loglik
+
+# sva-limma-ash-alpha 1
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+sva_limma_ash1$loglik
+```
+
+
+## CD8 vs CD14 cells
+
+```{r}
+Y = as.matrix(cbind(CD8,CD14))
+
+group_idx = c(rep(1,dim(CD8)[2]),rep(0,dim(CD14)[2]))
+
+# remove genes appearing in less than 10 cells
+
+Y = Y[-which(rowSums(Y!=0)<10),]
+
+X = model.matrix(~group_idx)
+sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
+
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = (Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+# sva-limma-ash-alpha 0
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+sva_limma_ash0$loglik
+
+# sva-limma-ash-alpha 1
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+sva_limma_ash1$loglik
+
+```
+
+
+Take log of Y
+
+```{r}
+Y = log(Y+0.5)
+sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
+
+X.sva <- cbind(X, sva_sva$sv)
+lmout <- limma::lmFit(object = (Y), design = X.sva)
+eout  <- limma::eBayes(lmout)
+svaout           <- list()
+svaout$betahat   <- lmout$coefficients[, 2]
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$pvalues   <- eout$p.value[, 2]
+
+# sva-limma-ash-alpha 0
+
+sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+sva_limma_ash0$loglik
+
+# sva-limma-ash-alpha 1
+
+sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+sva_limma_ash1$loglik
+```
+
+
+Simulate the easiest case...
+
+```{r}
+library(ashr)
+set.seed(12345)
+beta = c(rep(0,100),rnorm(100))
+sebetahat = abs(rnorm(200,0,1))
+betahat = rnorm(200,beta,sebetahat)
+beta.ash0 = ash(betahat, sebetahat,alpha=0)
+beta.ash0$loglik
+beta.ash1 = ash(betahat, sebetahat,alpha=1)
+beta.ash1$loglik
+```
