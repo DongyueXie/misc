@@ -1,5 +1,5 @@
 ---
-title: "Gerard and Stephens paper on RUV"
+title: "RUV"
 author: "Dongyue Xie"
 date: "2020-01-06"
 output: workflowr::wflow_html
@@ -9,21 +9,33 @@ editor_options:
 
 ## Introduction
 
-What are responses(Y)? conuts, tpm or sth else?
+Assume true relationship, $Y = XB + Z\Gamma + E$, $Z$ is unobserved and can be high correlated with $X$. Goal: find a good surrogate of $Z$, split the effects of $X$ and $Z$ on $Y$. 
 
-```{r}
-set.seed(1)
-library(vicar)
-library(ggplot2)
-library(dplyr)
-library(seqgendiff)
+Methods: 
 
-data(sim_gtex)
+1. Remove top PCs of $Y$(Price et al. (2006)). Need $Z\Gamma$ dominates $XB$, otherwise removes effects of $X$.
 
-Y <- sim_gtex$Y
-X <- sim_gtex$X
-ctl <- sim_gtex$ctl
-which_null <- sim_gtex$which_null
-beta <- sim_gtex$beta
-```
+2. Remove top PCs of $Y-X\hat B$. But confounder effects $Z\Gamma$ are also removed.
 
+3. SVA. The idea is to find a subset of [negative control] genes that are associated with Z but not with X. Weighted SVD with gene weight $p(B_i=0,\Gamma_i\neq 0|Y,X,\hat Z)$.
+
+4. RUV-4. Need to know genes $B_i=0$
+
+5. LEAPP. Assume $B$ is sparse and $Z = X\alpha + W$. Assume we have one variable of interest $B=\beta^T$, then model is $$Y = X(\beta+\Gamma\alpha)^T+(W\Gamma+E)$$
+
+
+
+QR decompositon of $X$ is $X=QR$, where $R=(||x||_2,0,0,...,0)^T$. Then $$Q^TY = R\beta^T+Q^TZ\Gamma^T+Q^TE$$.
+
+Then the second to the last row of $Q^TY$ follows $N(0,\Gamma\Gamma^T+E)$.
+
+
+
+
+Open problems:
+1. In addition to multiple testing, the surrogate variable analysis
+framework can solve many other high-dimensional problems, e.g.,
+classification
+2. Beyond linear models: High-dimensional random effects model;
+GLM; Varying coefficients model; Tree-based methods...
+3. Beyond PCA
