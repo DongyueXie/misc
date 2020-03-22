@@ -1,0 +1,96 @@
+---
+title: "binomial thinning ultimate"
+author: "DongyueXie"
+date: "2020-03-21"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+editor_options:
+  chunk_output_type: console
+---
+
+Let's start with the simplest case: we have a count $Y$ matrix, whose all entries are the same! Then we apply binomial thinning to $Y$. Half of samples are from group 1 and the rest are from group 2. $90\%$ of genes have no effects and the rest have effects generated from standard normal distribution. 
+
+In the following simulation, we set the number of samples to be $n=500$, the number of genes $p=5000$ and entries of $Y$ vary from 100, 50, 30, 20, 10, 5, 1.
+
+We fit a simple linear regression to each gene and compare the log-likelihood of `ash`, setting $\alpha=0$ and $\alpha=1$, and plot $\beta$ vs $\hat\beta$  as well as $\beta$ vs $s.e.(\hat\beta)$ for each case. 
+
+
+```{r}
+#'@param Z count matrix, sample by features
+#'@param x 1 for group 1, 0 for group 2
+#'@param beta effect of fearures,  0 for null.
+#'@return W, thinned matrix
+bi_thin = function(Z,x,beta){
+  
+  n=nrow(Z)
+  p=ncol(Z)
+  
+  # group index
+  g1 = which(x==1)
+  g2 = which(x==0)
+  
+  
+  p2 = 1/(1+exp(beta))
+  p1 = 1-p2
+  P = matrix(nrow = n,ncol = p)
+  P[g1,] = t(replicate(length(g1),p1))
+  P[g2,] = t(replicate(length(g2),p2))
+  
+  W = matrix(rbinom(n*p,Z,P),nrow=n)
+  
+  W
+}
+
+library(limma)
+
+n=500
+p=5000
+set.seed(12345)
+
+loglik0 = c()
+auc0 = c()
+loglik1 = c()
+auc1 = c()
+
+par(mfrow = c(1,2))
+for(ni in c(100,50,30,20,10,5,1)){
+  Y = matrix(rep(ni,n*p),nrow=p,ncol=n)
+
+  group_idx = c(rep(1,n/2),rep(0,n/2))
+  X = model.matrix(~group_idx)
+
+  b = rnorm(p)
+  b[sample(1:p,0.9*p)] = 0
+  which_null = 1*(b==0)
+
+  W = bi_thin(t(Y),group_idx,b)
+
+  lmout <- limma::lmFit(object = t(log(W+0.5)), design = X)
+
+  ash0 = ashr::ash(lmout$coefficients[, 2],lmout$stdev.unscaled[, 2]*lmout$sigma,alpha=0)
+  loglik0 = c(loglik0,ash0$loglik)
+  auc0 = c(auc0,pROC::roc(which_null,ash0$result$lfsr)$auc)
+
+  ash1 = ashr::ash(lmout$coefficients[, 2],lmout$stdev.unscaled[, 2]*lmout$sigma,alpha=1)
+  loglik1 = c(loglik1,ash1$loglik)
+  auc1 = c(auc1,pROC::roc(which_null,ash1$result$lfsr)$auc)
+  
+  
+  plot((b),lmout$coefficients[, 2],xlab='beta',ylab='estimated',col='grey60',main=paste('Y:',ni))
+  abline(a=0,b=1)
+  plot(abs(b),lmout$stdev.unscaled[, 2]*lmout$sigma,xlab='absolute value of beta',ylab='sd of beta_hat',main=paste('Y:',ni))
+}
+
+knitr::kable(cbind(c(100,50,30,20,10,5,1),loglik0,loglik1),col.names = c('Y','alpha0','alpha1'),
+             caption = 'log likelihood')
+
+knitr::kable(cbind(c(100,50,30,20,10,5,1),auc0,auc1),col.names = c('Y','alpha0','alpha1'),
+             caption = 'AUC')
+
+```
+
+So when counts in $Y$ are large, setting $\alpha=1$ gives higher likelihood. Estimated $\beta$s are close to true $\beta$s and apparently, scale of $\beta$ and $var(\hat\beta)$ are positively correlated. While when counts in $Y$ are small, things are opposite.
+
+
+
