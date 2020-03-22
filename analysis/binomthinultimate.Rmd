@@ -1,7 +1,7 @@
 ---
-title: "binomial thinning ultimate"
+title: "Binomial Thinning Ultimate"
 author: "DongyueXie"
-date: "2020-03-21"
+date: "2020-03-18"
 output:
   workflowr::wflow_html:
     code_folding: hide
@@ -9,14 +9,14 @@ editor_options:
   chunk_output_type: console
 ---
 
-Let's start with the simplest case: we have a count $Y$ matrix, whose all entries are the same! Then we apply binomial thinning to $Y$. Half of samples are from group 1 and the rest are from group 2. $90\%$ of genes have no effects and the rest have effects generated from standard normal distribution. 
+Let's start with the simplest case: we have a count matrix $Y$, whose all entries are the same! Then we apply binomial thinning to $Y$. 
 
-In the following simulation, we set the number of samples to be $n=500$, the number of genes $p=5000$ and entries of $Y$ vary from 100, 50, 30, 20, 10, 5, 1.
+In the following simulation, we set the number of samples to be $n=500$, the number of genes $p=5000$ and entries of $Y$ vary from $100, 50, 30, 20, 10, 5, 1.$ Half of samples are from group 1 and the rest are from group 2. About $90\%$ of genes have no effects and the rest have effects $\beta_j$ generated from standard normal distribution. 
 
-We fit a simple linear regression to each gene and compare the log-likelihood of `ash`, setting $\alpha=0$ and $\alpha=1$, and plot $\beta$ vs $\hat\beta$  as well as $\beta$ vs $s.e.(\hat\beta)$ for each case. 
+We fit a simple linear regression to each gene with log transformed counts and compare the log-likelihood from `ash`, setting $\alpha=0$ and $\alpha=1$, and plot $\beta$ vs $\hat\beta$  as well as $\beta$ vs $s.e.(\hat\beta)$ for each case. 
 
 
-```{r}
+```{r,fig.width=10,fig.height=5}
 #'@param Z count matrix, sample by features
 #'@param x 1 for group 1, 0 for group 2
 #'@param beta effect of fearures,  0 for null.
@@ -77,9 +77,9 @@ for(ni in c(100,50,30,20,10,5,1)){
   auc1 = c(auc1,pROC::roc(which_null,ash1$result$lfsr)$auc)
   
   
-  plot((b),lmout$coefficients[, 2],xlab='beta',ylab='estimated',col='grey60',main=paste('Y:',ni))
+  plot((b),lmout$coefficients[, 2],xlab='beta',ylab='estimated',col='grey60',main=paste('count:',ni))
   abline(a=0,b=1)
-  plot(abs(b),lmout$stdev.unscaled[, 2]*lmout$sigma,xlab='absolute value of beta',ylab='sd of beta_hat',main=paste('Y:',ni))
+  plot(abs(b),lmout$stdev.unscaled[, 2]*lmout$sigma,xlab='absolute value of beta',ylab='sd of beta_hat',main=paste('count:',ni))
 }
 
 knitr::kable(cbind(c(100,50,30,20,10,5,1),loglik0,loglik1),col.names = c('Y','alpha0','alpha1'),
