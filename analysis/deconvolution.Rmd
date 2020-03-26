@@ -2,14 +2,31 @@
 title: "Deconvolution"
 author: "Dongyue Xie"
 date: "2019-12-10"
-output: workflowr::wflow_html
+output:
+  workflowr::wflow_html:
+    code_folding: hide
 editor_options:
   chunk_output_type: console
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE,message = FALSE)
+```
+
 ## Introduction
 
-We have scRNA-seq data from Segerstolpe et al. (2016) including the 1097 cells from 6 healthy subjects, taken from [here](https://xuranw.github.io/MuSiC/articles/pages/data.html). In the following simulation study, 4 cell types -  acinar, alpha, beta, and ductal cells are included. 
+check bulk data library size: vary from few hundred(100-200) to few thousands(1600). Here 
+
+```{r}
+GSE50244bulkeset <- readRDS("~/misc/data/deconv/GSE50244bulkeset.rds")
+GSE50244bulkeset
+summary(as.numeric(apply(exprs(GSE50244bulkeset),2,mean)))
+
+Mousebulkeset <- readRDS("~/misc/data/deconv/Mousebulkeset.rds")
+summary(as.numeric(apply(exprs(Mousebulkeset),2,mean)))
+```
+
+We have scRNA-seq data from Segerstolpe et al. (2016) including the 1097 cells from 6 healthy subjects, taken from [here](https://xuranw.github.io/MuSiC/articles/pages/data.html). This dataset is non-UMI so the read counts are huge. In the following simulation study, 4 cell types -  acinar, alpha, beta, and ductal cells are included. 
 
 ```{r}
 EMTAB.eset = readRDS('data/deconv/EMTABesethealthy.rds')
@@ -20,24 +37,36 @@ table(EMTAB.eset$cellType)
 
 Now obtain the true gene relative expression in each cell type.
 
-Preprocess the data: 1. remove genes appearing in less than 10 cells; 2. remove top $1\%$ expressed genes  
+Preprocess the data: 1. remove genes appearing in less than 10 cells; 2. remove top $5\%$ expressed genes  
 
 ```{r}
 cell_types = c('acinar','alpha','beta','ductal')
 
-#remove genes appeared in too few cells
-#remove genes that are overly expressed
-rm.idx = which(rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)])!=0)<10)
-rr = rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)]))
-#rm.idx = which(rr==0)
-#rm.idx1 = which(rr<=quantile(rr[-rm.idx],0.01))
-rm.idx2 = which(rr>=quantile(rr[-rm.idx],0.95))
-rm.idx = unique(c(rm.idx,rm.idx2))
+###remove genes appeared in too few cells
+###remove genes that are overly expressed
+#rm.idx = which(rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)])!=0)<10)
+#rr = rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)]))
+###rm.idx = which(rr==0)
+###rm.idx1 = which(rr<=quantile(rr[-rm.idx],0.01))
+#rm.idx2 = which(rr>=quantile(rr[-rm.idx],0.99))
+#rm.idx = unique(c(rm.idx,rm.idx2))
 
-acinar = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='acinar')]
-alpha = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='alpha')]
-beta = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='beta')]
-ductal = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType=='ductal')]
+acinar = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType=='acinar')]
+alpha = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType=='alpha')]
+beta = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType=='beta')]
+ductal = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType=='ductal')]
+
+rm.idx1 = which(((rowSums(acinar!=0)<=10)|(rowSums(acinar)>=quantile(rowSums(acinar),0.95))))
+rm.idx2 = which(((rowSums(alpha!=0)<=10)|(rowSums(alpha)>=quantile(rowSums(alpha),0.95))))
+rm.idx3 = which(((rowSums(beta!=0)<=10)|(rowSums(beta)>=quantile(rowSums(beta),0.95))))
+rm.idx4 = which(((rowSums(ductal!=0)<=10)|(rowSums(ductal)>=quantile(rowSums(ductal),0.95))))
+
+rm.idx = unique(c(rm.idx1,rm.idx2,rm.idx3,rm.idx4))
+
+acinar = acinar[-rm.idx,]
+alpha = alpha[-rm.idx,]
+beta = beta[-rm.idx,]
+ductal = ductal[-rm.idx,]
 
 ```
 
@@ -49,6 +78,7 @@ summary(colSums(alpha))
 summary(colSums(beta))
 summary(colSums(ductal))
 ```
+
 
 ```{r}
 
@@ -62,22 +92,33 @@ cor(Theta)
 
 kappa(t(Theta)%*%Theta)
 
-# cell size
+# cell library size
 S = c(sum(acinar)/ncol(acinar),
       sum(alpha)/ncol(alpha),
       sum(beta)/ncol(beta),
       sum(ductal)/ncol(ductal))
 
-S=S/100
+#S=S/100 
+```
+
+
+Generate reference data: 1. obtain $\tilde{\theta}_{gk}$ by summing up read counts and normalize; 2. obtain $y_{k}^{r,+}$ by multiple cell library size and number of cells(set to 100); 3. Generate reference data using the Poisson model
+
+Generate bulk data: 1. simulate library size $y^{b,+}$ from Poisson$(300G)$; 2. generate $x^b_g$ by multiplying $N=400$, $\beta = (0.1,0.2,0.3,0.4)$, and $S$ cell library size then normalize to $\theta^b_g$. 3. generate bulk data using Poisson distribution.
+
+```{r}
+G = nrow(Theta)
+K = ncol(Theta)
 
 set.seed(12345)
-# bulk data library size: 50*number of genes.
-bulk_ls = 50*nrow(Theta)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
 # total number of cells in bulk data
 bulk_ncell = 400
 # cell proportions
 bulk_beta = c(1,2,3,4)
 bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
 # bulk data gene relative expression.
 bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
 bulk_theta = bulk_X/sum(bulk_X)
@@ -85,72 +126,602 @@ bulk_theta = bulk_X/sum(bulk_X)
 ref_ncell = 100
 ref_X = Theta%*%diag(S)*ref_ncell
 
-w = rep(1,length(bulk_theta))
+w = rep(1,G)
 
 
-ci_l = c()
-ci_r = c()
-beta_est = c()
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
 
-for(rep in 1:100){
-  
-  Z = matrix(rpois(prod(dim(ref_X)),ref_X),ncol=ncol(ref_X))
-y = rpois(length(bulk_theta),bulk_ls*bulk_theta)
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
 
-#W = diag(w)
-#beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
 
-beta_hat = solve(t(Z)%*%Z - diag(colSums(Z)))%*%t(Z)%*%y
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
 
-#beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+  #beta_hat
+  #beta_hat/sum(beta_hat)
 
-#beta_hat
-#beta_hat/sum(beta_hat)
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
 
-Q = 0
-Sigma=0
-for(i in 1:length(y)){
-  ag = Z[i,]%*%t(Z[i,])-diag(Z[i,])
-  Q = Q + ag
-  Delta = (ag%*%beta_hat-y[i]*Z[i,])
-  Sigma = Sigma + Delta%*%t(Delta)
-}
-Q = Q*2/length(y)
-Sigma = Sigma*4/length(y)
-
-K = ncol(Z)
-J = matrix(nrow = ncol(Z),ncol=ncol(Z))
-for(i in 1:K){
-  for(j in 1:K){
-    if(i==j){
-      J[i,j] = sum(beta_hat)-beta_hat[i]
-    }else{
-      J[i,j] = -beta_hat[i]
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
     }
   }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
 }
 
-asyV = J%*%solve(Q)%*%Sigma%*%solve(Q)%*%J
 
-beta_est = rbind(beta_est,c(beta_hat))
+#### coverage before delta method:
 
-ci_l = cbind(ci_l,beta_hat/sum(beta_hat)-2*sqrt(diag(asyV)/length(y)))
-ci_r = cbind(ci_r,beta_hat/sum(beta_hat)+2*sqrt(diag(asyV)/length(y)))
+#ci_l = p_tilde_est - qnorm(0.975)*sqrt(p_tilde_var)
+#ci_r = p_tilde_est + qnorm(0.975)*sqrt(p_tilde_var)
+
+#coverage
+
+#coverage = ((rep(1,100)%*%t(bulk_p))>=ci_l) & ((rep(1,100)%*%t(bulk_p))<=ci_r)
+#apply(coverage,2,mean)
+
+#### converage after delta method
+
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))>=ci_l) & ((rep(1,100)%*%t(bulk_p))<=ci_r)
+apply(coverage,2,mean)
+
+#for(i in 1:4){
+#  plot(ci_l[,i],type='l',ylim=range(c(ci_l[,i],ci_r[,i])))
+#  lines(ci_r[,i],col='grey80')
+#  lines(rep(bulk_p[i],100),lty = 2)
+#}
+
+```
+
+how about decrease bulk library size to $50G$?
+
+```{r}
+G = nrow(Theta)
+K = ncol(Theta)
+
+set.seed(12345)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(1,2,3,4)
+bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,G)
+
+
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
+
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,50*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
+
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+  #beta_hat
+  #beta_hat/sum(beta_hat)
+
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
+
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
+    }
+  }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
 }
 
-for(i in 1:4){
-  plot(ci_l[i,],type='l',ylim=range(c(ci_l[i,],ci_r[i,])))
-  lines(ci_r[i,],col='grey80')
-  lines(rep(i/10,100),lty = 2)
-}
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
 
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))>=ci_l) & ((rep(1,100)%*%t(bulk_p))<=ci_r)
+apply(coverage,2,mean)
+
+#for(i in 1:4){
+#  plot(ci_l[,i],type='l',ylim=range(c(ci_l[,i],ci_r[,i])))
+#  lines(ci_r[,i],col='grey80')
+#  lines(rep(bulk_p[i],100),lty = 2)
+#}
 
 ```
 
 
-Another dataset: 
+how about change $beta$ to be $(0.4,0.3,0.2,0.1)$?
 
 ```{r}
+G = nrow(Theta)
+K = ncol(Theta)
+
+set.seed(12345)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(4,3,2,1)
+bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,G)
+
+
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
+
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
+
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+  #beta_hat
+  #beta_hat/sum(beta_hat)
+
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
+
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
+    }
+  }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
+}
+
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))>=ci_l) & ((rep(1,100)%*%t(bulk_p))<=ci_r)
+apply(coverage,2,mean)
+
+#for(i in 1:4){
+#  plot(ci_l[,i],type='l',ylim=range(c(ci_l[,i],ci_r[,i])))
+#  lines(ci_r[,i],col='grey80')
+#  lines(rep(bulk_p[i],100),lty = 2)
+#}
+
+```
+
+The bigger the beta, the lower the coverage??
+
+## pbmc DATA
+
+
+```{r}
+load("~/misc/data/scde/scCD14.RData")
+load("~/misc/data/scde/scCD4.RData")
+load("~/misc/data/scde/scCD8.RData")
+#load("~/misc/data/scde/scCDT.RData")
+load("~/misc/data/scde/scMB.RData")
+
+# remove genes 
+CD14 = as.matrix(CD14)
+CD4 = as.matrix(CD4)
+CD8 = as.matrix(CD8)
+#CDT = as.matrix(CDT)
+MB = as.matrix(MB)
+rm.idx1 = which(((rowSums(CD14!=0)<=10)|(rowSums(CD14)>=quantile(rowSums(CD14),0.95))))
+rm.idx2 = which(((rowSums(CD4!=0)<=10)|(rowSums(CD4)>=quantile(rowSums(CD4),0.95))))
+rm.idx3 = which(((rowSums(CD8!=0)<=10)|(rowSums(CD8)>=quantile(rowSums(CD8),0.95))))
+#rm.idx4 = which(((rowSums(CDT!=0)<=10)|(rowSums(CDT)>=quantile(rowSums(CDT),0.95))))
+rm.idx5 = which(((rowSums(MB!=0)<=10)|(rowSums(MB)>=quantile(rowSums(MB),0.95))))
+
+rm.idx = unique(c(rm.idx1,rm.idx2,rm.idx3,rm.idx5))
+
+CD14 = CD14[-rm.idx,]
+CD4 = CD4[-rm.idx,]
+CD8 = CD8[-rm.idx,]
+#CDT = CDT[-rm.idx,]
+MB = MB[-rm.idx,]
+
+Theta = cbind(rowSums(CD14)/sum(CD14),
+              rowSums(CD4)/sum(CD4),
+              rowSums(CD8)/sum(CD8),
+              #rowSums(CDT)/sum(CDT),
+              rowSums(MB)/sum(MB))
+
+cor(Theta)
+
+kappa(t(Theta)%*%Theta)
+
+# cell library size
+S = c(sum(CD14)/ncol(CD14),
+      sum(CD4)/ncol(CD4),
+      sum(CD8)/ncol(CD8),
+      sum(MB)/ncol(MB))
+```
+
+
+```{r}
+G = nrow(Theta)
+K = ncol(Theta)
+
+set.seed(12345)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(1,2,3,4)
+bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,G)
+
+
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
+
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
+
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+  #beta_hat
+  #beta_hat/sum(beta_hat)
+
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
+
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
+    }
+  }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
+}
+
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))>=ci_l) & ((rep(1,100)%*%t(bulk_p))<=ci_r)
+apply(coverage,2,mean)
+```
+
+
+
+
+
+how about change $beta$ to be $(0.4,0.3,0.2,0.1)$?
+
+
+
+
+```{r}
+G = nrow(Theta)
+K = ncol(Theta)
+
+set.seed(12345)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(4,3,2,1)
+bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,G)
+
+
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
+
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
+
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+  #beta_hat
+  #beta_hat/sum(beta_hat)
+
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
+
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
+    }
+  }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
+}
+
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))>=ci_l) & ((rep(1,100)%*%t(bulk_p))<=ci_r)
+apply(coverage,2,mean)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r,eval=FALSE,include=FALSE}
+# Another dataset: 
 XinT2D.eset = readRDS('data/deconv/XinT2Deset.rds')
 XinT2D.eset
 table(XinT2D.eset$cellType)
@@ -167,6 +738,8 @@ for(i in 1:4){
   Theta = cbind(Theta,aa/sum(aa))
   S[i] = sum(aa)/length(which(XinT2D.eset$cellTypeID == i))
 }
+
+cor(Theta)
 
 S=S/100
 
