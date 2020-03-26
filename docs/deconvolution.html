@@ -25,6 +25,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
@@ -170,6 +171,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -315,6 +324,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Deconvolution</h1>
@@ -326,7 +343,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -335,7 +352,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -344,10 +361,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-03-13
+<strong>Last updated:</strong> 2020-03-26
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>misc/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -423,22 +440,94 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
 </p>
 </div>
-<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+~/misc/data/deconv/GSE50244bulkeset.rds
+</td>
+<td style="text-align:left;">
+data/deconv/GSE50244bulkeset.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/deconv/Mousebulkeset.rds
+</td>
+<td style="text-align:left;">
+data/deconv/Mousebulkeset.rds
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/scde/scCD14.RData
+</td>
+<td style="text-align:left;">
+data/scde/scCD14.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/scde/scCD4.RData
+</td>
+<td style="text-align:left;">
+data/scde/scCD4.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/scde/scCD8.RData
+</td>
+<td style="text-align:left;">
+data/scde/scCD8.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/scde/scCDT.RData
+</td>
+<td style="text-align:left;">
+data/scde/scCDT.RData
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+~/misc/data/scde/scMB.RData
+</td>
+<td style="text-align:left;">
+data/scde/scMB.RData
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree73933a7941216795b4a58fc8f6431710a573e281targetblank73933a7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/73933a7941216795b4a58fc8f6431710a573e281" target="_blank">73933a7</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2ab0aa9e618f9db36c18228ebb28d53d062fc771targetblank2ab0aa9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/2ab0aa9e618f9db36c18228ebb28d53d062fc771" target="_blank">2ab0aa9</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree73933a7941216795b4a58fc8f6431710a573e281targetblank73933a7a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2ab0aa9e618f9db36c18228ebb28d53d062fc771targetblank2ab0aa9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -449,6 +538,7 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  analysis/contrainedclustering.Rmd
     Untracked:  analysis/gsea.Rmd
     Untracked:  analysis/ideas.Rmd
     Untracked:  analysis/methylation.Rmd
@@ -465,6 +555,7 @@ Untracked files:
     Untracked:  data/scde/
 
 Unstaged changes:
+    Modified:   analysis/binomthinultimate.Rmd
     Deleted:    data/mout_high.RData
     Deleted:    data/scCDT.RData
     Deleted:    data/sva_sva_high.RData
@@ -506,6 +597,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/2ab0aa9e618f9db36c18228ebb28d53d062fc771/analysis/deconvolution.Rmd" target="_blank">2ab0aa9</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-26
+</td>
+<td>
+wflow_publish(“analysis/deconvolution.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/a617635adcc9a21437ce6c50f2b57a2927fd43f9/docs/deconvolution.html" target="_blank">a617635</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-13
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -566,37 +691,30 @@ wflow_publish(“analysis/deconvolution.Rmd”)
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>We have scRNA-seq data from Segerstolpe et al. (2016) including the 1097 cells from 6 healthy subjects, taken from <a href="https://xuranw.github.io/MuSiC/articles/pages/data.html">here</a>. In the following simulation study, 4 cell types - acinar, alpha, beta, and ductal cells are included.</p>
+<p>check bulk data library size: vary from few hundred(100-200) to few thousands(1600). Here</p>
+<pre class="r"><code>GSE50244bulkeset &lt;- readRDS(&quot;~/misc/data/deconv/GSE50244bulkeset.rds&quot;)
+GSE50244bulkeset</code></pre>
+<pre><code>ExpressionSet (storageMode: lockedEnvironment)
+assayData: 32581 features, 89 samples 
+  element names: exprs 
+protocolData: none
+phenoData
+  sampleNames: Sub1 Sub2 ... Sub89 (89 total)
+  varLabels: sampleID SubjectName ... tissue (7 total)
+  varMetadata: labelDescription
+featureData: none
+experimentData: use &#39;experimentData(object)&#39;
+Annotation:  </code></pre>
+<pre class="r"><code>summary(as.numeric(apply(exprs(GSE50244bulkeset),2,mean)))</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  376.3   506.4   605.8   587.1   664.4   793.6 </code></pre>
+<pre class="r"><code>Mousebulkeset &lt;- readRDS(&quot;~/misc/data/deconv/Mousebulkeset.rds&quot;)
+summary(as.numeric(apply(exprs(Mousebulkeset),2,mean)))</code></pre>
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   1431    1546    1608    1625    1729    1805 </code></pre>
+<p>We have scRNA-seq data from Segerstolpe et al. (2016) including the 1097 cells from 6 healthy subjects, taken from <a href="https://xuranw.github.io/MuSiC/articles/pages/data.html">here</a>. This dataset is non-UMI so the read counts are huge. In the following simulation study, 4 cell types - acinar, alpha, beta, and ductal cells are included.</p>
 <pre class="r"><code>EMTAB.eset = readRDS(&#39;data/deconv/EMTABesethealthy.rds&#39;)
 EMTAB.eset</code></pre>
-<pre><code>Loading required package: Biobase</code></pre>
-<pre><code>Loading required package: BiocGenerics</code></pre>
-<pre><code>Loading required package: parallel</code></pre>
-<pre><code>
-Attaching package: &#39;BiocGenerics&#39;</code></pre>
-<pre><code>The following objects are masked from &#39;package:parallel&#39;:
-
-    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    clusterExport, clusterMap, parApply, parCapply, parLapply,
-    parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
-<pre><code>The following objects are masked from &#39;package:stats&#39;:
-
-    IQR, mad, sd, var, xtabs</code></pre>
-<pre><code>The following objects are masked from &#39;package:base&#39;:
-
-    anyDuplicated, append, as.data.frame, basename, cbind,
-    colMeans, colnames, colSums, dirname, do.call, duplicated,
-    eval, evalq, Filter, Find, get, grep, grepl, intersect,
-    is.unsorted, lapply, lengths, Map, mapply, match, mget, order,
-    paste, pmax, pmax.int, pmin, pmin.int, Position, rank, rbind,
-    Reduce, rowMeans, rownames, rowSums, sapply, setdiff, sort,
-    table, tapply, union, unique, unsplit, which, which.max,
-    which.min</code></pre>
-<pre><code>Welcome to Bioconductor
-
-    Vignettes contain introductory material; view with
-    &#39;browseVignettes()&#39;. To cite Bioconductor, see
-    &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
 <pre><code>ExpressionSet (storageMode: lockedEnvironment)
 assayData: 25453 features, 1097 samples 
   element names: exprs 
@@ -621,35 +739,47 @@ Annotation:  </code></pre>
           unclassified unclassified endocrine 
                      1                     29 </code></pre>
 <p>Now obtain the true gene relative expression in each cell type.</p>
-<p>Preprocess the data: 1. remove genes appearing in less than 10 cells; 2. remove top <span class="math inline">\(1\%\)</span> expressed genes</p>
+<p>Preprocess the data: 1. remove genes appearing in less than 10 cells; 2. remove top <span class="math inline">\(5\%\)</span> expressed genes</p>
 <pre class="r"><code>cell_types = c(&#39;acinar&#39;,&#39;alpha&#39;,&#39;beta&#39;,&#39;ductal&#39;)
 
-#remove genes appeared in too few cells
-#remove genes that are overly expressed
-rm.idx = which(rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)])!=0)&lt;10)
-rr = rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)]))
-#rm.idx = which(rr==0)
-#rm.idx1 = which(rr&lt;=quantile(rr[-rm.idx],0.01))
-rm.idx2 = which(rr&gt;=quantile(rr[-rm.idx],0.95))
-rm.idx = unique(c(rm.idx,rm.idx2))
+###remove genes appeared in too few cells
+###remove genes that are overly expressed
+#rm.idx = which(rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)])!=0)&lt;10)
+#rr = rowSums((exprs(EMTAB.eset)[,which(EMTAB.eset$cellType%in%cell_types)]))
+###rm.idx = which(rr==0)
+###rm.idx1 = which(rr&lt;=quantile(rr[-rm.idx],0.01))
+#rm.idx2 = which(rr&gt;=quantile(rr[-rm.idx],0.99))
+#rm.idx = unique(c(rm.idx,rm.idx2))
 
-acinar = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;acinar&#39;)]
-alpha = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;alpha&#39;)]
-beta = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;beta&#39;)]
-ductal = exprs(EMTAB.eset)[-rm.idx,which(EMTAB.eset$cellType==&#39;ductal&#39;)]</code></pre>
+acinar = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType==&#39;acinar&#39;)]
+alpha = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType==&#39;alpha&#39;)]
+beta = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType==&#39;beta&#39;)]
+ductal = exprs(EMTAB.eset)[,which(EMTAB.eset$cellType==&#39;ductal&#39;)]
+
+rm.idx1 = which(((rowSums(acinar!=0)&lt;=10)|(rowSums(acinar)&gt;=quantile(rowSums(acinar),0.95))))
+rm.idx2 = which(((rowSums(alpha!=0)&lt;=10)|(rowSums(alpha)&gt;=quantile(rowSums(alpha),0.95))))
+rm.idx3 = which(((rowSums(beta!=0)&lt;=10)|(rowSums(beta)&gt;=quantile(rowSums(beta),0.95))))
+rm.idx4 = which(((rowSums(ductal!=0)&lt;=10)|(rowSums(ductal)&gt;=quantile(rowSums(ductal),0.95))))
+
+rm.idx = unique(c(rm.idx1,rm.idx2,rm.idx3,rm.idx4))
+
+acinar = acinar[-rm.idx,]
+alpha = alpha[-rm.idx,]
+beta = beta[-rm.idx,]
+ductal = ductal[-rm.idx,]</code></pre>
 <p>Check cell library size: cell library sizes are big</p>
 <pre class="r"><code>summary(colSums(acinar))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   5565   76099  140386  232418  328637  981553 </code></pre>
+   2686   40757   75941  129023  186640  553802 </code></pre>
 <pre class="r"><code>summary(colSums(alpha))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   5842   65225  134546  184102  261253 1165737 </code></pre>
+   3523   40465   83358  113020  159609  690603 </code></pre>
 <pre class="r"><code>summary(colSums(beta))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   4871   79238  164028  206068  316283  846231 </code></pre>
+   2970   47179  100240  124888  190024  537763 </code></pre>
 <pre class="r"><code>summary(colSums(ductal))</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  11119   67514  155453  242885  341715 1333342 </code></pre>
+   6405   38504   86323  135121  191832  739986 </code></pre>
 <pre class="r"><code># cell type specific gene relative expression
 Theta = cbind(rowSums(acinar)/sum(acinar),
               rowSums(alpha)/sum(alpha),
@@ -658,28 +788,33 @@ Theta = cbind(rowSums(acinar)/sum(acinar),
 
 cor(Theta)</code></pre>
 <pre><code>          [,1]      [,2]      [,3]      [,4]
-[1,] 1.0000000 0.5215232 0.4614900 0.6805119
-[2,] 0.5215232 1.0000000 0.7833674 0.5356580
-[3,] 0.4614900 0.7833674 1.0000000 0.4803255
-[4,] 0.6805119 0.5356580 0.4803255 1.0000000</code></pre>
+[1,] 1.0000000 0.6653738 0.5972479 0.8288408
+[2,] 0.6653738 1.0000000 0.8156478 0.6819325
+[3,] 0.5972479 0.8156478 1.0000000 0.6363127
+[4,] 0.8288408 0.6819325 0.6363127 1.0000000</code></pre>
 <pre class="r"><code>kappa(t(Theta)%*%Theta)</code></pre>
-<pre><code>[1] 16.63482</code></pre>
-<pre class="r"><code># cell size
+<pre><code>[1] 34.74529</code></pre>
+<pre class="r"><code># cell library size
 S = c(sum(acinar)/ncol(acinar),
       sum(alpha)/ncol(alpha),
       sum(beta)/ncol(beta),
       sum(ductal)/ncol(ductal))
 
-S=S/100
+#S=S/100 </code></pre>
+<p>Generate reference data: 1. obtain <span class="math inline">\(\tilde{\theta}_{gk}\)</span> by summing up read counts and normalize; 2. obtain <span class="math inline">\(y_{k}^{r,+}\)</span> by multiple cell library size and number of cells(set to 100); 3. Generate reference data using the Poisson model</p>
+<p>Generate bulk data: 1. simulate library size <span class="math inline">\(y^{b,+}\)</span> from Poisson<span class="math inline">\((300G)\)</span>; 2. generate <span class="math inline">\(x^b_g\)</span> by multiplying <span class="math inline">\(N=400\)</span>, <span class="math inline">\(\beta = (0.1,0.2,0.3,0.4)\)</span>, and <span class="math inline">\(S\)</span> cell library size then normalize to <span class="math inline">\(\theta^b_g\)</span>. 3. generate bulk data using Poisson distribution.</p>
+<pre class="r"><code>G = nrow(Theta)
+K = ncol(Theta)
 
 set.seed(12345)
-# bulk data library size: 50*number of genes.
-bulk_ls = 50*nrow(Theta)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
 # total number of cells in bulk data
 bulk_ncell = 400
 # cell proportions
 bulk_beta = c(1,2,3,4)
 bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
 # bulk data gene relative expression.
 bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
 bulk_theta = bulk_X/sum(bulk_X)
@@ -687,107 +822,109 @@ bulk_theta = bulk_X/sum(bulk_X)
 ref_ncell = 100
 ref_X = Theta%*%diag(S)*ref_ncell
 
-w = rep(1,length(bulk_theta))
+w = rep(1,G)
 
 
-ci_l = c()
-ci_r = c()
-beta_est = c()
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
 
-for(rep in 1:100){
-  
-  Z = matrix(rpois(prod(dim(ref_X)),ref_X),ncol=ncol(ref_X))
-y = rpois(length(bulk_theta),bulk_ls*bulk_theta)
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
 
-#W = diag(w)
-#beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
 
-beta_hat = solve(t(Z)%*%Z - diag(colSums(Z)))%*%t(Z)%*%y
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
 
-#beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+  #beta_hat
+  #beta_hat/sum(beta_hat)
 
-#beta_hat
-#beta_hat/sum(beta_hat)
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
 
-Q = 0
-Sigma=0
-for(i in 1:length(y)){
-  ag = Z[i,]%*%t(Z[i,])-diag(Z[i,])
-  Q = Q + ag
-  Delta = (ag%*%beta_hat-y[i]*Z[i,])
-  Sigma = Sigma + Delta%*%t(Delta)
-}
-Q = Q*2/length(y)
-Sigma = Sigma*4/length(y)
-
-K = ncol(Z)
-J = matrix(nrow = ncol(Z),ncol=ncol(Z))
-for(i in 1:K){
-  for(j in 1:K){
-    if(i==j){
-      J[i,j] = sum(beta_hat)-beta_hat[i]
-    }else{
-      J[i,j] = -beta_hat[i]
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
     }
   }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
 }
 
-asyV = J%*%solve(Q)%*%Sigma%*%solve(Q)%*%J
 
-beta_est = rbind(beta_est,c(beta_hat))
+#### coverage before delta method:
 
-ci_l = cbind(ci_l,beta_hat/sum(beta_hat)-2*sqrt(diag(asyV)/length(y)))
-ci_r = cbind(ci_r,beta_hat/sum(beta_hat)+2*sqrt(diag(asyV)/length(y)))
-}
+#ci_l = p_tilde_est - qnorm(0.975)*sqrt(p_tilde_var)
+#ci_r = p_tilde_est + qnorm(0.975)*sqrt(p_tilde_var)
 
-for(i in 1:4){
-  plot(ci_l[i,],type=&#39;l&#39;,ylim=range(c(ci_l[i,],ci_r[i,])))
-  lines(ci_r[i,],col=&#39;grey80&#39;)
-  lines(rep(i/10,100),lty = 2)
-}</code></pre>
-<p><img src="figure/deconvolution.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-4-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Another dataset:</p>
-<pre class="r"><code>XinT2D.eset = readRDS(&#39;data/deconv/XinT2Deset.rds&#39;)
-XinT2D.eset</code></pre>
-<pre><code>ExpressionSet (storageMode: lockedEnvironment)
-assayData: 39849 features, 1492 samples 
-  element names: exprs 
-protocolData: none
-phenoData
-  sampleNames: Sample_1 Sample_2 ... Sample_1492 (1492 total)
-  varLabels: sampleID SubjectName ... Disease (5 total)
-  varMetadata: labelDescription
-featureData: none
-experimentData: use &#39;experimentData(object)&#39;
-Annotation:  </code></pre>
-<pre class="r"><code>table(XinT2D.eset$cellType)</code></pre>
-<pre><code>
-alpha  beta delta gamma 
-  886   472    49    85 </code></pre>
-<pre class="r"><code># remove genes 
-rm.idx = which(rowSums((exprs(XinT2D.eset))!=0)&lt;5)
-rr = rowSums((exprs(XinT2D.eset)))
+#coverage
 
-rm.idx2 = which(rr&gt;=quantile(rr[-rm.idx],0.95))
-rm.idx = unique(c(rm.idx,rm.idx2))
-Theta = c()
-S=c()
-for(i in 1:4){
-  aa = rowSums(exprs(XinT2D.eset)[-rm.idx,which(XinT2D.eset$cellTypeID == i)])
-  Theta = cbind(Theta,aa/sum(aa))
-  S[i] = sum(aa)/length(which(XinT2D.eset$cellTypeID == i))
-}
+#coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
+#apply(coverage,2,mean)
 
-S=S/100
+#### converage after delta method
+
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
+apply(coverage,2,mean)</code></pre>
+<pre><code>[1] 0.98 0.98 0.94 0.84</code></pre>
+<pre class="r"><code>#for(i in 1:4){
+#  plot(ci_l[,i],type=&#39;l&#39;,ylim=range(c(ci_l[,i],ci_r[,i])))
+#  lines(ci_r[,i],col=&#39;grey80&#39;)
+#  lines(rep(bulk_p[i],100),lty = 2)
+#}</code></pre>
+<p>how about decrease bulk library size to <span class="math inline">\(50G\)</span>?</p>
+<pre class="r"><code>G = nrow(Theta)
+K = ncol(Theta)
 
 set.seed(12345)
-# bulk data library size: 50*number of genes.
-bulk_ls = 50*nrow(Theta)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
 # total number of cells in bulk data
 bulk_ncell = 400
 # cell proportions
 bulk_beta = c(1,2,3,4)
 bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
 # bulk data gene relative expression.
 bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
 bulk_theta = bulk_X/sum(bulk_X)
@@ -795,65 +932,412 @@ bulk_theta = bulk_X/sum(bulk_X)
 ref_ncell = 100
 ref_X = Theta%*%diag(S)*ref_ncell
 
-w = rep(1,length(bulk_theta))
+w = rep(1,G)
 
 
-ci_l = c()
-ci_r = c()
-beta_est = c()
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
 
-for(rep in 1:100){
-  
-  Z = matrix(rpois(prod(dim(ref_X)),ref_X),ncol=ncol(ref_X))
-y = rpois(length(bulk_theta),bulk_ls*bulk_theta)
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,50*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
 
-#W = diag(w)
-#beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
 
-beta_hat = solve(t(Z)%*%Z - diag(colSums(Z)))%*%t(Z)%*%y
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
 
-#beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+  #beta_hat
+  #beta_hat/sum(beta_hat)
 
-#beta_hat
-#beta_hat/sum(beta_hat)
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
 
-Q = 0
-Sigma=0
-for(i in 1:length(y)){
-  ag = Z[i,]%*%t(Z[i,])-diag(Z[i,])
-  Q = Q + ag
-  Delta = (ag%*%beta_hat-y[i]*Z[i,])
-  Sigma = Sigma + Delta%*%t(Delta)
-}
-Q = Q*2/length(y)
-Sigma = Sigma*4/length(y)
-
-K = ncol(Z)
-J = matrix(nrow = ncol(Z),ncol=ncol(Z))
-for(i in 1:K){
-  for(j in 1:K){
-    if(i==j){
-      J[i,j] = sum(beta_hat)-beta_hat[i]
-    }else{
-      J[i,j] = -beta_hat[i]
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
     }
   }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
 }
 
-asyV = J%*%solve(Q)%*%Sigma%*%solve(Q)%*%J
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
 
-beta_est = rbind(beta_est,c(beta_hat))
+#coverage
 
-ci_l = cbind(ci_l,beta_hat/sum(beta_hat)-2*sqrt(diag(asyV)/length(y)))
-ci_r = cbind(ci_r,beta_hat/sum(beta_hat)+2*sqrt(diag(asyV)/length(y)))
+coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
+apply(coverage,2,mean)</code></pre>
+<pre><code>[1] 0.96 0.98 0.95 0.77</code></pre>
+<pre class="r"><code>#for(i in 1:4){
+#  plot(ci_l[,i],type=&#39;l&#39;,ylim=range(c(ci_l[,i],ci_r[,i])))
+#  lines(ci_r[,i],col=&#39;grey80&#39;)
+#  lines(rep(bulk_p[i],100),lty = 2)
+#}</code></pre>
+<p>how about change <span class="math inline">\(beta\)</span> to be <span class="math inline">\((0.4,0.3,0.2,0.1)\)</span>?</p>
+<pre class="r"><code>G = nrow(Theta)
+K = ncol(Theta)
+
+set.seed(12345)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(4,3,2,1)
+bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,G)
+
+
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
+
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
+
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+  #beta_hat
+  #beta_hat/sum(beta_hat)
+
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
+
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
+    }
+  }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
 }
 
-for(i in 1:4){
-  plot(ci_l[i,],type=&#39;l&#39;,ylim=range(c(ci_l[i,],ci_r[i,])))
-  lines(ci_r[i,],col=&#39;grey80&#39;)
-  lines(rep(i/10,100),lty = 2)
-}</code></pre>
-<p><img src="figure/deconvolution.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/deconvolution.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
+apply(coverage,2,mean)</code></pre>
+<pre><code>[1] 0.88 0.96 0.95 1.00</code></pre>
+<pre class="r"><code>#for(i in 1:4){
+#  plot(ci_l[,i],type=&#39;l&#39;,ylim=range(c(ci_l[,i],ci_r[,i])))
+#  lines(ci_r[,i],col=&#39;grey80&#39;)
+#  lines(rep(bulk_p[i],100),lty = 2)
+#}</code></pre>
+<p>The bigger the beta, the lower the coverage??</p>
+</div>
+<div id="pbmc-data" class="section level2">
+<h2>pbmc DATA</h2>
+<pre class="r"><code>load(&quot;~/misc/data/scde/scCD14.RData&quot;)
+load(&quot;~/misc/data/scde/scCD4.RData&quot;)
+load(&quot;~/misc/data/scde/scCD8.RData&quot;)
+#load(&quot;~/misc/data/scde/scCDT.RData&quot;)
+load(&quot;~/misc/data/scde/scMB.RData&quot;)
+
+# remove genes 
+CD14 = as.matrix(CD14)
+CD4 = as.matrix(CD4)
+CD8 = as.matrix(CD8)
+#CDT = as.matrix(CDT)
+MB = as.matrix(MB)
+rm.idx1 = which(((rowSums(CD14!=0)&lt;=10)|(rowSums(CD14)&gt;=quantile(rowSums(CD14),0.95))))
+rm.idx2 = which(((rowSums(CD4!=0)&lt;=10)|(rowSums(CD4)&gt;=quantile(rowSums(CD4),0.95))))
+rm.idx3 = which(((rowSums(CD8!=0)&lt;=10)|(rowSums(CD8)&gt;=quantile(rowSums(CD8),0.95))))
+#rm.idx4 = which(((rowSums(CDT!=0)&lt;=10)|(rowSums(CDT)&gt;=quantile(rowSums(CDT),0.95))))
+rm.idx5 = which(((rowSums(MB!=0)&lt;=10)|(rowSums(MB)&gt;=quantile(rowSums(MB),0.95))))
+
+rm.idx = unique(c(rm.idx1,rm.idx2,rm.idx3,rm.idx5))
+
+CD14 = CD14[-rm.idx,]
+CD4 = CD4[-rm.idx,]
+CD8 = CD8[-rm.idx,]
+#CDT = CDT[-rm.idx,]
+MB = MB[-rm.idx,]
+
+Theta = cbind(rowSums(CD14)/sum(CD14),
+              rowSums(CD4)/sum(CD4),
+              rowSums(CD8)/sum(CD8),
+              #rowSums(CDT)/sum(CDT),
+              rowSums(MB)/sum(MB))
+
+cor(Theta)</code></pre>
+<pre><code>          [,1]      [,2]      [,3]      [,4]
+[1,] 1.0000000 0.8534940 0.7874808 0.6553133
+[2,] 0.8534940 1.0000000 0.7390032 0.6612358
+[3,] 0.7874808 0.7390032 1.0000000 0.5953219
+[4,] 0.6553133 0.6612358 0.5953219 1.0000000</code></pre>
+<pre class="r"><code>kappa(t(Theta)%*%Theta)</code></pre>
+<pre><code>[1] 57.73301</code></pre>
+<pre class="r"><code># cell library size
+S = c(sum(CD14)/ncol(CD14),
+      sum(CD4)/ncol(CD4),
+      sum(CD8)/ncol(CD8),
+      sum(MB)/ncol(MB))</code></pre>
+<pre class="r"><code>G = nrow(Theta)
+K = ncol(Theta)
+
+set.seed(12345)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(1,2,3,4)
+bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,G)
+
+
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
+
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
+
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+  #beta_hat
+  #beta_hat/sum(beta_hat)
+
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
+
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
+    }
+  }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
+}
+
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
+apply(coverage,2,mean)</code></pre>
+<pre><code>[1] 0.99 0.98 0.91 0.95</code></pre>
+<p>how about change <span class="math inline">\(beta\)</span> to be <span class="math inline">\((0.4,0.3,0.2,0.1)\)</span>?</p>
+<pre class="r"><code>G = nrow(Theta)
+K = ncol(Theta)
+
+set.seed(12345)
+# bulk data library size: 300*number of genes.
+# bulk_ls = rpois(1,300*nrow(Theta))
+# total number of cells in bulk data
+bulk_ncell = 400
+# cell proportions
+bulk_beta = c(4,3,2,1)
+bulk_beta = bulk_beta/sum(bulk_beta)
+bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
+# bulk data gene relative expression.
+bulk_X = bulk_ncell*Theta%*%diag(S)%*%bulk_beta
+bulk_theta = bulk_X/sum(bulk_X)
+
+ref_ncell = 100
+ref_X = Theta%*%diag(S)*ref_ncell
+
+w = rep(1,G)
+
+
+p_tilde_est = c()
+p_tilde_var = c()
+p_est = c()
+p_var = c()
+
+nrep = 100
+for(rep in 1:nrep){
+  if(rep%%200==0){print(rep)}
+  bulk_ls = rpois(1,300*nrow(Theta))
+  Z = matrix(rpois(G*K,ref_X),ncol=K)
+  y = rpois(G,bulk_ls*bulk_theta)
+
+  #W = diag(w)
+  #beta_hat = solve(t(Z)%*%W%*%Z - diag(colSums(W%*%Z)))%*%t(Z)%*%W%*%y
+
+  U = diag(colSums(Z))
+  Zu = Z%*%(solve(U))
+  Zuu = Zu%*%solve(U)
+  p_tilde_hat = solve(t(Zu)%*%Zu - diag(colSums(Zuu)))%*%t(Zu)%*%y
+  p_tilde_est = rbind(p_tilde_est,c(p_tilde_hat))
+  #beta_hat = solve(t(Z)%*%Z)%*%t(Z)%*%y
+
+  #beta_hat
+  #beta_hat/sum(beta_hat)
+
+  Q = 0
+  Sigma=0
+  deltas = c()
+  for(i in 1:length(y)){ 
+    ag = Zu[i,]%*%t(Zu[i,])-diag(Zuu[i,])
+    Q = Q + ag
+    Delta = (ag%*%p_tilde_hat-y[i]*Zu[i,])
+    Sigma = Sigma + Delta%*%t(Delta)
+  }
+  Q = Q/G
+  Sigma = Sigma/G
+
+  J = matrix(nrow = K,ncol=K)
+  for(i in 1:K){
+    for(j in 1:K){
+      if(i==j){
+        J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+      }else{
+        J[i,j] = -p_tilde_hat[i]
+      }
+    }
+  }
+
+  J = J/sum(p_tilde_hat)^2
+
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+
+  p_hat = p_tilde_hat/sum(p_tilde_hat)
+  p_est = rbind(p_est,c(p_hat))
+  
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  
+  p_var = rbind(p_var,diag(asyV))
+
+}
+
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+
+#coverage
+
+coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
+apply(coverage,2,mean)</code></pre>
+<pre><code>[1] 0.90 0.98 0.97 0.98</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -882,15 +1366,16 @@ attached base packages:
 [8] base     
 
 other attached packages:
-[1] Biobase_2.42.0      BiocGenerics_0.28.0
+[1] Matrix_1.2-15       Biobase_2.42.0      BiocGenerics_0.28.0
 
 loaded via a namespace (and not attached):
- [1] workflowr_1.6.0 Rcpp_1.0.2      digest_0.6.18   later_0.7.5    
- [5] rprojroot_1.3-2 R6_2.3.0        backports_1.1.2 git2r_0.26.1   
- [9] magrittr_1.5    evaluate_0.12   stringi_1.2.4   fs_1.3.1       
-[13] promises_1.0.1  whisker_0.3-2   rmarkdown_1.10  tools_3.5.1    
-[17] stringr_1.3.1   glue_1.3.0      httpuv_1.4.5    yaml_2.2.0     
-[21] compiler_3.5.1  htmltools_0.3.6 knitr_1.20     </code></pre>
+ [1] Rcpp_1.0.2      knitr_1.20      whisker_0.3-2   magrittr_1.5   
+ [5] workflowr_1.6.0 lattice_0.20-38 R6_2.3.0        stringr_1.3.1  
+ [9] highr_0.7       tools_3.5.1     grid_3.5.1      git2r_0.26.1   
+[13] htmltools_0.3.6 yaml_2.2.0      rprojroot_1.3-2 digest_0.6.18  
+[17] later_0.7.5     promises_1.0.1  fs_1.3.1        glue_1.3.0     
+[21] evaluate_0.12   rmarkdown_1.10  stringi_1.2.4   compiler_3.5.1 
+[25] backports_1.1.2 httpuv_1.4.5   </code></pre>
 </div>
 </div>
 
