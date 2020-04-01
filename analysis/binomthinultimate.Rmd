@@ -35,7 +35,7 @@ Plots on the left show that as $n$ goes larger, the $\beta$ maximizing the curve
 
 The plots in the middle show that the $n=1$ curve is similar to a binomial distribution curve($p$ vs $np(1-p)$) while the other ones skew to right.  
 
-```{r}
+```{r,fig.height=12,fig.width=9}
 library(Biobase)
 par(mfrow = c(4,3))
 
@@ -81,7 +81,7 @@ If we consider $|\beta|\leq 2.5$, then roughly when $n\geq 15$, $s.e.(\hat\beta)
 
 
 
-```{r}
+```{r,fig.height=8,fig.width=6}
 load("data/scde/scCDT.RData")
 CDT = as.matrix(CDT)
 remove.idx = which(rowSums(CDT>0)<=20)
@@ -168,7 +168,7 @@ plot(alphas,auc,type='l',xlab = 'alpha')
 Another run:
 
 
-```{r}
+```{r,fig.height=8,fig.width=6}
 
 #beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
 
@@ -227,10 +227,11 @@ As long as $\hat\beta$ is a consistent estimator, and sample size is large(701 h
 
 However, it seems that the Taylor series and log Binomial analysis still cannot explain the $\alpha$ stuff. Becuase according to above analysis, since most genes have small counts, then effects with larger s.e. should be smaller. This is certainly not true here. On the other hand, if we only consider genes with maximum counts less or equal to 1, then apply binomial thinning, the results are:
 
-```{r}
+```{r,fig.height=8,fig.width=6}
 ii = which(rowMax(CDT)<=1)
 
 set.seed(12345)
+par(mfrow=c(2,2))
 
 #beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
 
@@ -284,7 +285,8 @@ plot(alphas,auc,type='l')
 
 Another run
 
-```{r}
+```{r,fig.height=8,fig.width=6}
+par(mfrow=c(2,2))
 beta = rnorm(nrow(CDT[ii,]),0,0.8)
 
 null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
@@ -335,7 +337,8 @@ plot(alphas,auc,type='l')
 
 If we only consider genes with maximum counts greater or equal to 50, then apply binomial thinning, the results are:
 
-```{r}
+```{r,fig.height=8,fig.width=6}
+par(mfrow=c(2,2))
 ii = which(rowMax(CDT)>=50)
 
 set.seed(12345)
@@ -392,7 +395,8 @@ plot(alphas,auc,type='l')
 
 Another run 
 
-```{r}
+```{r,fig.height=8,fig.width=6}
+par(mfrow=c(2,2))
 beta = rnorm(nrow(CDT[ii,]),0,0.8)
 
 null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
@@ -513,7 +517,7 @@ plot(alphas,auc,type='l')
 
 ```
 
-```{r}
+```{r,eval=FALSE}
 G=1000
 n=100
 Y = matrix(0,nrow=G,ncol=n)
