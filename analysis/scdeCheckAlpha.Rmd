@@ -8,20 +8,44 @@ output:
 editor_options:
   chunk_output_type: console
 ---
+```{r,include=FALSE}
+knitr::opts_chunk$set(warning = FALSE,message = FALSE)
+```
 
-## Introduction
+
 
 Compare the loglikelihood from sva-limma-ash, setting $\alpha=0$ and $\alpha=1$, on real data.
+
+## Dataset 1: PBMC
+
+### Summary
+
+Even if we do not take log, $\alpha=1$ still give larger loglikelihood.
 
 ```{r}
 library(vicar)
 library(sva)
 library(cate)
 library(seqgendiff)
+library(edgeR)
+library(MASS)
 load('data/scde/scCD4.RData')
 load('data/scde/scCD8.RData')
 load('data/scde/scCD14.RData')
 load('data/scde/scMB.RData')
+
+mglmfit = function(Y,X){
+  G = nrow(Y)
+  coefs = c()
+  ses = c()
+  for(i in 1:G){
+    fit = glm(y~.,data.frame(y=Y[i,],x=X[,-1]),family = 'poisson')
+    coefs = rbind(coefs,fit$coefficients)
+    ses = rbind(ses,summary(fit)$coefficients[,2])
+  }
+  return(list(coefficients=coefs,se = ses))
+}
+
 ```
 
 CD4, CD8, CD14 and B cells. Look at number of genes and cells.
@@ -34,7 +58,8 @@ dim(MB)
 ```
 
 
-## CD4 vs MB cells.
+### CD4 vs MB cells.
+
 
 ```{r}
 Y = as.matrix(cbind(CD4,MB))
@@ -46,56 +71,66 @@ group_idx = c(rep(1,dim(CD4)[2]),rep(0,dim(MB)[2]))
 Y = Y[-which(rowSums(Y!=0)<10),]
 
 X = model.matrix(~group_idx)
-sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
 
-X.sva <- cbind(X, sva_sva$sv)
-lmout <- limma::lmFit(object = (Y), design = X.sva)
-eout  <- limma::eBayes(lmout)
-svaout           <- list()
-svaout$betahat   <- lmout$coefficients[, 2]
-svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
-svaout$pvalues   <- eout$p.value[, 2]
+real_study = function(Y,X,run_sva_eb=TRUE,n.sv=NULL){
+  
+  if(run_sva_eb){
+    sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = n.sv)
+    X.sva <- cbind(X, sva_sva$sv)
+    lmout <- limma::lmFit(object = (Y), design = X.sva)
+    eout  <- limma::eBayes(lmout)
+    svaout           <- list()
+    svaout$betahat   <- lmout$coefficients[, 2]
+    svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+    svaout$pvalues   <- eout$p.value[, 2]
+    sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
+    sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
+    print(paste('sva-limma-ash0 loglik: ',round(sva_limma_ash0$loglik,2),';',
+            'sva-limma-ash1 loglik: ',round(sva_limma_ash1$loglik)))
+  }else{
+    lmout <- limma::lmFit(object = (Y), design = X)
+    out = list()
+    out$betahat   <- lmout$coefficients[, 2]
+    out$sebetahat <- lmout$stdev.unscaled[, 2] * lmout$sigma
+    lm_ash0 = ashr::ash(out$betahat,out$sebetahat,alpha=0)
+    lm_ash1 = ashr::ash(out$betahat,out$sebetahat,alpha=1)
+    print(paste('lm-ash0 loglik: ',round(lm_ash0$loglik,2),';',
+            'lm-ash1 loglik: ',round(lm_ash1$loglik)))
+  }
+}
 
-# sva-limma-ash-alpha 0
-
-sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
-sva_limma_ash0$loglik
-
-# sva-limma-ash-alpha 1
-
-sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
-sva_limma_ash1$loglik
-
+real_study(Y,X,3)
+real_study(Y,X,run_sva_eb = FALSE)
 ```
 
 
-Take log of Y
+Take log1p of Y
 
 ```{r}
-Y = log(Y+0.5)
-sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
-
-X.sva <- cbind(X, sva_sva$sv)
-lmout <- limma::lmFit(object = (Y), design = X.sva)
-eout  <- limma::eBayes(lmout)
-svaout           <- list()
-svaout$betahat   <- lmout$coefficients[, 2]
-svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
-svaout$pvalues   <- eout$p.value[, 2]
-
-# sva-limma-ash-alpha 0
-
-sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
-sva_limma_ash0$loglik
-
-# sva-limma-ash-alpha 1
-
-sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
-sva_limma_ash1$loglik
+real_study(log(Y+0.5),X,14)
+real_study(log(Y+0.5),X,run_sva_eb = FALSE)
 ```
 
+Voom-lm-ash
 
-## CD8 vs CD14 cells
+```{r}
+d = DGEList(Y)
+d = calcNormFactors(d)
+y = voom(d, design=X, plot = FALSE)
+real_study(y,X,run_sva_eb = FALSE)
+```
+
+glm-ash
+
+```{r}
+fit = mglmfit(Y,X)
+glm_ash0 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=0)
+glm_ash1 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=1)
+print(paste('glm-ash0 loglik: ',round(glm_ash0$loglik,2),';',
+            'glm-ash1 loglik: ',round(glm_ash1$loglik)))
+```
+
+### CD8 vs CD14 cells
 
 ```{r}
 Y = as.matrix(cbind(CD8,CD14))
@@ -107,14 +142,87 @@ group_idx = c(rep(1,dim(CD8)[2]),rep(0,dim(CD14)[2]))
 Y = Y[-which(rowSums(Y!=0)<10),]
 
 X = model.matrix(~group_idx)
-sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
+real_study(Y,X,3)
+real_study(Y,X,run_sva_eb = FALSE)
 
-X.sva <- cbind(X, sva_sva$sv)
-lmout <- limma::lmFit(object = (Y), design = X.sva)
-eout  <- limma::eBayes(lmout)
+```
+
+
+Take log1p of Y
+
+```{r}
+real_study(log(Y+0.5),X,27)
+real_study(log(Y+0.5),X,run_sva_eb = FALSE)
+```
+
+Voom-lm-ash
+
+```{r}
+d = DGEList(Y)
+d = calcNormFactors(d)
+y = voom(d, design=X, plot = FALSE)
+real_study(y,X,run_sva_eb = FALSE)
+```
+
+glm-ash
+
+```{r}
+fit = mglmfit(Y,X)
+glm_ash0 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=0)
+glm_ash1 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=1)
+print(paste('glm-ash0 loglik: ',round(glm_ash0$loglik,2),';',
+            'glm-ash1 loglik: ',round(glm_ash1$loglik)))
+```
+
+## Dataset 2: Jaitin et al.	2014
+
+Taken from [here](https://github.com/jhsiao999/singleCellRNASeqMouseJaitinSpleen)
+
+```{r}
+load('data/scde/MouseJaitinSpleen.rda')
+suppressPackageStartupMessages(library(SummarizedExperiment))
+suppressPackageStartupMessages(library(MultiAssayExperiment))
+mat = exprs(MouseJaitinSpleen)
+idx = which(MouseJaitinSpleen$ERCC_dilution=='2.50E-05')
+cell_type = MouseJaitinSpleen$group_name[idx]
+table(cell_type)
+mat = mat[,idx]
+```
+
+### B cell and NK_cell
+
+```{r}
+Y = as.matrix(cbind(mat[,which(cell_type=='B cell')],mat[,which(cell_type=='NK_cell')]))
+
+group_idx = c(rep(1,dim(mat[,which(cell_type=='B cell')])[2]),
+              rep(0,dim(mat[,which(cell_type=='NK_cell')])[2]))
+
+# remove genes appearing in less than 10 cells
+
+Y = Y[-which(rowSums(Y!=0)<10),]
+rm.idx = which(colSums(Y)==0)
+Y = Y[,-rm.idx]
+group_idx = group_idx[-rm.idx]
+
+
+X = model.matrix(~group_idx)
+real_study(Y,X)
+real_study(Y,X,run_sva_eb = FALSE)
+```
+
+
+
+```{r,eval=FALSE}
+
+# How about just run linear model and then ash?
+
+X = model.matrix(~group_idx)
+
+lmout <- limma::lmFit(object = (Y), design = X)
+
 svaout           <- list()
 svaout$betahat   <- lmout$coefficients[, 2]
-svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
+svaout$sebetahat <- lmout$stdev.unscaled[, 2] * lmout$sigma
 svaout$pvalues   <- eout$p.value[, 2]
 
 # sva-limma-ash-alpha 0
@@ -126,46 +234,126 @@ sva_limma_ash0$loglik
 
 sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
 sva_limma_ash1$loglik
-
 ```
 
-
-Take log of Y
+Take log1p of y
 
 ```{r}
-Y = log(Y+0.5)
-sva_sva = sva((Y),mod=X,mod0=X[,1],n.sv = 3)
-
-X.sva <- cbind(X, sva_sva$sv)
-lmout <- limma::lmFit(object = (Y), design = X.sva)
-eout  <- limma::eBayes(lmout)
-svaout           <- list()
-svaout$betahat   <- lmout$coefficients[, 2]
-svaout$sebetahat <- lmout$stdev.unscaled[, 2] * sqrt(eout$s2.post)
-svaout$pvalues   <- eout$p.value[, 2]
-
-# sva-limma-ash-alpha 0
-
-sva_limma_ash0 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=0)
-sva_limma_ash0$loglik
-
-# sva-limma-ash-alpha 1
-
-sva_limma_ash1 = ashr::ash(svaout$betahat,svaout$sebetahat,alpha=1)
-sva_limma_ash1$loglik
+real_study(log(Y+0.5),X)
+real_study(log(Y+0.5),X,run_sva_eb = FALSE)
 ```
 
-
-Simulate the easiest case...
+Voom-lm-ash
 
 ```{r}
-library(ashr)
-set.seed(12345)
-beta = c(rep(0,100),rnorm(100))
-sebetahat = abs(rnorm(200,0,1))
-betahat = rnorm(200,beta,sebetahat)
-beta.ash0 = ash(betahat, sebetahat,alpha=0)
-beta.ash0$loglik
-beta.ash1 = ash(betahat, sebetahat,alpha=1)
-beta.ash1$loglik
+d = DGEList(Y)
+d = calcNormFactors(d)
+y = voom(d, design=X, plot = FALSE)
+real_study(y,X,run_sva_eb = FALSE)
 ```
+
+glm-ash
+
+```{r}
+fit = mglmfit(Y,X)
+glm_ash0 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=0)
+glm_ash1 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=1)
+print(paste('glm-ash0 loglik: ',round(glm_ash0$loglik,2),';',
+            'glm-ash1 loglik: ',round(glm_ash1$loglik)))
+```
+
+### CD8-pDC  and splenocyte 
+
+```{r}
+Y = as.matrix(cbind(mat[,which(cell_type=='CD8-pDC')],mat[,which(cell_type=='splenocyte')]))
+
+group_idx = c(rep(1,dim(mat[,which(cell_type=='CD8-pDC')])[2]),
+              rep(0,dim(mat[,which(cell_type=='splenocyte')])[2]))
+
+# remove genes appearing in less than 10 cells
+
+Y = Y[-which(rowSums(Y!=0)<10),]
+rm.idx = which(colSums(Y)==0)
+Y = Y[,-rm.idx]
+group_idx = group_idx[-rm.idx]
+
+X = model.matrix(~group_idx)
+real_study(Y,X)
+real_study(Y,X,run_sva_eb = FALSE)
+
+```
+
+
+Take log1p of y
+
+```{r}
+real_study(log(Y+0.5),X)
+real_study(log(Y+0.5),X,run_sva_eb = FALSE)
+```
+
+Voom-lm-ash
+
+```{r}
+d = DGEList(Y)
+d = calcNormFactors(d)
+y = voom(d, design=X, plot = FALSE)
+real_study(y,X,run_sva_eb = FALSE)
+```
+
+glm-ash
+
+```{r}
+fit = mglmfit(Y,X)
+glm_ash0 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=0)
+glm_ash1 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=1)
+print(paste('glm-ash0 loglik: ',round(glm_ash0$loglik,2),';',
+            'glm-ash1 loglik: ',round(glm_ash1$loglik)))
+```
+
+## Dataset3: Grun et al 2016
+
+Taken [here](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE81076)
+
+```{r}
+datax=readRDS("data/scde/GSE81076-GPL18573.rds")
+datax_gene = experiments(datax)[["gene"]]
+mat = (assays(datax_gene)[["count"]])
+cell63_idx = 1:96
+TGFBR3_idx = 673:768
+Y = cbind(mat[,cell63_idx],mat[,TGFBR3_idx])
+group_idx = c(rep(1,length(cell63_idx)),
+              rep(0,length(TGFBR3_idx)))
+Y = Y[-which(rowSums(Y!=0)<10),]
+
+X = model.matrix(~group_idx)
+real_study(Y,X)
+real_study(Y,X,run_sva_eb = FALSE)
+```
+
+Take log1p of y
+
+```{r}
+real_study(log(Y+0.5),X)
+real_study(log(Y+0.5),X,run_sva_eb = FALSE)
+```
+
+Voom-lm-ash
+
+```{r}
+d = DGEList(Y)
+d = calcNormFactors(d)
+y = voom(d, design=X, plot = FALSE)
+real_study(y,X,run_sva_eb = FALSE)
+```
+
+glm-ash
+
+```{r}
+fit = mglmfit(Y,X)
+glm_ash0 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=0)
+glm_ash1 = ashr::ash(fit$coefficients[,2],fit$se[,2],alpha=1)
+print(paste('glm-ash0 loglik: ',round(glm_ash0$loglik,2),';',
+            'glm-ash1 loglik: ',round(glm_ash1$loglik)))
+```
+
+## Also compare log-limma-ash, voom-limma-ash and glm-ash on simulated and real data.
