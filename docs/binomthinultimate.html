@@ -452,10 +452,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreebfa42666f3bc8975d9b7f6649906861d51575408targetblankbfa4266a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/bfa42666f3bc8975d9b7f6649906861d51575408" target="_blank">bfa4266</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree42ee8caf9e46d7d04ffaa47fee7b1c3ef230cdc2targetblank42ee8caa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/42ee8caf9e46d7d04ffaa47fee7b1c3ef230cdc2" target="_blank">42ee8ca</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreebfa42666f3bc8975d9b7f6649906861d51575408targetblankbfa4266a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree42ee8caf9e46d7d04ffaa47fee7b1c3ef230cdc2targetblank42ee8caa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -464,7 +464,6 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/contrainedclustering.Rmd
@@ -529,6 +528,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/42ee8caf9e46d7d04ffaa47fee7b1c3ef230cdc2/analysis/binomthinultimate.Rmd" target="_blank">42ee8ca</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+<td>
+wflow_publish(“analysis/binomthinultimate.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/binomthinultimate.html" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -668,7 +701,44 @@ for(n in n_list){
   # first order taylor series expansion approximated one
   #lines(b, n*exp(b)*(((2*n+2*s+1)*exp(b)+2*s-1)^2+2*(n-1)*exp(b)) / (4*((n+s)*exp(b)+s)^4),col=4)
 }</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-2-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-2-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>If we consider <span class="math inline">\(|\beta|\leq 2.5\)</span>, then roughly when <span class="math inline">\(n\geq 15\)</span>, <span class="math inline">\(s.e.(\hat\beta)\)</span> should be monotonically increasing with <span class="math inline">\(|\beta|\)</span>.</p>
 <pre class="r"><code>load(&quot;data/scde/scCDT.RData&quot;)
 CDT = as.matrix(CDT)
@@ -750,7 +820,44 @@ for(alpha in alphas){
 
 plot(alphas,loglik,type=&#39;l&#39;,xlab = &#39;alpha&#39;)
 plot(alphas,auc,type=&#39;l&#39;,xlab = &#39;alpha&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-3-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Another run:</p>
 <pre class="r"><code>#beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
 
@@ -799,13 +906,51 @@ for(alpha in alphas){
 
 plot(alphas,loglik,type=&#39;l&#39;,xlab = &#39;alpha&#39;)
 plot(alphas,auc,type=&#39;l&#39;,xlab = &#39;alpha&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-4-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The plot of <span class="math inline">\(\beta\)</span> vs <span class="math inline">\(\hat\beta\)</span> shows that if <span class="math inline">\(\hat\beta\)</span> is large, then <span class="math inline">\(\beta\)</span> is large. But if <span class="math inline">\(\beta\)</span> is large, <span class="math inline">\(\hat\beta\)</span> is not necessarily large because counts are small, the most we can thin is limited. In this sense, some of the ‘true’ <span class="math inline">\(\beta\)</span>s used to thin the counts are not really ‘true’ since data do not contain such information.</p>
 <p>As long as <span class="math inline">\(\hat\beta\)</span> is a consistent estimator, and sample size is large(701 here, large rnough), <span class="math inline">\(\hat\beta\)</span> should be close enough to <span class="math inline">\(\beta\)</span>.</p>
 <p>However, it seems that the Taylor series and log Binomial analysis still cannot explain the <span class="math inline">\(\alpha\)</span> stuff. Becuase according to above analysis, since most genes have small counts, then effects with larger s.e. should be smaller. This is certainly not true here. On the other hand, if we only consider genes with maximum counts less or equal to 1, then apply binomial thinning, the results are:</p>
 <pre class="r"><code>ii = which(rowMax(CDT)&lt;=1)
 
 set.seed(12345)
+par(mfrow=c(2,2))
 
 #beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
 
@@ -835,12 +980,11 @@ out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
 #out$pvalues   = eout$p.value[, 2]
 
 plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
-abline(a=0,b=1)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>#plot(abs(beta),out$sebetahat)
-plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
 
 loglik = c()
 auc = c()
@@ -851,12 +995,49 @@ for(alpha in alphas){
   auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
 }
 
-plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+plot(alphas,loglik,type=&#39;l&#39;)
+plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-5-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Another run</p>
-<pre class="r"><code>beta = rnorm(nrow(CDT[ii,]),0,0.8)
+<pre class="r"><code>par(mfrow=c(2,2))
+beta = rnorm(nrow(CDT[ii,]),0,0.8)
 
 null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
 
@@ -882,12 +1063,11 @@ out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
 #out$pvalues   = eout$p.value[, 2]
 
 plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
-abline(a=0,b=1)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>#plot(abs(beta),out$sebetahat)
-plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
 
 loglik = c()
 auc = c()
@@ -898,12 +1078,49 @@ for(alpha in alphas){
   auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
 }
 
-plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /></p>
+plot(alphas,loglik,type=&#39;l&#39;)
+plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-6-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>If we only consider genes with maximum counts greater or equal to 50, then apply binomial thinning, the results are:</p>
-<pre class="r"><code>ii = which(rowMax(CDT)&gt;=50)
+<pre class="r"><code>par(mfrow=c(2,2))
+ii = which(rowMax(CDT)&gt;=50)
 
 set.seed(12345)
 
@@ -935,12 +1152,11 @@ out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
 #out$pvalues   = eout$p.value[, 2]
 
 plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
-abline(a=0,b=1)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>#plot(abs(beta),out$sebetahat)
-plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
 
 loglik = c()
 auc = c()
@@ -951,12 +1167,49 @@ for(alpha in alphas){
   auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
 }
 
-plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
+plot(alphas,loglik,type=&#39;l&#39;)
+plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-7-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Another run</p>
-<pre class="r"><code>beta = rnorm(nrow(CDT[ii,]),0,0.8)
+<pre class="r"><code>par(mfrow=c(2,2))
+beta = rnorm(nrow(CDT[ii,]),0,0.8)
 
 null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
 
@@ -982,12 +1235,11 @@ out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
 #out$pvalues   = eout$p.value[, 2]
 
 plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
-abline(a=0,b=1)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>#plot(abs(beta),out$sebetahat)
-plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
 
 loglik = c()
 auc = c()
@@ -998,10 +1250,46 @@ for(alpha in alphas){
   auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
 }
 
-plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /></p>
+plot(alphas,loglik,type=&#39;l&#39;)
+plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-8-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>So there must have something to do with the 0’s.</p>
 <p>Let’s directly work with <span class="math inline">\(\hat{\sigma}^2\)</span>,</p>
 <span class="math display">\[\begin{equation}
@@ -1104,12 +1392,11 @@ out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
 #out$pvalues   = eout$p.value[, 2]
 
 plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
-abline(a=0,b=1)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>#plot(abs(beta),out$sebetahat)
-plot((out$betahat),out$sebetahat,pch = 18,xlab = &#39;(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat)
+plot((out$betahat),out$sebetahat,pch = 18,xlab = &#39;(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
 
 loglik = c()
 auc = c()
@@ -1120,10 +1407,8 @@ for(alpha in alphas){
   auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
 }
 
-plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /></p>
+plot(alphas,loglik,type=&#39;l&#39;)
+plot(alphas,auc,type=&#39;l&#39;)</code></pre>
 <div id="earlier-analysis" class="section level1">
 <h1>Earlier analysis</h1>
 <div id="taylor-series-approximation" class="section level2">
@@ -1174,7 +1459,120 @@ s = 1
   legend(&#39;topright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))
 
 }</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-11-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-2">
+Past versions of unnamed-chunk-11-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-11-2.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-3">
+Past versions of unnamed-chunk-11-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-11-3.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Second order</p>
 <pre class="r"><code>mean_log = function(n,p,s){
   log(n*p+s)-n*p*(1-p)/(2*(n*p+s)^2)
@@ -1221,7 +1619,120 @@ s = 0.5
   legend(&#39;topright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))
 
 }</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-12-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-2">
+Past versions of unnamed-chunk-12-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-12-2.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-3">
+Past versions of unnamed-chunk-12-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-12-3.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="large-np" class="section level2">
 <h2>Large <span class="math inline">\(np\)</span></h2>
@@ -1248,6 +1759,43 @@ plot(log(1/p_list-1),true_var,xlab = &#39;beta&#39;, ylab= &#39;variance&#39;,ty
 lines(log(1/p_list-1),approx_var,col=4)
 legend(&#39;topleft&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))</code></pre>
 <p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-13-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="small-np" class="section level2">
 <h2>Small <span class="math inline">\(np\)</span></h2>
@@ -1274,6 +1822,43 @@ plot(log(1/p_list-1),true_var,xlab = &#39;beta&#39;, ylab= &#39;variance&#39;,ty
 lines(log(1/p_list-1),approx_var,col=4)
 legend(&#39;topright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))</code></pre>
 <p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-14-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>set.seed(12345)
 n_list = 0:100
 
@@ -1295,6 +1880,43 @@ plot(n_list,true_var,xlab = &#39;n&#39;, ylab= &#39;variance&#39;,type=&#39;l&#3
 lines(n_list,approx_var,col=4)
 legend(&#39;topleft&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))</code></pre>
 <p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/7177fb223462fb9ca44ae519f0efc54467adea8c/docs/figure/binomthinultimate.Rmd/unnamed-chunk-15-1.png" target="_blank">7177fb2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s start with the simplest case: we have a count matrix <span class="math inline">\(Y\)</span>, whose all entries are the same! Then we apply binomial thinning to <span class="math inline">\(Y\)</span>.</p>
 <p>In the following simulation, we set the number of samples to be <span class="math inline">\(n=500\)</span>, the number of genes <span class="math inline">\(p=5000\)</span> and entries of <span class="math inline">\(Y\)</span> vary from <span class="math inline">\(100, 50, 30, 20, 10, 5, 1.\)</span> Half of samples are from group 1 and the rest are from group 2. About <span class="math inline">\(90\%\)</span> of genes have no effects and the rest have effects <span class="math inline">\(\beta_j\)</span> generated from standard normal distribution.</p>
 <p>We fit a simple linear regression to each gene with log transformed counts and compare the log-likelihood from <code>ash</code>, setting <span class="math inline">\(\alpha=0\)</span> and <span class="math inline">\(\alpha=1\)</span>, and plot <span class="math inline">\(\beta\)</span> vs <span class="math inline">\(\hat\beta\)</span> as well as <span class="math inline">\(\beta\)</span> vs <span class="math inline">\(s.e.(\hat\beta)\)</span> for each case.</p>
