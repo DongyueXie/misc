@@ -361,7 +361,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-03-21
+<strong>Last updated:</strong> 2020-04-01
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -452,10 +452,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed6cf110432b833d65fa9609206848bea97d17b0ftargetblankd6cf110a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/d6cf110432b833d65fa9609206848bea97d17b0f" target="_blank">d6cf110</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreebfa42666f3bc8975d9b7f6649906861d51575408targetblankbfa4266a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/bfa42666f3bc8975d9b7f6649906861d51575408" target="_blank">bfa4266</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreed6cf110432b833d65fa9609206848bea97d17b0ftargetblankd6cf110a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreebfa42666f3bc8975d9b7f6649906861d51575408targetblankbfa4266a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -464,6 +464,7 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/contrainedclustering.Rmd
@@ -483,8 +484,10 @@ Untracked files:
     Untracked:  data/scde/
 
 Unstaged changes:
+    Modified:   analysis/CPM.Rmd
     Modified:   analysis/deconvolution.Rmd
     Modified:   analysis/index.Rmd
+    Modified:   analysis/limma.Rmd
     Deleted:    data/mout_high.RData
     Deleted:    data/scCDT.RData
     Deleted:    data/sva_sva_high.RData
@@ -526,6 +529,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/bfa42666f3bc8975d9b7f6649906861d51575408/analysis/binomthinultimate.Rmd" target="_blank">bfa4266</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-01
+</td>
+<td>
+wflow_publish(“analysis/binomthinultimate.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/9576644230dc49d2b963c24ef73b6802de727f63/docs/binomthinultimate.html" target="_blank">9576644</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -584,6 +621,680 @@ wflow_publish(“analysis/binomthinultimate.Rmd”)
 </div>
 </div>
 </div>
+<p>I observe that for a real single cell RNA-Seq dataset, if applying binomial thinning, taking log1p, and fitting linear models, then effects with larger standard error tend to be larger. This is seen from the fact that setting <span class="math inline">\(\alpha=1\)</span> in <code>ash</code> gives higher likelihood than setting <span class="math inline">\(\alpha=0\)</span>. I want to figure out why this happens.</p>
+<p>Binomial thinning: given observed counts <span class="math inline">\(n\)</span> , effect size <span class="math inline">\(\beta\)</span> and two groups, draw <span class="math inline">\(y\)</span> either from Binomial<span class="math inline">\((n, \frac{\exp(\beta)}{1\exp(\beta)})\)</span> or Binomial<span class="math inline">\((n, \frac{1}{1\exp(\beta)})\)</span>, depending on group. Without loss of generality, we assign <span class="math inline">\(p = \exp(\beta)}{1\exp(\beta)\)</span> to group one and <span class="math inline">\(1-p\)</span> to group two.</p>
+<p>How I tackle this: The standard error of estimated effects is proportional to square root residual variance. Hence, I need to understand the relationship between effects and residual variance. Residual variance is basically <span class="math inline">\(var(\log(y+s))\)</span>, where <span class="math inline">\(s\)</span> is usually taken to be 0.5 or 1.</p>
+<p>Of course, different counts and thinning probabilities result in heterogeneity so a linear model with constant variance is not strictly adequate. Most RUV methods do not consider this heterogeneity. How about voom-ruv-limma-ash combination?</p>
+<p>Observed counts vary from 0 to a few hundreds of thousands.</p>
+<p>By doing theoretical analysis via Taylor series expansion and extensive simulations, my conclusion is that</p>
+<ol style="list-style-type: decimal">
+<li>For group one with <span class="math inline">\(p=\frac{\exp\beta}{\exp\beta+1}\)</span>, <span class="math inline">\(var(\log(y+s))\)</span> is a unimodal bell shaped function of <span class="math inline">\(\beta\)</span> given <span class="math inline">\(n\)</span> and <span class="math inline">\(s\)</span>. Based on first order Taylor series expansion, variance of <span class="math inline">\(\log(y+s)\)</span> where <span class="math inline">\(y\sim Binomial(n,\frac{\exp\beta}{1+\exp\beta})\)</span> is <span class="math inline">\(\frac{n\exp\beta}{((n+s)\exp\beta+s)^2}\)</span>, which is maximized at <span class="math inline">\(\log(\frac{s}{n+s})\)</span>. Let’s see some plots for true variance function based on simulating <span class="math inline">\(10^5\)</span> binomial samples.</li>
+</ol>
+<p>Plots on the left in figure below show variance of <span class="math inline">\(\log(y+0.5)\)</span> vs <span class="math inline">\(\beta\)</span> relationships for <span class="math inline">\(n=1,5,10,50\)</span>. The ones in the middle change <span class="math inline">\(\beta\)</span> to <span class="math inline">\(p\)</span> on x axis. The y axis in right plots are sum of <span class="math inline">\(var(\log(y+0.5))\)</span> of two groups, i.e. <span class="math inline">\(var(\log(y_1)+0.5)+var(\log(y_2)+0.5)\)</span>, where <span class="math inline">\(y_1\sim Binomial(n,p)\)</span> and <span class="math inline">\(y_2\sim Binomial(n,p)\)</span>. The idea of these plots are that suppose we have two samples with the same observed counts <span class="math inline">\(n\)</span> and we assign them to two different groups, we want to understand how total variances(proportional to residual variance) vary with <span class="math inline">\(\beta\)</span>?</p>
+<p>Plots on the left show that as <span class="math inline">\(n\)</span> goes larger, the <span class="math inline">\(\beta\)</span> maximizing the curve becomes smaller, which conforms to the Taylor series expansion analysis.</p>
+<p>The plots in the middle show that the <span class="math inline">\(n=1\)</span> curve is similar to a binomial distribution curve(<span class="math inline">\(p\)</span> vs <span class="math inline">\(np(1-p)\)</span>) while the other ones skew to right.</p>
+<pre class="r"><code>library(Biobase)
+par(mfrow = c(4,3))
+
+b = seq(-5,5,length.out = 101)
+n_list = c(1,5,10,50)
+s=0.5
+
+set.seed(12345)
+
+for(n in n_list){
+  true_var1 = c()
+  true_var2 = c()
+  p1 = c()
+  p2 = c()
+  for(i in 1:length(b)){
+    p1[i] = exp(b[i])/(1+exp(b[i]))
+    p2[i] = 1/(1+exp(b[i]))
+    true_var1 = c(true_var1,var(log(rbinom(1e5,n,p1[i])+s)))
+    true_var2 = c(true_var2,var(log(rbinom(1e5,n,p2[i])+s)))
+  }
+  
+  #print(p1[which.max(true_var1)]*n)
+  
+  plot(b,true_var1,type=&#39;l&#39;,xlab=&#39;beta&#39;,ylab=&#39;variance&#39;,main = paste(&#39;n = &#39;,n))
+  abline(v = 0, lty = 2)
+  
+  plot(n*p1,true_var1,type=&#39;l&#39;,xlab=&#39;p&#39;,ylab=&#39;variance&#39;,main = paste(&#39;n = &#39;,n))
+  abline(v = 0, lty = 2)
+  
+  plot(b,true_var1 + true_var2,type=&#39;l&#39;,xlab=&#39;beta&#39;,ylab=&#39;variance&#39;,main = paste(&#39;n = &#39;,n, &#39;, sum of two groups&#39;))
+  abline(v = 0, lty = 2)
+  #plot(p,true_var,type=&#39;l&#39;)
+  # first order taylor series expansion approximated one
+  #lines(b, n*exp(b)*(((2*n+2*s+1)*exp(b)+2*s-1)^2+2*(n-1)*exp(b)) / (4*((n+s)*exp(b)+s)^4),col=4)
+}</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>If we consider <span class="math inline">\(|\beta|\leq 2.5\)</span>, then roughly when <span class="math inline">\(n\geq 15\)</span>, <span class="math inline">\(s.e.(\hat\beta)\)</span> should be monotonically increasing with <span class="math inline">\(|\beta|\)</span>.</p>
+<pre class="r"><code>load(&quot;data/scde/scCDT.RData&quot;)
+CDT = as.matrix(CDT)
+remove.idx = which(rowSums(CDT&gt;0)&lt;=20)
+CDT = CDT[-remove.idx,]
+
+#&#39;@param Z count matrix, sample by features
+#&#39;@param x 1 for group 1, 0 for group 2
+#&#39;@param beta effect of fearures,  0 for null.
+#&#39;@return W, thinned matrix
+bi_thin = function(Z,x,beta){
+
+  n=nrow(Z)
+  p=ncol(Z)
+  
+  # group index
+  g1 = which(x==1)
+  g2 = which(x==0)
+  
+  
+  p2 = 1/(1+exp(beta))
+  p1 = 1-p2
+  P = matrix(nrow = n,ncol = p)
+  P[g1,] = t(replicate(length(g1),p1))
+  P[g2,] = t(replicate(length(g2),p2))
+  
+  W = matrix(rbinom(n*p,Z,P),nrow=n)
+  
+  W
+}
+
+
+set.seed(12345)
+
+#beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
+
+beta = rnorm(nrow(CDT),0,0.8)
+
+null_idx = sample(1:nrow(CDT),round(0.5*nrow(CDT)))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,ncol(CDT))
+
+x[sample(1:ncol(CDT),round(ncol(CDT)/2))] = 1
+
+Y = bi_thin(t(CDT),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+par(mfrow=c(2,2))
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat,ylab = &#39;s.e.&#39;)
+plot(abs(out$betahat),out$sebetahat,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;,xlab = &#39;alpha&#39;)
+plot(alphas,auc,type=&#39;l&#39;,xlab = &#39;alpha&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Another run:</p>
+<pre class="r"><code>#beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
+
+beta = rnorm(nrow(CDT),0,0.8)
+
+null_idx = sample(1:nrow(CDT),round(0.5*nrow(CDT)))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,ncol(CDT))
+
+x[sample(1:ncol(CDT),round(ncol(CDT)/2))] = 1
+
+Y = bi_thin(t(CDT),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+par(mfrow=c(2,2))
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat,ylab = &#39;s.e.&#39;)
+plot(abs(out$betahat),out$sebetahat,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;,xlab = &#39;alpha&#39;)
+plot(alphas,auc,type=&#39;l&#39;,xlab = &#39;alpha&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The plot of <span class="math inline">\(\beta\)</span> vs <span class="math inline">\(\hat\beta\)</span> shows that if <span class="math inline">\(\hat\beta\)</span> is large, then <span class="math inline">\(\beta\)</span> is large. But if <span class="math inline">\(\beta\)</span> is large, <span class="math inline">\(\hat\beta\)</span> is not necessarily large because counts are small, the most we can thin is limited. In this sense, some of the ‘true’ <span class="math inline">\(\beta\)</span>s used to thin the counts are not really ‘true’ since data do not contain such information.</p>
+<p>As long as <span class="math inline">\(\hat\beta\)</span> is a consistent estimator, and sample size is large(701 here, large rnough), <span class="math inline">\(\hat\beta\)</span> should be close enough to <span class="math inline">\(\beta\)</span>.</p>
+<p>However, it seems that the Taylor series and log Binomial analysis still cannot explain the <span class="math inline">\(\alpha\)</span> stuff. Becuase according to above analysis, since most genes have small counts, then effects with larger s.e. should be smaller. This is certainly not true here. On the other hand, if we only consider genes with maximum counts less or equal to 1, then apply binomial thinning, the results are:</p>
+<pre class="r"><code>ii = which(rowMax(CDT)&lt;=1)
+
+set.seed(12345)
+
+#beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
+
+beta = rnorm(nrow(CDT[ii,]),0,0.8)
+
+null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,ncol(CDT[ii,]))
+
+x[sample(1:ncol(CDT[ii,]),round(ncol(CDT[ii,])/2))] = 1
+
+Y = bi_thin(t(CDT[ii,]),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Another run</p>
+<pre class="r"><code>beta = rnorm(nrow(CDT[ii,]),0,0.8)
+
+null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,ncol(CDT[ii,]))
+
+x[sample(1:ncol(CDT[ii,]),round(ncol(CDT[ii,])/2))] = 1
+
+Y = bi_thin(t(CDT[ii,]),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>If we only consider genes with maximum counts greater or equal to 50, then apply binomial thinning, the results are:</p>
+<pre class="r"><code>ii = which(rowMax(CDT)&gt;=50)
+
+set.seed(12345)
+
+#beta = sample(seq(-2.5,2.5,length.out = nrow(CDT)))
+
+beta = rnorm(nrow(CDT[ii,]),0,0.8)
+
+null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,ncol(CDT[ii,]))
+
+x[sample(1:ncol(CDT[ii,]),round(ncol(CDT[ii,])/2))] = 1
+
+Y = bi_thin(t(CDT[ii,]),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Another run</p>
+<pre class="r"><code>beta = rnorm(nrow(CDT[ii,]),0,0.8)
+
+null_idx = sample(1:nrow(CDT[ii,]),round(0.5*nrow(CDT[ii,])))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,ncol(CDT[ii,]))
+
+x[sample(1:ncol(CDT[ii,]),round(ncol(CDT[ii,])/2))] = 1
+
+Y = bi_thin(t(CDT[ii,]),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#plot(abs(beta),out$sebetahat)
+plot(abs(out$betahat),out$sebetahat,pch = 18,xlab = &#39;abs(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>So there must have something to do with the 0’s.</p>
+<p>Let’s directly work with <span class="math inline">\(\hat{\sigma}^2\)</span>,</p>
+<span class="math display">\[\begin{equation}
+    \hat{\sigma}^2 = \frac{1}{n-2}(\sum_{i\in Group1}(y_i-\bar{y}_1)^2+\sum_{i\in Group2}(y_i-\bar{y}_2)^2),
+\end{equation}\]</span>
+<p>where <span class="math inline">\(\bar{y}_1\)</span> is the sample mean of group 1. Let <span class="math inline">\(n_1\)</span> be the number of samples in group, <span class="math inline">\(p_1^0\)</span> be the proportion of zeros or <span class="math inline">\(\log(s)\)</span> in group 1, and <span class="math inline">\(y_0\)</span> denote zero or <span class="math inline">\(\log(s)\)</span>, then</p>
+<span class="math display">\[\begin{equation}
+    \begin{split}
+        \sum_{i\in Group1}(y_i-\bar{y}_1)^2 &amp;= \sum_{\substack{i\in Group1 \\ y_i\neq y_0}}(y_i-\bar{y}_1)^2 + n_1p_1^0(y_0-\bar{y}_1)^2
+        \\&amp;= \sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i ^2 - 2p_1^0y_0\sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i - \frac{1}{n_1}(\sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i)^2 + n_1 p_1^0(1-p_1^0)y_0^2
+        \\&amp;= n_1(1-p_1^0)\text{Var}\{y_i,\in Group1, y_i\neq y_0\} + \frac{(\sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i)^2}{n_1/p_1^0-n_1} + n_1 p_1^0(1-p_1^0)y_0(y_0-2\bar{y}_{1,y_i\neq y_0})
+    \end{split}
+\end{equation}\]</span>
+<pre class="r"><code>G=1000
+n=100
+Y = matrix(0,nrow=G,ncol=n)
+Y = t(Y)
+Y[1:10,] = 1
+Y[51:60,] = 1
+Y = t(Y)
+
+set.seed(12345)
+beta = rnorm(G,0,0.8)
+
+null_idx = sample(1:G,round(0.5*G))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,n)
+
+x[sample(1:n,round(n/2))] = 1
+
+Y = bi_thin(t(Y),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)
+#plot(abs(beta),out$sebetahat)
+plot((out$betahat),out$sebetahat,pch = 18,xlab = &#39;(beta_hat)&#39;,ylab = &#39;s.e.&#39;)
+
+alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;)
+plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<pre class="r"><code>G=1000
+n=100
+Y = matrix(0,nrow=G,ncol=n)
+Y = t(Y)
+Y[1:5,] = 1
+Y[6:10,] = 50
+Y[51:55,] = 1
+Y[56:60,] = 1
+Y = t(Y)
+
+set.seed(12345)
+beta = rnorm(G,0,0.8)
+
+null_idx = sample(1:G,round(0.5*G))
+
+beta[null_idx] = 0
+
+which_null = 1*(beta==0)
+
+x = rep(0,n)
+
+x[sample(1:n,round(n/2))] = 1
+
+Y = bi_thin(t(Y),x,beta)
+
+#Y = Y[,-which(colSums(Y!=0)&lt;10)]
+
+X = model.matrix(~x)
+
+lmout = limma::lmFit(object = t(log(Y+0.5)), design = X)
+#eout  &lt;- limma::eBayes(lmout)
+out           = list()
+out$betahat   = lmout$coefficients[, 2]
+out$sebetahat = lmout$stdev.unscaled[, 2] * lmout$sigma
+#out$pvalues   = eout$p.value[, 2]
+
+plot(beta,out$betahat,ylab=&#39;beta_hat&#39;)
+abline(a=0,b=1)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#plot(abs(beta),out$sebetahat)
+plot((out$betahat),out$sebetahat,pch = 18,xlab = &#39;(beta_hat)&#39;,ylab = &#39;s.e.&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>alphas = seq(0,1,length.out = 11)
+
+loglik = c()
+auc = c()
+
+for(alpha in alphas){
+  ash_ash = ashr::ash(out$betahat,out$sebetahat,alpha=alpha)
+  loglik = c(loglik,ash_ash$loglik)
+  auc = c(auc,pROC::roc(which_null,ash_ash$result$lfsr)$auc)
+}
+
+plot(alphas,loglik,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(alphas,auc,type=&#39;l&#39;)</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="earlier-analysis" class="section level1">
+<h1>Earlier analysis</h1>
+<div id="taylor-series-approximation" class="section level2">
+<h2>Taylor series approximation</h2>
+<p>First order</p>
+<pre class="r"><code>mean_log = function(n,p,s){
+  log(n*p+s)
+}
+
+var_log = function(n,p,s){
+  n*p*(1-p)/(n*p+s)^2 
+}
+
+
+
+
+s = 1
+
+
+  
+  set.seed(12345)
+  
+  for(p in c(0.1,0.5,0.9)){
+  
+  true_var = c()
+  approx_var = c()
+  
+  true_mean = c()
+  approx_mean = c()
+  
+  n_list = 0:ceiling(20/p)
+  for(n in n_list){
+    y = rbinom(1e5,n,p)
+    true_var = c(true_var,var(log(y+s)))
+    true_mean = c(true_mean,mean(log(y+s)))
+    approx_var = c(approx_var,var_log(n,p,s))
+    approx_mean = c(approx_mean,mean_log(n,p,s))
+  }
+  
+  par(mfrow = c(1,2))
+  
+  plot(n_list*p,true_mean,type=&#39;l&#39;,col=2,xlab = &#39;n*p&#39;,ylab = &#39;mean&#39;,ylim = range(c(true_mean,approx_mean)),main = paste(&#39;p =&#39;,p))
+  lines(n_list*p,approx_mean,col=4)
+  legend(&#39;bottomright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))
+  
+  plot(n_list*p,true_var,type=&#39;l&#39;,col=2,xlab = &#39;n*p&#39;,ylab = &#39;varaince&#39;,ylim = range(c(true_var,approx_var)),main = paste(&#39;p =&#39;,p))
+  lines(n_list*p,approx_var,col=4)
+  legend(&#39;topright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))
+
+}</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Second order</p>
+<pre class="r"><code>mean_log = function(n,p,s){
+  log(n*p+s)-n*p*(1-p)/(2*(n*p+s)^2)
+}
+
+var_log = function(n,p,s){
+  n*p*(1-p)/(n*p+s)^2 + n*p*(1-p)*(1+(2*n-6)*p*(1-p))/(4*(n*p+s)^4) - n*p*(1-p)*(1-2*p)/(n*p+s)^3
+}
+
+
+
+
+s = 0.5
+
+
+  
+  set.seed(12345)
+  
+  for(p in c(0.1,0.5,0.9)){
+  
+  true_var = c()
+  approx_var = c()
+  
+  true_mean = c()
+  approx_mean = c()
+  
+  n_list = 0:ceiling(20/p)
+  for(n in n_list){
+    y = rbinom(1e5,n,p)
+    true_var = c(true_var,var(log(y+s)))
+    true_mean = c(true_mean,mean(log(y+s)))
+    approx_var = c(approx_var,var_log(n,p,s))
+    approx_mean = c(approx_mean,mean_log(n,p,s))
+  }
+  
+  par(mfrow = c(1,2))
+  
+  plot(n_list*p,true_mean,type=&#39;l&#39;,col=2,xlab = &#39;n*p&#39;,ylab = &#39;mean&#39;,ylim = range(c(true_mean,approx_mean)),main = paste(&#39;p =&#39;,p))
+  lines(n_list*p,approx_mean,col=4)
+  legend(&#39;bottomright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))
+  
+  plot(n_list*p,true_var,type=&#39;l&#39;,col=2,xlab = &#39;n*p&#39;,ylab = &#39;varaince&#39;,ylim = range(c(true_var,approx_var)),main = paste(&#39;p =&#39;,p))
+  lines(n_list*p,approx_var,col=4)
+  legend(&#39;topright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))
+
+}</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/binomthinultimate.Rmd/unnamed-chunk-12-3.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="large-np" class="section level2">
+<h2>Large <span class="math inline">\(np\)</span></h2>
+<pre class="r"><code>set.seed(12345)
+p_list = seq(0.1,0.5,length.out = 100)
+
+n = 50
+s = 0.5
+
+
+true_var = c()
+approx_var = c()
+  
+for(p in p_list){
+  y1 = rbinom(1e5,n,p)
+  y2 = rbinom(1e5,n,1-p)
+  true_var = c(true_var,var(log(y1+s))+var(log(y2+s)))
+  approx_var = c(approx_var,var_log(n,p,s)+var_log(n,1-p,s))
+}
+
+par(mfrow=c(1,1))
+
+plot(log(1/p_list-1),true_var,xlab = &#39;beta&#39;, ylab= &#39;variance&#39;,type=&#39;l&#39;,col=2,ylim = range(c(true_var,approx_var)))
+lines(log(1/p_list-1),approx_var,col=4)
+legend(&#39;topleft&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="small-np" class="section level2">
+<h2>Small <span class="math inline">\(np\)</span></h2>
+<pre class="r"><code>set.seed(12345)
+p_list = seq(0.1,0.5,length.out = 100)
+
+n = 5
+s = 0.5
+
+
+true_var = c()
+approx_var = c()
+  
+for(p in p_list){
+  y1 = rbinom(1e5,n,p)
+  y2 = rbinom(1e5,n,1-p)
+  true_var = c(true_var,var(log(y1+s))+var(log(y2+s)))
+  approx_var = c(approx_var,var_log(n,p,s)+var_log(n,1-p,s))
+}
+
+par(mfrow=c(1,1))
+
+plot(log(1/p_list-1),true_var,xlab = &#39;beta&#39;, ylab= &#39;variance&#39;,type=&#39;l&#39;,col=2,ylim = range(c(true_var,approx_var)))
+lines(log(1/p_list-1),approx_var,col=4)
+legend(&#39;topright&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>set.seed(12345)
+n_list = 0:100
+
+
+s = 0.5
+p = 0.1
+
+true_var = c()
+approx_var = c()
+  
+for(n in n_list){
+  y1 = rbinom(1e5,n,p)
+  y2 = rbinom(1e5,n,1-p)
+  true_var = c(true_var,var(log(y1+s))+var(log(y2+s)))
+  approx_var = c(approx_var,var_log(n,p,s)+var_log(n,1-p,s))
+}
+
+plot(n_list,true_var,xlab = &#39;n&#39;, ylab= &#39;variance&#39;,type=&#39;l&#39;,col=2)
+lines(n_list,approx_var,col=4)
+legend(&#39;topleft&#39;,c(&#39;true&#39;,&#39;approx&#39;),lty=c(1,1),col=c(2,4))</code></pre>
+<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Let’s start with the simplest case: we have a count matrix <span class="math inline">\(Y\)</span>, whose all entries are the same! Then we apply binomial thinning to <span class="math inline">\(Y\)</span>.</p>
 <p>In the following simulation, we set the number of samples to be <span class="math inline">\(n=500\)</span>, the number of genes <span class="math inline">\(p=5000\)</span> and entries of <span class="math inline">\(Y\)</span> vary from <span class="math inline">\(100, 50, 30, 20, 10, 5, 1.\)</span> Half of samples are from group 1 and the rest are from group 2. About <span class="math inline">\(90\%\)</span> of genes have no effects and the rest have effects <span class="math inline">\(\beta_j\)</span> generated from standard normal distribution.</p>
 <p>We fit a simple linear regression to each gene with log transformed counts and compare the log-likelihood from <code>ash</code>, setting <span class="math inline">\(\alpha=0\)</span> and <span class="math inline">\(\alpha=1\)</span>, and plot <span class="math inline">\(\beta\)</span> vs <span class="math inline">\(\hat\beta\)</span> as well as <span class="math inline">\(\beta\)</span> vs <span class="math inline">\(s.e.(\hat\beta)\)</span> for each case.</p>
@@ -630,7 +1341,7 @@ for(ni in c(100,50,30,20,10,5,1)){
   group_idx = c(rep(1,n/2),rep(0,n/2))
   X = model.matrix(~group_idx)
 
-  b = rnorm(p)
+  b = seq(1,10,length.out = p)
   b[sample(1:p,0.9*p)] = 0
   which_null = 1*(b==0)
 
@@ -650,371 +1361,13 @@ for(ni in c(100,50,30,20,10,5,1)){
   plot((b),lmout$coefficients[, 2],xlab=&#39;beta&#39;,ylab=&#39;estimated&#39;,col=&#39;grey60&#39;,main=paste(&#39;count:&#39;,ni))
   abline(a=0,b=1)
   plot(abs(b),lmout$stdev.unscaled[, 2]*lmout$sigma,xlab=&#39;absolute value of beta&#39;,ylab=&#39;sd of beta_hat&#39;,main=paste(&#39;count:&#39;,ni))
-}</code></pre>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-1-1.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-1">
-Past versions of unnamed-chunk-1-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/9d09fc0cf50f1fcf370df115cdf5634904974255/docs/figure/binomthinultimate.Rmd/unnamed-chunk-1-1.png" target="_blank">9d09fc0</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-03-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-1-2.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-2">
-Past versions of unnamed-chunk-1-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/9d09fc0cf50f1fcf370df115cdf5634904974255/docs/figure/binomthinultimate.Rmd/unnamed-chunk-1-2.png" target="_blank">9d09fc0</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-03-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-1-3.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-3">
-Past versions of unnamed-chunk-1-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/9d09fc0cf50f1fcf370df115cdf5634904974255/docs/figure/binomthinultimate.Rmd/unnamed-chunk-1-3.png" target="_blank">9d09fc0</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-03-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-1-4.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-4">
-Past versions of unnamed-chunk-1-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/9d09fc0cf50f1fcf370df115cdf5634904974255/docs/figure/binomthinultimate.Rmd/unnamed-chunk-1-4.png" target="_blank">9d09fc0</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-03-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-1-5.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-5">
-Past versions of unnamed-chunk-1-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/9d09fc0cf50f1fcf370df115cdf5634904974255/docs/figure/binomthinultimate.Rmd/unnamed-chunk-1-5.png" target="_blank">9d09fc0</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-03-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-1-6.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-6">
-Past versions of unnamed-chunk-1-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/9d09fc0cf50f1fcf370df115cdf5634904974255/docs/figure/binomthinultimate.Rmd/unnamed-chunk-1-6.png" target="_blank">9d09fc0</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-03-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p><img src="figure/binomthinultimate.Rmd/unnamed-chunk-1-7.png" width="960" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-1-7">
-Past versions of unnamed-chunk-1-7.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-1-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/9d09fc0cf50f1fcf370df115cdf5634904974255/docs/figure/binomthinultimate.Rmd/unnamed-chunk-1-7.png" target="_blank">9d09fc0</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-03-21
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>knitr::kable(cbind(c(100,50,30,20,10,5,1),loglik0,loglik1),col.names = c(&#39;Y&#39;,&#39;alpha0&#39;,&#39;alpha1&#39;),
-             caption = &#39;log likelihood&#39;)</code></pre>
-<table>
-<caption>log likelihood</caption>
-<thead>
-<tr class="header">
-<th align="right">Y</th>
-<th align="right">alpha0</th>
-<th align="right">alpha1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">100</td>
-<td align="right">12512.276</td>
-<td align="right">12718.055</td>
-</tr>
-<tr class="even">
-<td align="right">50</td>
-<td align="right">10986.665</td>
-<td align="right">11183.645</td>
-</tr>
-<tr class="odd">
-<td align="right">30</td>
-<td align="right">9896.405</td>
-<td align="right">10105.976</td>
-</tr>
-<tr class="even">
-<td align="right">20</td>
-<td align="right">9007.333</td>
-<td align="right">9172.525</td>
-</tr>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">7412.412</td>
-<td align="right">7501.178</td>
-</tr>
-<tr class="even">
-<td align="right">5</td>
-<td align="right">5790.367</td>
-<td align="right">5765.926</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">5782.362</td>
-<td align="right">5667.772</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>knitr::kable(cbind(c(100,50,30,20,10,5,1),auc0,auc1),col.names = c(&#39;Y&#39;,&#39;alpha0&#39;,&#39;alpha1&#39;),
+}
+
+knitr::kable(cbind(c(100,50,30,20,10,5,1),loglik0,loglik1),col.names = c(&#39;Y&#39;,&#39;alpha0&#39;,&#39;alpha1&#39;),
+             caption = &#39;log likelihood&#39;)
+
+knitr::kable(cbind(c(100,50,30,20,10,5,1),auc0,auc1),col.names = c(&#39;Y&#39;,&#39;alpha0&#39;,&#39;alpha1&#39;),
              caption = &#39;AUC&#39;)</code></pre>
-<table>
-<caption>AUC</caption>
-<thead>
-<tr class="header">
-<th align="right">Y</th>
-<th align="right">alpha0</th>
-<th align="right">alpha1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">100</td>
-<td align="right">0.9912156</td>
-<td align="right">0.9911644</td>
-</tr>
-<tr class="even">
-<td align="right">50</td>
-<td align="right">0.9977804</td>
-<td align="right">0.9978253</td>
-</tr>
-<tr class="odd">
-<td align="right">30</td>
-<td align="right">0.9918271</td>
-<td align="right">0.9916689</td>
-</tr>
-<tr class="even">
-<td align="right">20</td>
-<td align="right">0.9866613</td>
-<td align="right">0.9870316</td>
-</tr>
-<tr class="odd">
-<td align="right">10</td>
-<td align="right">0.9787556</td>
-<td align="right">0.9786769</td>
-</tr>
-<tr class="even">
-<td align="right">5</td>
-<td align="right">0.9694556</td>
-<td align="right">0.9693831</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">0.9334029</td>
-<td align="right">0.9327509</td>
-</tr>
-</tbody>
-</table>
 <p>So when counts in <span class="math inline">\(Y\)</span> are large, setting <span class="math inline">\(\alpha=1\)</span> gives higher likelihood. Estimated <span class="math inline">\(\beta\)</span>s are close to true <span class="math inline">\(\beta\)</span>s and apparently, scale of <span class="math inline">\(\beta\)</span> and <span class="math inline">\(var(\hat\beta)\)</span> are positively correlated. While when counts in <span class="math inline">\(Y\)</span> are small, things are opposite.</p>
 <br>
 <p>
@@ -1040,31 +1393,33 @@ locale:
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
-[1] limma_3.38.2
+[1] Matrix_1.2-15       Biobase_2.42.0      BiocGenerics_0.28.0
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.2        highr_0.7         pillar_1.3.1     
- [4] plyr_1.8.4        compiler_3.5.1    later_0.7.5      
- [7] git2r_0.26.1      workflowr_1.6.0   iterators_1.0.10 
-[10] tools_3.5.1       digest_0.6.18     tibble_2.1.1     
-[13] evaluate_0.12     gtable_0.2.0      lattice_0.20-38  
-[16] pkgconfig_2.0.2   rlang_0.4.0       Matrix_1.2-15    
-[19] foreach_1.4.4     yaml_2.2.0        parallel_3.5.1   
-[22] dplyr_0.8.0.1     stringr_1.3.1     knitr_1.20       
-[25] pROC_1.13.0       fs_1.3.1          tidyselect_0.2.5 
-[28] rprojroot_1.3-2   grid_3.5.1        glue_1.3.0       
-[31] R6_2.3.0          rmarkdown_1.10    mixsqp_0.2-2     
-[34] purrr_0.3.2       ggplot2_3.1.1     ashr_2.2-39      
-[37] magrittr_1.5      whisker_0.3-2     backports_1.1.2  
-[40] scales_1.0.0      promises_1.0.1    codetools_0.2-15 
-[43] htmltools_0.3.6   MASS_7.3-51.1     assertthat_0.2.0 
-[46] colorspace_1.3-2  httpuv_1.4.5      stringi_1.2.4    
-[49] lazyeval_0.2.1    doParallel_1.0.14 pscl_1.5.2       
-[52] munsell_0.5.0     truncnorm_1.0-8   SQUAREM_2017.10-1
-[55] crayon_1.3.4     </code></pre>
+ [1] Rcpp_1.0.2        pillar_1.3.1      plyr_1.8.4       
+ [4] compiler_3.5.1    later_0.7.5       git2r_0.26.1     
+ [7] workflowr_1.6.0   iterators_1.0.10  tools_3.5.1      
+[10] digest_0.6.18     tibble_2.1.1      gtable_0.2.0     
+[13] evaluate_0.12     lattice_0.20-38   pkgconfig_2.0.2  
+[16] rlang_0.4.0       foreach_1.4.4     yaml_2.2.0       
+[19] dplyr_0.8.0.1     stringr_1.3.1     knitr_1.20       
+[22] pROC_1.13.0       fs_1.3.1          tidyselect_0.2.5 
+[25] rprojroot_1.3-2   grid_3.5.1        glue_1.3.0       
+[28] R6_2.3.0          rmarkdown_1.10    mixsqp_0.2-2     
+[31] limma_3.38.2      purrr_0.3.2       ggplot2_3.1.1    
+[34] ashr_2.2-39       magrittr_1.5      whisker_0.3-2    
+[37] scales_1.0.0      backports_1.1.2   promises_1.0.1   
+[40] codetools_0.2-15  htmltools_0.3.6   MASS_7.3-51.1    
+[43] assertthat_0.2.0  colorspace_1.3-2  httpuv_1.4.5     
+[46] stringi_1.2.4     lazyeval_0.2.1    munsell_0.5.0    
+[49] doParallel_1.0.14 pscl_1.5.2        truncnorm_1.0-8  
+[52] SQUAREM_2017.10-1 crayon_1.3.4     </code></pre>
+</div>
+</div>
 </div>
 
 
