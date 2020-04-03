@@ -361,7 +361,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-03-26
+<strong>Last updated:</strong> 2020-04-02
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -524,10 +524,10 @@ data/scde/scMB.RData
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2ab0aa9e618f9db36c18228ebb28d53d062fc771targetblank2ab0aa9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/2ab0aa9e618f9db36c18228ebb28d53d062fc771" target="_blank">2ab0aa9</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree78f2fdc0741a6ac01fbc65e939740c4bf7d63f22targetblank78f2fdca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/78f2fdc0741a6ac01fbc65e939740c4bf7d63f22" target="_blank">78f2fdc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2ab0aa9e618f9db36c18228ebb28d53d062fc771targetblank2ab0aa9a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree78f2fdc0741a6ac01fbc65e939740c4bf7d63f22targetblank78f2fdca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -555,7 +555,9 @@ Untracked files:
     Untracked:  data/scde/
 
 Unstaged changes:
-    Modified:   analysis/binomthinultimate.Rmd
+    Modified:   analysis/CPM.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/limma.Rmd
     Deleted:    data/mout_high.RData
     Deleted:    data/scCDT.RData
     Deleted:    data/sva_sva_high.RData
@@ -597,6 +599,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/78f2fdc0741a6ac01fbc65e939740c4bf7d63f22/analysis/deconvolution.Rmd" target="_blank">78f2fdc</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-02
+</td>
+<td>
+wflow_publish(“analysis/deconvolution.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/90dde67cda8041a24a5548fa8154ddbacf8ade23/docs/deconvolution.html" target="_blank">90dde67</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -875,7 +911,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
@@ -906,7 +942,7 @@ ci_r = p_est + qnorm(0.975)*sqrt(p_var)
 
 coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
 apply(coverage,2,mean)</code></pre>
-<pre><code>[1] 0.98 0.98 0.94 0.84</code></pre>
+<pre><code>[1] 0.95 0.94 0.95 0.93</code></pre>
 <pre class="r"><code>#for(i in 1:4){
 #  plot(ci_l[,i],type=&#39;l&#39;,ylim=range(c(ci_l[,i],ci_r[,i])))
 #  lines(ci_r[,i],col=&#39;grey80&#39;)
@@ -922,7 +958,7 @@ set.seed(12345)
 # total number of cells in bulk data
 bulk_ncell = 400
 # cell proportions
-bulk_beta = c(1,2,3,4)
+bulk_beta = c(1,1,2,16)
 bulk_beta = bulk_beta/sum(bulk_beta)
 bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
 # bulk data gene relative expression.
@@ -942,8 +978,9 @@ p_var = c()
 
 nrep = 100
 for(rep in 1:nrep){
-  if(rep%%200==0){print(rep)}
-  bulk_ls = rpois(1,50*nrow(Theta))
+  if(rep%%10==0){print(rep)}
+  #bulk_ls = rpois(1,50*nrow(Theta))
+  bulk_ls = 50*nrow(Theta)
   Z = matrix(rpois(G*K,ref_X),ncol=K)
   y = rpois(G,bulk_ls*bulk_theta)
 
@@ -977,33 +1014,44 @@ for(rep in 1:nrep){
     for(j in 1:K){
       if(i==j){
         J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+        #J[i,j] = sum(p_tilde_hat)
       }else{
         J[i,j] = -p_tilde_hat[i]
+        #J[i,j] = 0
       }
     }
   }
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
   
-  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q))/G)
   
   p_var = rbind(p_var,diag(asyV))
 
-}
-
-ci_l = p_est - qnorm(0.975)*sqrt(p_var)
-ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+}</code></pre>
+<pre><code>[1] 10
+[1] 20
+[1] 30
+[1] 40
+[1] 50
+[1] 60
+[1] 70
+[1] 80
+[1] 90
+[1] 100</code></pre>
+<pre class="r"><code>ci_l = p_est - qnorm(0.975)*sqrt(p_var)*4
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)*4
 
 #coverage
 
 coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
 apply(coverage,2,mean)</code></pre>
-<pre><code>[1] 0.96 0.98 0.95 0.77</code></pre>
+<pre><code>[1] 1 1 1 1</code></pre>
 <pre class="r"><code>#for(i in 1:4){
 #  plot(ci_l[,i],type=&#39;l&#39;,ylim=range(c(ci_l[,i],ci_r[,i])))
 #  lines(ci_r[,i],col=&#39;grey80&#39;)
@@ -1082,7 +1130,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
@@ -1100,7 +1148,7 @@ ci_r = p_est + qnorm(0.975)*sqrt(p_var)
 
 coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
 apply(coverage,2,mean)</code></pre>
-<pre><code>[1] 0.88 0.96 0.95 1.00</code></pre>
+<pre><code>[1] 0.93 0.96 0.95 0.98</code></pre>
 <pre class="r"><code>#for(i in 1:4){
 #  plot(ci_l[,i],type=&#39;l&#39;,ylim=range(c(ci_l[,i],ci_r[,i])))
 #  lines(ci_r[,i],col=&#39;grey80&#39;)
@@ -1227,7 +1275,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
@@ -1245,7 +1293,7 @@ ci_r = p_est + qnorm(0.975)*sqrt(p_var)
 
 coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
 apply(coverage,2,mean)</code></pre>
-<pre><code>[1] 0.99 0.98 0.91 0.95</code></pre>
+<pre><code>[1] 0.96 0.98 0.94 0.98</code></pre>
 <p>how about change <span class="math inline">\(beta\)</span> to be <span class="math inline">\((0.4,0.3,0.2,0.1)\)</span>?</p>
 <pre class="r"><code>G = nrow(Theta)
 K = ncol(Theta)
@@ -1319,7 +1367,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
@@ -1337,7 +1385,7 @@ ci_r = p_est + qnorm(0.975)*sqrt(p_var)
 
 coverage = ((rep(1,100)%*%t(bulk_p))&gt;=ci_l) &amp; ((rep(1,100)%*%t(bulk_p))&lt;=ci_r)
 apply(coverage,2,mean)</code></pre>
-<pre><code>[1] 0.90 0.98 0.97 0.98</code></pre>
+<pre><code>[1] 0.98 0.95 0.95 0.96</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
