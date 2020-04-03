@@ -179,7 +179,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
@@ -231,7 +231,7 @@ set.seed(12345)
 # total number of cells in bulk data
 bulk_ncell = 400
 # cell proportions
-bulk_beta = c(1,2,3,4)
+bulk_beta = c(1,1,2,16)
 bulk_beta = bulk_beta/sum(bulk_beta)
 bulk_p = (bulk_beta * (S))/sum(bulk_beta * (S))
 # bulk data gene relative expression.
@@ -251,8 +251,9 @@ p_var = c()
 
 nrep = 100
 for(rep in 1:nrep){
-  if(rep%%200==0){print(rep)}
-  bulk_ls = rpois(1,50*nrow(Theta))
+  if(rep%%10==0){print(rep)}
+  #bulk_ls = rpois(1,50*nrow(Theta))
+  bulk_ls = 50*nrow(Theta)
   Z = matrix(rpois(G*K,ref_X),ncol=K)
   y = rpois(G,bulk_ls*bulk_theta)
 
@@ -286,27 +287,29 @@ for(rep in 1:nrep){
     for(j in 1:K){
       if(i==j){
         J[i,j] = sum(p_tilde_hat)-p_tilde_hat[i]
+        #J[i,j] = sum(p_tilde_hat)
       }else{
         J[i,j] = -p_tilde_hat[i]
+        #J[i,j] = 0
       }
     }
   }
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
   
-  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q)))
+  p_tilde_var = rbind(p_tilde_var,diag(solve(Q)%*%Sigma%*%solve(Q))/G)
   
   p_var = rbind(p_var,diag(asyV))
 
 }
 
-ci_l = p_est - qnorm(0.975)*sqrt(p_var)
-ci_r = p_est + qnorm(0.975)*sqrt(p_var)
+ci_l = p_est - qnorm(0.975)*sqrt(p_var)*4
+ci_r = p_est + qnorm(0.975)*sqrt(p_var)*4
 
 #coverage
 
@@ -397,7 +400,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
@@ -547,7 +550,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
@@ -566,6 +569,7 @@ ci_r = p_est + qnorm(0.975)*sqrt(p_var)
 coverage = ((rep(1,100)%*%t(bulk_p))>=ci_l) & ((rep(1,100)%*%t(bulk_p))<=ci_r)
 apply(coverage,2,mean)
 ```
+
 
 
 
@@ -649,7 +653,7 @@ for(rep in 1:nrep){
 
   J = J/sum(p_tilde_hat)^2
 
-  asyV = (t(J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%J)/G
+  asyV = ((J)%*%solve(Q)%*%Sigma%*%solve(Q)%*%t(J))/G
 
   p_hat = p_tilde_hat/sum(p_tilde_hat)
   p_est = rbind(p_est,c(p_hat))
