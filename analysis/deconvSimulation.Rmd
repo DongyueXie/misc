@@ -1,0 +1,146 @@
+---
+title: "deconv Simulation"
+author: "DongyueXie"
+date: "2020-04-03"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+load('data/deconv/pbmc_simu1.RData')
+
+###############################################
+############# analyze results #################
+###############################################
+
+G_list = round(seq(50,6742,length.out = 50))
+
+mse_adj = c()
+mse_unadj = c()
+
+bias_adj = c()
+bias_unadj = c()
+
+se_adj = c()
+se_unadj=c()
+
+coverage_adj = c()
+coverage_unadj = c()
+
+for(i in 1:length(results)){
+  mse_adj[i] = mean(results[[i]]$mse_adj)
+  mse_unadj[i] = mean(results[[i]]$mse_unadj)
+
+  bias_adj = rbind(bias_adj,results[[i]]$mean_est_adj - results[[i]]$p)
+  bias_unadj = rbind(bias_unadj,results[[i]]$mean_est_unadj - results[[i]]$p)
+
+  se_adj = rbind(se_adj,results[[i]]$se_est_adj)
+  se_unadj = rbind(se_unadj,results[[i]]$se_est_unadj)
+
+  coverage_adj = rbind(coverage_adj,results[[i]]$covergae_adj)
+  coverage_unadj = rbind(coverage_unadj,results[[i]]$covergae_unadj)
+
+}
+
+```
+
+## MSE
+
+```{r}
+
+#1. mean sqaured error
+
+plot(G_list,mse_adj,type='l',col=2,ylim=range(c(mse_adj,mse_unadj)),xlab='G',ylab='mse')
+lines(G_list,mse_unadj,col=4)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+```
+
+## Bias
+
+```{r,fig.height=8,fig.width=10}
+
+#2. bias
+
+par(mfrow=c(2,2))
+
+plot(G_list,bias_adj[,1],type='l',col=2,ylim=range(c(bias_adj,bias_unadj)),xlab='G',ylab='bias')
+lines(G_list,bias_unadj[,1],col=4)
+abline(h=0,lty=2)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,bias_adj[,2],type='l',col=2,ylim=range(c(bias_adj,bias_unadj)),xlab='G',ylab='bias')
+lines(G_list,bias_unadj[,2],col=4)
+abline(h=0,lty=2)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,bias_adj[,3],type='l',col=2,ylim=range(c(bias_adj,bias_unadj)),xlab='G',ylab='bias')
+lines(G_list,bias_unadj[,3],col=4)
+abline(h=0,lty=2)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,bias_adj[,4],type='l',col=2,ylim=range(c(bias_adj,bias_unadj)),xlab='G',ylab='bias')
+lines(G_list,bias_unadj[,4],col=4)
+abline(h=0,lty=2)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+
+
+```
+
+## Standard error
+
+```{r,fig.height=8,fig.width=10}
+#3. standard error
+par(mfrow=c(2,2))
+
+plot(G_list,se_adj[,1],type='l',col=2,ylim=range(c(se_adj,se_unadj)),xlab='G',ylab='standard error')
+lines(G_list,se_unadj[,1],col=4)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,se_adj[,2],type='l',col=2,ylim=range(c(se_adj,se_unadj)),xlab='G',ylab='standard error')
+lines(G_list,se_unadj[,2],col=4)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,se_adj[,3],type='l',col=2,ylim=range(c(se_adj,se_unadj)),xlab='G',ylab='standard error')
+lines(G_list,se_unadj[,3],col=4)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,se_adj[,4],type='l',col=2,ylim=range(c(se_adj,se_unadj)),xlab='G',ylab='standard error')
+lines(G_list,se_unadj[,4],col=4)
+legend('topright',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+```
+
+## Coverage
+
+```{r,fig.height=8,fig.width=10}
+
+#4. Coverage
+
+par(mfrow = c(2,2))
+
+plot(G_list,coverage_adj[,1],type='l',col=2,ylim=range(c(coverage_adj,coverage_unadj)),xlab='G',ylab='coverage')
+lines(G_list,coverage_unadj[,1],col=4)
+abline(h=0.95)
+legend('topleft',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+
+plot(G_list,coverage_adj[,2],type='l',col=2,ylim=range(c(coverage_adj,coverage_unadj)),xlab='G',ylab='coverage')
+lines(G_list,coverage_unadj[,2],col=4)
+abline(h=0.95)
+legend('topleft',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,coverage_adj[,3],type='l',col=2,ylim=range(c(coverage_adj,coverage_unadj)),xlab='G',ylab='coverage')
+lines(G_list,coverage_unadj[,3],col=4)
+abline(h=0.95)
+legend('topleft',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+
+plot(G_list,coverage_adj[,4],type='l',col=2,ylim=range(c(coverage_adj,coverage_unadj)),xlab='G',ylab='coverage')
+lines(G_list,coverage_unadj[,4],col=4)
+abline(h=0.95)
+legend('topleft',c('adjusted','unajusted'),lty=c(1,1),col=c(2,4))
+```
+
