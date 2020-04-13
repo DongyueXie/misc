@@ -1,0 +1,28 @@
+---
+title: "bayesian data analysis"
+author: "DongyueXie"
+date: "2020-04-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Section 4.1 Normal approximations to the posterior distribution
+
+If the posterior distribution $p(\theta|y)$ is **unimodal** and roughly **symmetric**(very stringent requirements), it can be convenient to approximate it by a normal distribution; that is, the logarithm of the posterior density is approximated by a quadratic function of $\theta$.
+
+A Taylor series expansion of $p(\theta|y)$ around its posterior mode $\hat\theta$ is $$\log p(\theta | y)=\log p(\hat{\theta} | y)+\frac{1}{2}(\theta-\hat{\theta})^{T}\left[\frac{d^{2}}{d \theta^{2}} \log p(\theta | y)\right]_{\theta=\hat{\theta}}(\theta-\hat{\theta}).$$
+
+The remainder terms of higher order fade in importance relative to the quadratic term when $\theta$ is close to $\hat\theta$ and $n$ is large. The normal approximations to the posterior distribution is then $$p(\theta | y) \approx \mathrm{N}\left(\hat{\theta},[I(\hat{\theta})]^{-1}\right),$$ where $I(\theta)$ is information matrix $I(\theta) = -\frac{d^2}{d\theta}\log p(\theta|y)$. If the mode is in the interior of parameter space, then the matrix $I(\hat\theta)$ is positive definite.
+
+We can rewrite the coefficient of the quadratic term as 
+
+$$\left[\frac{d^{2}}{d \theta^{2}} \log p(\theta | y)\right]_{\theta=\hat{\theta}}=\left[\frac{d^{2}}{d \theta^{2}} \log p(\theta)\right]_{\theta=\hat{\theta}}+\sum_{i=1}^{n}\left[\frac{d^{2}}{d \theta^{2}} \log p\left(y_{i} | \theta\right)\right]_{\theta=\hat{\theta}}$$
+The importance of the prior distribution diminishes as the sample size increases.
+
+When theory fails: 1. the likelihood is flat; 2. Number of parameters increasing with sample size; 3. ...
+
+
+
+
+
