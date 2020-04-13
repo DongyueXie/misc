@@ -1,0 +1,22 @@
+---
+title: "susie"
+author: "DongyueXie"
+date: "2020-03-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Idea
+
+Assume we have a p-dimensional random vector $\mathbf{b}\in R^p$, in which **at most** $L$ elements are non-zero. Then $\mathbf{b}$ can be written as a sum of $L$ random vectors $\mathbf{b}=\sum_{l=1}^L \mathbf{b}_l$, where $\mathbf{b}_l$ is a p-dimensional vector with one non-zero element. In SuSiE, $\mathbf{b}_l$ is modeled as $\mathbf{b}_l = \gamma_l b_l$ where $\gamma_l\sim Categorical(\mathbf{\pi})$ and $b_l\sim N(0,\sigma_{0l}^2)$.
+
+This additive structure is of particular interest to me.
+
+1. susie + factor analysis
+
+2. susie + spam
+
+3. susie + clustering(trajectory analysis)
+
+
