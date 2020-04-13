@@ -1,5 +1,5 @@
 ---
-title: "limma"
+title: "voom and limma"
 author: "Dongyue Xie"
 date: "2020-01-04"
 output: workflowr::wflow_html
@@ -10,6 +10,21 @@ editor_options:
 ## Introduction
 
 [limma tutorial](https://ucdavis-bioinformatics-training.github.io/2018-June-RNA-Seq-Workshop/thursday/DE.html)
+
+The number of reads observed for a given gene is proportional not just to the expression level of the gene but
+also to its gene transcript length and to the sequencing
+depth of the library. Dividing each read count by the corresponding library size (in millions) yields counts per million (cpm), a simple measure of read abundance that can
+be compared across libraries of different sizes. Standardizing further by transcript length (in kilobases) gives rise
+to reads per kilobase per million (rpkm).
+
+Differences in log-cpm between samples can be
+interpreted as log-fold-changes of expression. The counts
+are augmented by a small positive value (a half of one
+read) to avoid taking the logarithm of zero. This ensures
+no missing log-cpm values and reduces the variability at
+low count values.
+
+Let $r_{gi}$ denote the read count of gene $g$ in sample $i$, and $y_{gi} = \log_2 (\frac{r_{gi}+0.5}{R_i+1}*10^6)$, where $R_i = \sum_gr_{gi}$. Voom assumes mean-variance relationship of $r$ being $var(r) = \lambda+\phi\lambda^2$, where $\lambda=E(r)$.  
 
 ```{r,eval=FALSE}
 library(edgeR)
