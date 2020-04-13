@@ -16,24 +16,3 @@ CPM: counts per million
 
 RPKM: reads per kilobase per million 
 
-So there must have something to do with the 0's.
-
-Let's directly work with $\hat{\sigma}^2$,
-
-\begin{equation}
-    \hat{\sigma}^2 = \frac{1}{n-2}(\sum_{i\in Group1}(y_i-\bar{y}_1)^2+\sum_{i\in Group2}(y_i-\bar{y}_2)^2),
-\end{equation}
-where $\bar{y}_1$ is the sample mean of group 1. Let $n_1$ be the number of samples in group,  $p_1^0$ be the proportion of zeros or $\log(s)$ in group 1, and $y_0$ denote zero or $\log(s)$, then
-
-\begin{equation}
-    \begin{split}
-        \sum_{i\in Group1}(y_i-\bar{y}_1)^2 &= \sum_{\substack{i\in Group1 \\ y_i\neq y_0}}(y_i-\bar{y}_1)^2 + n_1p_1^0(y_0-\bar{y}_1)^2
-        \\&= \sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i ^2 - 2p_1^0y_0\sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i - \frac{1}{n_1}(\sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i)^2 + n_1 p_1^0(1-p_1^0)y_0^2
-        \\&= n_1(1-p_1^0)\text{Var}\{y_i,\in Group1, y_i\neq y_0\} + \frac{(\sum_{\substack{i\in Group1 \\ y_i\neq y_0}} y_i)^2}{n_1/p_1^0-n_1} + n_1 p_1^0(1-p_1^0)y_0(y_0-2\bar{y}_{1,y_i\neq y_0})
-    \end{split}
-\end{equation}
-
-```{r}
-
-```
-
