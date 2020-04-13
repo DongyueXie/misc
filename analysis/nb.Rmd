@@ -1,0 +1,36 @@
+---
+title: "negative binomial distribution"
+author: "DongyueXie"
+date: "2020-04-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+In its very original form, negative binomial distribution $NB(r,p)$ has pmf $P(X=k;r,p) = {k+r-1 \choose k}p^r(1-p)^k$, where $k$ is number of failures observed in a sequence of Bernoulli trials that are stopped at $r$ successes, and $p$ is the paprameter of the Bernnouli dsitrbution. It's mean is $\mu = \frac{pr}{1-p}$ and variance is $\sigma^2 = \frac{pr}{(1-p)^2} = \mu + \frac{1}{r}\mu^2$. On the other hand, if the distribution is charaterized by mean and variance, then $p = \frac{\sigma^2-\mu}{\sigma^2}$ and $r=\frac{\mu^2}{\sigma^2-\mu}$.
+
+Sometimes people write $NB(\mu,\alpha)$, where $\mu$ is the mean and $\alpha$ is called dispersion parameter. Obviously, $\alpha = \frac{1}{r}$. 
+
+In R function `rnbinom`, size is the $r$, prob is the $p$ and $\mu$ is the mean. 
+
+## Poisson-gamma
+
+It's well known that the marginal distribution of a Poisson-gamma random variable is negative bionomial. Suppose $X\sim Poisson(\lambda)$ and the Poisson parameter $\lambda$ itself is distributed as $Gamma(r,\frac{1-p}{p})$, where $r$ is the shape parameter and $\frac{1-p}{p}$ is the rate parameter of gamma distribution(note: A gamma distribution with shape a and rate b has pdf $\frac{b^a}{\Gamma(a)}x^{a-1}\exp(-bx)$, mean $a/b$ and variance $a/b^2$), then the marginal distribution of $X$ is $NB(r,p)$.
+
+On the other hand, if $\lambda\sim Gamma(a,\mu)$, where $\mu=a/b$, then $X\sim NB(\mu,1/\alpha)$; if further let $p = \frac{\mu}{\mu+\alpha}$, then $X\sim NB(\alpha,p)$.
+
+## Estimation
+
+If we have one observation from a NB and $r$ is known, then mle is $\hat p = \frac{r}{r+k}$ and an unbiased estimator is $\hat p = \frac{r-1}{r+k-1}$.
+
+## Negative binomial glm
+
+Now we focus on the parameterization with mean $\mu$ and dispersion parameter $\alpha$. With $\alpha$ fixed, this is a member of an exponential dispersion family appropriate for
+discrete variables, with natural parameter $\log(\frac{\mu}{\mu+1/\alpha})$.
+
+In nbglm, the dispersion parameter $\alpha$ is common for all observations. We can test $H_0: \alpha=0$ to see if Poisson is enough. This quadratuc mean-variance relationship model is called NB2. 
+
+NB1(linear) instead uses another paramaterization of the gamma mixture which yields a negative binomial distribution with with mean $\mu$ and variance $\frac{\mu(1+r)}{r}$. See Foundations of Linear and
+Generalized Linear Models, p250.  
