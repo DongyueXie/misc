@@ -1,0 +1,29 @@
+---
+title: "gene set enrichment analysis"
+author: "DongyueXie"
+date: "2020-03-06"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+This is a summary of [Irizarry et al 2009](https://journals.sagepub.com/doi/pdf/10.1177/0962280209351908)
+
+Goal: Incorporating biological information into differential expression analysis.
+
+The very common differential expression analysis is referred to as margianl approach:  decide on a null hypothesis, test this hypothesis for each gene, produce a p-value,
+and attach a significance level that accounts for multiplicity.
+
+In gesa, gene categories or gene sets are formed prior to the statistical analysis. It is more common to use category definitions from the Gene Ontology project. 
+
+Aggregate score approach: assign scores to each gene set based on all the gene-specific scores for that gene set.
+
+For a gene set $A_g$, each gene in it has a t-statistics $t_i$, for $i\in A_g$. We want to assign a gene set score $E_g$ and a significant level that tells how $t_i, i\in A_g$ differ from $t_i,i\notin A_g$.
+
+Some test proposed: K-S test, t-test, $\chi^2$ test.
+
+Can we do simultaneous RUV, and GESA? via regression and factor analysis.
+
+Also think about regresing covariate on loadings.
