@@ -40,6 +40,10 @@ editor_options:
 
 # Methods
 
+[count data analysis](count.html)
+
+[kl-divergence](kl.html)
+
 [susie summary](susie.html)
 
 [voom-limma](limma.html)
