@@ -1,0 +1,20 @@
+---
+title: "kl divergence"
+author: "DongyueXie"
+date: "2020-04-13"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## KL divergence direction
+
+Assume $p$ is true distribution and $q$ is the approximated one. The forward KL is $KL(p||q)$ and reverse KL is $KL(q||p)$. 
+
+What's the difference between them? The forward KL is a sum of $log\frac{p}{q}$, weighted by $p$. We want to choose $q$ to minimize $KL(p||q)$, so $q$ will try to cover everywhere $p>0$, otherwise $KL(p||q)$ will be large. On the other hand, the reverse KL is weighted by $q$, so whenever $q>0$, $q$ and $p$ should be close. 
+
+Forward KL is called zero avoiding while reverse KL is called zero forcing. A classicial example is from GAN [tutorial](https://arxiv.org/pdf/1701.00160.pdf) page 24 figure 14, by Ian. 
+
+Why variational inference uses reverse KL? 
+
+Because forward KL is intractable. 
