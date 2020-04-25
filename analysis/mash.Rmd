@@ -1,0 +1,18 @@
+---
+title: "mash"
+author: "DongyueXie"
+date: "2020-04-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Univarite normal mean: $x_i\sim N(\mu_i,s_j^2)$, $i=1,2,...$, $s_j$ known. Empirical Bayes approach: $\mu_i\overset{iid}{\sim} g(\cdot)$. For example, the simplest would be $\mu_i\overset{iid}{\sim} N(0,1)$.
+
+Multivariate normal mean: $x_i\sim N(\mu_i,V_i)$, $V_i$ known. Empirical Bayes approach: $\mu_i\overset{iid}{\sim} g(\cdot)$. For example, $\mu_i\overset{iid}{\sim} N(0,I)$.
+
+mash(Urbut et al Nature genetics) assumes the prior $$p\left(\mu_{j} | \boldsymbol{\pi}, \boldsymbol{U}\right)=\sum_{k=1}^{K} \sum_{l=1}^{L} \pi_{k, l} N_{R}\left(\mu_{j} ; 0, \omega_{l} U_{k}\right)$$
+
+
