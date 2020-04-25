@@ -48,6 +48,8 @@ editor_options:
 
 [voom-limma](limma.html)
 
+[mash](mash.html)
+
 [MAST](MAST.html)
 
 [mouthwash](mouthwash.html)
