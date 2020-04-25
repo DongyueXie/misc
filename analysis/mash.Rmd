@@ -15,4 +15,4 @@ Multivariate normal mean: $x_i\sim N(\mu_i,V_i)$, $V_i$ known. Empirical Bayes a
 
 mash(Urbut et al Nature genetics) assumes the prior $$p\left(\mu_{j} | \boldsymbol{\pi}, \boldsymbol{U}\right)=\sum_{k=1}^{K} \sum_{l=1}^{L} \pi_{k, l} N_{R}\left(\mu_{j} ; 0, \omega_{l} U_{k}\right)$$
 
-
+Can I do theoretical analysis on EB Multivariate normal mean to show it dominates MLE?
