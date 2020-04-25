@@ -375,10 +375,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree90fde2139d493308d06445a3e11add77e59b69f7targetblank90fde21a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/90fde2139d493308d06445a3e11add77e59b69f7" target="_blank">90fde21</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9bcbbd2ff51980d070610978a04fb2286416c212targetblank9bcbbd2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/9bcbbd2ff51980d070610978a04fb2286416c212" target="_blank">9bcbbd2</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree90fde2139d493308d06445a3e11add77e59b69f7targetblank90fde21a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9bcbbd2ff51980d070610978a04fb2286416c212targetblank9bcbbd2a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -455,6 +455,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/9bcbbd2ff51980d070610978a04fb2286416c212/analysis/mash.Rmd" target="_blank">9bcbbd2</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-25
+</td>
+<td>
+wflow_publish(“analysis/mash.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/f8bd02daa72c66727f472160ed39fd8bf2cebd4e/docs/mash.html" target="_blank">f8bd02d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/90fde2139d493308d06445a3e11add77e59b69f7/analysis/mash.Rmd" target="_blank">90fde21</a>
 </td>
 <td>
@@ -479,6 +513,7 @@ wflow_publish(“analysis/mash.Rmd”)
 <p>Univarite normal mean: <span class="math inline">\(x_i\sim N(\mu_i,s_j^2)\)</span>, <span class="math inline">\(i=1,2,...\)</span>, <span class="math inline">\(s_j\)</span> known. Empirical Bayes approach: <span class="math inline">\(\mu_i\overset{iid}{\sim} g(\cdot)\)</span>. For example, the simplest would be <span class="math inline">\(\mu_i\overset{iid}{\sim} N(0,1)\)</span>.</p>
 <p>Multivariate normal mean: <span class="math inline">\(x_i\sim N(\mu_i,V_i)\)</span>, <span class="math inline">\(V_i\)</span> known. Empirical Bayes approach: <span class="math inline">\(\mu_i\overset{iid}{\sim} g(\cdot)\)</span>. For example, <span class="math inline">\(\mu_i\overset{iid}{\sim} N(0,I)\)</span>.</p>
 <p>mash(Urbut et al Nature genetics) assumes the prior <span class="math display">\[p\left(\mu_{j} | \boldsymbol{\pi}, \boldsymbol{U}\right)=\sum_{k=1}^{K} \sum_{l=1}^{L} \pi_{k, l} N_{R}\left(\mu_{j} ; 0, \omega_{l} U_{k}\right)\]</span></p>
+<p>Can I do theoretical analysis on EB Multivariate normal mean to show it dominates MLE?</p>
 </div>
 
 
