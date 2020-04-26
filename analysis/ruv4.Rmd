@@ -39,3 +39,28 @@ classification
 2. Beyond linear models: High-dimensional random effects model;
 GLM; Varying coefficients model; Tree-based methods...
 3. Beyond PCA
+
+## Details of irw-sva(Leek and Storey, 2008, PNAS)
+
+$X_{m\times n} = B_{m\times d}S_{d\times n}+\Gamma_{m\times r} G_{r\times n} + U_{m\times n}$
+
+$X$ is $m\times n$, where $m$ indexes features and $n$ is the sample size. The $i$th row of $X$ is $\mathbf{x}_i$.
+
+Primary variables $S$ is of dimension $d\times n$. $\Gamma$ and $G$ have rank $r$.
+
+Algorithm: `irwsva.build` function in sva package.
+
+Let $S_0$ denote null model variables. (In code, mod is parimary variable matrix and mod0 is null)
+
+1. Fit model $X=BS+E$ using ols and obtain $R=X-B\hat S$. Code: `resid <- dat %*% (Id - mod %*% solve(t(mod) %*% mod) %*% t(mod))`.
+2. Perform svd on R and obtain right eigenvectors v. Code: `uu <- eigen(t(resid) %*% resid)`, `vv <- uu$vectors`
+3. Initialize feature weights `pprob <- rep(1, m)`, set number of sv, `n.sv`, and surrogate variable matrix $G$.
+4. Iterate $b=1:B$: 
+a. Calculate weights of each feature: (1).  Code: `ptmp <- f.pvalue(dat, mod.b, mod0.b)`, `pprob.b <- (1 - edge.lfdr(ptmp))`, `ptmp <- f.pvalue(dat, mod.gam, mod0.gam)`, `pprob.gam <- (1 - edge.lfdr(ptmp))`. The function `f.pvalue` calculates f-statistics comparing nested models. 
+b. Update $G$ with updated weights.
+
+
+
+
+
+
