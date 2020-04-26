@@ -54,7 +54,7 @@ editor_options:
 
 [mouthwash](mouthwash.html)
 
-[ruv4](ruv4.html)
+[ruv](ruv4.html)
 
 [cisTopic scATAC-Seq](cisTopic.html)
 
