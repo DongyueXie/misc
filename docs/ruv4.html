@@ -344,7 +344,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-03-19
+<strong>Last updated:</strong> 2020-04-26
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -375,10 +375,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree8367e7895a0eda422ebd860066ee4e7a4a9dda44targetblank8367e78a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/8367e7895a0eda422ebd860066ee4e7a4a9dda44" target="_blank">8367e78</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9ab2d40274cfa8b03256b9aca6a831c43509d13atargetblank9ab2d40a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/9ab2d40274cfa8b03256b9aca6a831c43509d13a" target="_blank">9ab2d40</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree8367e7895a0eda422ebd860066ee4e7a4a9dda44targetblank8367e78a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree9ab2d40274cfa8b03256b9aca6a831c43509d13atargetblank9ab2d40a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -390,10 +390,10 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/contrainedclustering.Rmd
-    Untracked:  analysis/gsea.Rmd
+    Untracked:  analysis/count.Rmd
+    Untracked:  analysis/deconvSimulation2.Rmd
     Untracked:  analysis/ideas.Rmd
     Untracked:  analysis/methylation.Rmd
-    Untracked:  analysis/susie.Rmd
     Untracked:  code/sccytokines.R
     Untracked:  code/scdeCalibration.R
     Untracked:  data/bart/
@@ -406,6 +406,7 @@ Untracked files:
     Untracked:  data/scde/
 
 Unstaged changes:
+    Modified:   analysis/deconvSimulation.Rmd
     Modified:   analysis/deconvolution.Rmd
     Modified:   analysis/index.Rmd
     Deleted:    data/mout_high.RData
@@ -449,6 +450,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/9ab2d40274cfa8b03256b9aca6a831c43509d13a/analysis/ruv4.Rmd" target="_blank">9ab2d40</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-04-26
+</td>
+<td>
+wflow_publish(“analysis/ruv4.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/f40a5800aa8b4aa2bc19067306d4fc37e6065a2d/docs/ruv4.html" target="_blank">f40a580</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-03-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -521,6 +556,24 @@ wflow_publish(“analysis/ruv4.Rmd”)
 <p>QR decompositon of <span class="math inline">\(X\)</span> is <span class="math inline">\(X=QR\)</span>, where <span class="math inline">\(R=(||x||_2,0,0,...,0)^T\)</span>. Then <span class="math display">\[Q^TY = R\beta^T+Q^TZ\Gamma^T+Q^TE\]</span>.</p>
 <p>Then the second to the last row of <span class="math inline">\(Q^TY\)</span> follows <span class="math inline">\(N(0,\Gamma\Gamma^T+E)\)</span>.</p>
 <p>Open problems: 1. In addition to multiple testing, the surrogate variable analysis framework can solve many other high-dimensional problems, e.g., classification 2. Beyond linear models: High-dimensional random effects model; GLM; Varying coefficients model; Tree-based methods… 3. Beyond PCA</p>
+</div>
+<div id="details-of-irw-svaleek-and-storey-2008-pnas" class="section level2">
+<h2>Details of irw-sva(Leek and Storey, 2008, PNAS)</h2>
+<p><span class="math inline">\(X_{m\times n} = B_{m\times d}S_{d\times n}+\Gamma_{m\times r} G_{r\times n} + U_{m\times n}\)</span></p>
+<p><span class="math inline">\(X\)</span> is <span class="math inline">\(m\times n\)</span>, where <span class="math inline">\(m\)</span> indexes features and <span class="math inline">\(n\)</span> is the sample size. The <span class="math inline">\(i\)</span>th row of <span class="math inline">\(X\)</span> is <span class="math inline">\(\mathbf{x}_i\)</span>.</p>
+<p>Primary variables <span class="math inline">\(S\)</span> is of dimension <span class="math inline">\(d\times n\)</span>. <span class="math inline">\(\Gamma\)</span> and <span class="math inline">\(G\)</span> have rank <span class="math inline">\(r\)</span>.</p>
+<p>Algorithm: <code>irwsva.build</code> function in sva package.</p>
+<p>Let <span class="math inline">\(S_0\)</span> denote null model variables. (In code, mod is parimary variable matrix and mod0 is null)</p>
+<ol style="list-style-type: decimal">
+<li>Fit model <span class="math inline">\(X=BS+E\)</span> using ols and obtain <span class="math inline">\(R=X-B\hat S\)</span>. Code: <code>resid &lt;- dat %*% (Id - mod %*% solve(t(mod) %*% mod) %*% t(mod))</code>.</li>
+<li>Perform svd on R and obtain right eigenvectors v. Code: <code>uu &lt;- eigen(t(resid) %*% resid)</code>, <code>vv &lt;- uu$vectors</code></li>
+<li>Initialize feature weights <code>pprob &lt;- rep(1, m)</code>, set number of sv, <code>n.sv</code>, and surrogate variable matrix <span class="math inline">\(G\)</span>.</li>
+<li>Iterate <span class="math inline">\(b=1:B\)</span>:</li>
+</ol>
+<ol style="list-style-type: lower-alpha">
+<li>Calculate weights of each feature: (1). Code: <code>ptmp &lt;- f.pvalue(dat, mod.b, mod0.b)</code>, <code>pprob.b &lt;- (1 - edge.lfdr(ptmp))</code>, <code>ptmp &lt;- f.pvalue(dat, mod.gam, mod0.gam)</code>, <code>pprob.gam &lt;- (1 - edge.lfdr(ptmp))</code>. The function <code>f.pvalue</code> calculates f-statistics comparing nested models.</li>
+<li>Update <span class="math inline">\(G\)</span> with updated weights.</li>
+</ol>
 </div>
 
 
