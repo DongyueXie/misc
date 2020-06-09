@@ -60,6 +60,8 @@ editor_options:
 
 [Negative Bionomial distribution](nb.html)
 
+[Bayes GLM](bayesglm.html)
+
 # Book
 
 [bayesian data analysis](bda.html)
