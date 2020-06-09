@@ -375,10 +375,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2618f8426e53398d2bfaed69e3ca979bbf06266etargetblank2618f84a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/2618f8426e53398d2bfaed69e3ca979bbf06266e" target="_blank">2618f84</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree8d4833a897dffbf17b15af2a80aa8e15e467118etargetblank8d4833aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/8d4833a897dffbf17b15af2a80aa8e15e467118e" target="_blank">8d4833a</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree2618f8426e53398d2bfaed69e3ca979bbf06266etargetblank2618f84a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree8d4833a897dffbf17b15af2a80aa8e15e467118etargetblank8d4833aa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -411,7 +411,6 @@ Unstaged changes:
     Modified:   analysis/deconvolution.Rmd
     Modified:   analysis/gsea.Rmd
     Modified:   analysis/index.Rmd
-    Modified:   analysis/limma.Rmd
     Deleted:    data/mout_high.RData
     Deleted:    data/scCDT.RData
     Deleted:    data/sva_sva_high.RData
@@ -458,6 +457,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/8d4833a897dffbf17b15af2a80aa8e15e467118e/analysis/bayesglm.Rmd" target="_blank">8d4833a</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-06-09
+</td>
+<td>
+wflow_publish(“analysis/bayesglm.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/820d15fc911b816b58f36a9f48b5a1b3ce015a2f/docs/bayesglm.html" target="_blank">820d15f</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-06-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/2618f8426e53398d2bfaed69e3ca979bbf06266e/analysis/bayesglm.Rmd" target="_blank">2618f84</a>
 </td>
 <td>
@@ -480,7 +513,7 @@ wflow_publish(“analysis/bayesglm.Rmd”)
 <div id="apeglm" class="section level2">
 <h2>apeglm</h2>
 <p>Let <span class="math inline">\(Y_{gi}\)</span> denote the count of RNA-seq fragments assigned to gene g in sample i. We assume that <span class="math inline">\(Y_{gi}\)</span> follows a NB distribution with mean <span class="math inline">\(\mu_{gi}\)</span> and dispersion <span class="math inline">\(\alpha_g\)</span>.</p>
-<p>The model is <span class="math inline">\(Y_{gi}\sim NB(\mu_{gi},\alpha_g)\)</span>, where <span class="math inline">\(\mu_{gi} = s_{gi}q_{gi}\)</span> and <span class="math inline">\(\log(q_{gi})=x_i^T\beta_g\)</span>, <span class="math inline">\(\beta_g=(\beta_{g0},...,\beta_{gK}})\)</span>.</p>
+<p>The model is <span class="math inline">\(Y_{gi}\sim NB(\mu_{gi},\alpha_g)\)</span>, where <span class="math inline">\(\mu_{gi} = s_{gi}q_{gi}\)</span> and <span class="math inline">\(\log(q_{gi})=x_i^T\beta_g\)</span>, <span class="math inline">\(\beta_g=(\beta_{g0},...,\beta_{gK})\)</span>.</p>
 <p>Prior on <span class="math inline">\(\beta\)</span>: <span class="math inline">\(\beta_{gk}\sim Cauchy(0,S_k)\)</span>.</p>
 <p>First obtain MLE <span class="math inline">\(\hat\beta_{gk}\)</span> and its standard error <span class="math inline">\(e_{gk}\)</span> then set <span class="math inline">\(S_k = \sqrt{A}\)</span> where A is an empircal estimate proposed in Efron and Morris, 1975 for normal distribution. Then the method uses Laplace approximation for posterior calculation.</p>
 </div>
