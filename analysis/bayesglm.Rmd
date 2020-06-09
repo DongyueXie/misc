@@ -12,7 +12,7 @@ editor_options:
 
 Let $Y_{gi}$ denote the count of RNA-seq fragments assigned to gene g in sample i. We assume that $Y_{gi}$ follows a NB distribution with mean $\mu_{gi}$ and dispersion $\alpha_g$.
 
-The model is $Y_{gi}\sim NB(\mu_{gi},\alpha_g)$, where $\mu_{gi} = s_{gi}q_{gi}$ and $\log(q_{gi})=x_i^T\beta_g$, $\beta_g=(\beta_{g0},...,\beta_{gK}})$.
+The model is $Y_{gi}\sim NB(\mu_{gi},\alpha_g)$, where $\mu_{gi} = s_{gi}q_{gi}$ and $\log(q_{gi})=x_i^T\beta_g$, $\beta_g=(\beta_{g0},...,\beta_{gK})$.
 
 Prior on $\beta$: $\beta_{gk}\sim Cauchy(0,S_k)$.
 
