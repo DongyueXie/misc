@@ -1,0 +1,37 @@
+---
+title: "bayes glm"
+author: "DongyueXie"
+date: "2020-06-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## apeglm
+
+
+Let $Y_{gi}$ denote the count of RNA-seq fragments assigned to gene g in sample i. We assume that $Y_{gi}$ follows a NB distribution with mean $\mu_{gi}$ and dispersion $\alpha_g$.
+
+The model is $Y_{gi}\sim NB(\mu_{gi},\alpha_g)$, where $\mu_{gi} = s_{gi}q_{gi}$ and $\log(q_{gi})=x_i^T\beta_g$, $\beta_g=(\beta_{g0},...,\beta_{gK}})$.
+
+Prior on $\beta$: $\beta_{gk}\sim Cauchy(0,S_k)$.
+
+
+First obtain MLE $\hat\beta_{gk}$ and its standard error $e_{gk}$ then set $S_k = \sqrt{A}$ where A is an empircal estimate proposed in Efron and Morris, 1975 for normal distribution. Then the method uses Laplace approximation for posterior calculation. 
+
+
+## bayesglm
+
+The first step of our model is to standardize the input variables. Binary inputs are shifted to have a mean of 0 and to differ by 1 in their lower
+and upper conditions. Other inputs are shifted to have a mean of 0 and scaled to have a standard deviation of 0.5.
+
+Assume prior independence of the coefficients as a default assumption, with the understanding that the model could be reparameterized
+if there are places where prior correlation is appropriate. For each coefficient, we
+assume a Student-t prior distribution with mean 0, degrees-of-freedom parameter ν, and scale s, with ν and s chosen to provide minimal prior information to
+constrain the coefficients to lie in a reasonable range.
+
+We assign independent Cauchy prior distributions with center 0 and scale 2.5 to
+each of the coefficients in the logistic regression except the constant term. When
+combined with the standardization, this implies that the absolute difference in logit
+probability should be less then 5, when moving from one standard deviation below
+the mean, to one standard deviation above the mean, in any input variable.
