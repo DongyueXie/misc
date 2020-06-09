@@ -63,3 +63,11 @@ contr <- makeContrasts(groupI5.9 - groupI5.6, levels = colnames(coef(fit)))
 contr
 ```
 
+
+## RNA-seq analysis is easy as
+
+A [tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq123/inst/doc/limmaWorkflow.html) 
+
+Genes that do not have a worthwhile number of reads in any sample should be filtered out of the downstream analyses. There are several reasons for this. From a biological point of view, genes that not expressed at a biologically meaningful level in any condition are not of interest and are therefore best ignored. 
+
+Contrasts for pairwise comparisons between cell populations are set up in limma using the makeContrasts function.
