@@ -16,3 +16,15 @@ CPM: counts per million
 
 RPKM: reads per kilobase per million 
 
+
+In general, need to consider 1. library size; 2. gene length. Because libraries sequenced at a greater depth will result in higher counts. 
+
+CPM and log-CPM transformations do not account for gene length differences as RPKM and FPKM values do. CPM and log-CPM values can be calculated using a counts matrix alone. Assuming that there are no differences in isoform usage between conditions, differential expression analyses look at gene expression changes between conditions rather than comparing expression across multiple genes or drawing conclusions on absolute levels of expression. In other words, gene lengths remain constant for comparisons of interest and any observed differences are a result of changes in condition rather than changes in gene length.
+
+
+RPKM values are just as easily calculated as CPM values using the rpkm function in edgeR if gene lengths are available.
+
+
+## Trimmed mean of M values
+
+Observed counts as $Y_{gk}$, gene length $l_g$,  true and unknown expression level (number of transcripts) $\mu_{gk}$, total number of  reads for library k $N_k$, let $s_k = \sum_g l_g \mu_{gk}$, then $$E(Y_{gk}) = \frac{\mu_{gk}l_g}{s_k}N_k$$
