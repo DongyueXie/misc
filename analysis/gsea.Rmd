@@ -27,3 +27,10 @@ Some test proposed: K-S test, t-test, $\chi^2$ test.
 Can we do simultaneous RUV, and GESA? via regression and factor analysis.
 
 Also think about regresing covariate on loadings.
+
+
+## Efron and Tibshirani(2007)
+
+I read this paper because of the authors.
+
+
