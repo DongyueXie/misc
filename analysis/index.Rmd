@@ -44,24 +44,32 @@ editor_options:
 
 [kl-divergence](kl.html)
 
-[susie summary](susie.html)
-
 [voom-limma](limma.html)
 
 [mash](mash.html)
 
-[MAST](MAST.html)
-
-[mouthwash](mouthwash.html)
-
 [ruv](ruv4.html)
-
-[cisTopic scATAC-Seq](cisTopic.html)
 
 [Negative Bionomial distribution](nb.html)
 
 [Bayes GLM](bayesglm.html)
 
+[EM ridge](ridge_em.html)
+
+[Polya-gamma augmentation](polya_gamma.html)
+
 # Book
 
 [bayesian data analysis](bda.html)
+
+# Papers
+
+[MAST](MAST.html)
+
+[mouthwash](mouthwash.html)
+
+[susie summary](susie.html)
+
+[cisTopic scATAC-Seq](cisTopic.html)
+
+[Integer‐valued functional data analysis for measles forecasting](kowal2019.html)

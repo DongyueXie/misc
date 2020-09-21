@@ -1,0 +1,41 @@
+---
+title: "kowal 2019"
+author: "DongyueXie"
+date: "2020-09-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+## Model
+
+Assume \[z_i(\tau)|r,\theta_i(\tau)\sim NB(r,\frac{\exp(\theta_i(\tau))}{r+\exp(\theta_i(\tau))}),\]
+
+its mean and variance are $\exp(\theta_i(\tau))$ and $\exp(\theta_i(\tau))(1+\exp(\theta_i(\tau))/r)$.
+
+This model can also be viewed as Poisson-gamma hierarchical model, where $z_i(\tau)|\lambda_i(\tau)\sim Poisson(\lambda_i(\tau))$ and $\lambda_i(\tau)|r,\theta_i(\tau)\sim Gamma(r,r\exp(\theta_i(\tau)))$.
+
+If $r\to+\infty$, then $z_i(\tau)|\theta_i(\tau)\sim Poisson(\exp(\theta_i(\tau)))$.
+
+To model the functional data, let $\theta_i(\tau) = \mu_i(\tau)+\epsilon_i(\tau)$, $\epsilon_i(\tau)\sim N(0,\sigma^2)$, and $\mu_i(\tau) = \sum_k f_k(\tau)\beta_{k,i}$. The conditional expectation of $z_i(\tau)$ is then $E(z_i(\tau)|\mu,\sigma^2,r) = \exp(\mu_i(\tau))\exp(\sigma^2/2)$.
+
+The author incorporates autoregressive model into basis coefficients: $\beta_{k,i} = \mu_k+\phi_k(\beta_{k,i-1}-\mu_k)+\eta_{k,i}$ where $\eta_{k,i}\sim N(0,\sigma^2_{\eta_{k,i}})$, and introduces ordered shrinkage via a multiplicative gamma process (MGP) prior on $\mu_k,\eta_{k,i}$.
+
+## Modeling the basis functions
+
+Modelling basis as unknown and produce data-adaptive basis? Kowal et al.(2017)
+
+## MCMC
+
+A Polya‐Gamma data augmentation scheme is adopted to sample  from the full conditional distribution of $\theta_i(\tau)$.
+
+1. imputation
+
+2. sample $r$ using slice sampler.
+
+3. Parameter expansion, sample from a polya-gamma dsitrobution
+
+4. sample $\theta_i(\tau)$
+
+5. Gaussian smoothing on $\theta_i(\tau)$

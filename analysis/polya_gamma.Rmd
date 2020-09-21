@@ -1,0 +1,67 @@
+---
+title: "polya gamma augmentation"
+author: "DongyueXie"
+date: "2020-09-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Definition
+
+X follows polya-gamma distribution with parameters  $b>0$ and $c\in R$ if \[X\overset{D}{=}\frac{1}{2\pi^2}\sum_{k=1}^\infty\frac{g_k}{(k-1/2)^2+c^2/(4\pi^2)},\]
+where $g_k\sim Gamma(b,1)$.
+
+Binomial likelihoods parametrized by log odds can be represented as mixtures of Gaussians with respect to a P´olya-Gamma distribution.
+
+## Properties
+
+$$\frac{\left(e^{\psi}\right)^{a}}{\left(1+e^{\psi}\right)^{b}}=2^{-b} e^{\kappa \psi} \int_{0}^{\infty} e^{-\omega \psi^{2} / 2} p(\omega) d \omega,$$
+where $\kappa = a-b/2$, and $\omega\sim PG(b,0)$.
+
+The density of a Polya-Gamma random variable can be expressed as an alternating-sign sum
+of inverse-Gaussian densities 
+$$f(x \mid b, c)=\left\{\cosh ^{b}(c / 2)\right\} \frac{2^{b-1}}{\Gamma(b)} \sum_{n=0}^{\infty}(-1)^{n} \frac{\Gamma(n+b)}{\Gamma(n+1)} \frac{(2 n+b)}{\sqrt{2 \pi x^{3}}} e^{-\frac{(2 n+b)^{2}}{8 x}-\frac{c^{2}}{2} x}$$
+
+
+All finite moments of a Polya-Gamma random variable are
+available in closed form. In particular, the expectation may be calculated directly. This
+allows the Polya-Gamma scheme to be used in EM algorithms. If $\omega\sim PG(b,c)$, then $E(\omega) = \frac{b}{2c}tanh(c/2) = \frac{b}{2c}(\frac{e^c-1}{1+e^c})$.
+
+If $w_1\sim PG(b_1,c)$ and $w_2\sim PG(b_2,c)$ then $w_1+w_2\sim PG(b_1+b_2,c)$
+
+## Augmentation
+
+
+Let $y_i\sim Binomial(n_i,\frac{1}{1+e^{-\phi_i}})$, where $\phi_i$ are log odds of success. In logistic regression, $\phi_i = x_i^T\beta$.
+
+THe likelihood contribution of observation $i$ is 
+
+\[L_i(\phi_i) = \frac{(\exp\phi_i)^{y_i}}{(1+\exp(\phi_i))^{n_i}}.\]
+
+In logistic regression, the likelihood is 
+
+$$\begin{aligned}
+L_{i}(\boldsymbol{\beta}) &=\frac{\left\{\exp \left(x_{i}^{T} \boldsymbol{\beta}\right)\right\}^{y_{i}}}{(1+\exp \left(x_{i}^{T} \boldsymbol{\beta}\right))^{n_i}} \\
+& \propto \exp \left(\kappa_{i} x_{i}^{T} \boldsymbol{\beta}\right) \int_{0}^{\infty} \exp \left\{-\omega_{i}\left(x_{i}^{T} \boldsymbol{\beta}\right)^{2} / 2\right\} p\left(\omega_{i} \mid n_{i}, 0\right)
+\end{aligned},$$
+
+where $\kappa_i - y_i-n_i/2$.
+
+The conditional posterior of $\beta$ is 
+\[p(\beta|w,y)\propto p(\beta)\exp\{-\frac{1}{2}(z-X\beta)^T\Omega(z-X\beta)\} = p(\beta)\exp\{-\frac{1}{2}(\beta-X^{-1}z)^TX^T\Omega X(\beta-X^{-1}z)\},\]
+where $z = (\kappa_1/w_1,...,\kappa_n/w_n)$ and $\Omega = diag(w_1,...,w_n)$.
+
+## Posterior
+
+If the prior of $\beta$ is Gaussian, then the canditional posterior of $\beta$ is also Gaussian. So the Gibbs sampler iteratively samples from $(\omega_i|\beta)\sim PG(n_i,x_i^T\beta), (\beta|y,\Omega)\sim N(m,V)$. 
+
+## Simulation
+
+```{r}
+library()
+```
+
+## Reference
+
+Polson, N. G., Scott, J. G., & Windle, J. (2013). Bayesian inference for logistic models using Pólya–Gamma latent variables. Journal of the American statistical Association, 108(504), 1339-1349.
