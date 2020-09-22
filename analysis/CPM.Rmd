@@ -28,3 +28,27 @@ RPKM values are just as easily calculated as CPM values using the rpkm function 
 ## Trimmed mean of M values
 
 Observed counts as $Y_{gk}$, gene length $l_g$,  true and unknown expression level (number of transcripts) $\mu_{gk}$, total number of  reads for library k $N_k$, let $s_k = \sum_g l_g \mu_{gk}$, then $$E(Y_{gk}) = \frac{\mu_{gk}l_g}{s_k}N_k$$
+
+The ratio of expected value between two conditions is \[\frac{E(Y_{g1})}{E(Y_{g2})} = \frac{s_1}{s_2}\frac{N_2}{N_1}\frac{\mu_{g2}}{\mu_{g1}}\]
+
+So $s_k$ is the size of studied transcriptome in condition $k$, $\mu_{gk}/s_k$ is the relative expression of gene $g$ in condition $k$. 
+
+Let $r$ denote the reference sample. Filter out 1. transcripts with null counts(The cases where $Y_{gk} = 0$ or $Y_{gr} = 0$ are trimmed); 2. the $30\%$ more extreme $M-value$: $M_{gk}^r = \log\frac{y_{gk}/N_k}{y_{gr}/N_r}$; 3. the $5\%$ more extreme $A-value$: $A_{gk}^r = 0.5*(\log\frac{y_{gk}}{N_k}+\log\frac{y_{gr}}{N_r})$. 
+
+After filtering out genes, we have a set of genes denoted as $G^*$ whose neither value was trimmed.  The scaling factor $TMM_k$ is calculated as \[\log TMM_k = \frac{\sum_{g\in G^*}w_{gk}M_{gk}}{\sum_{g\in G^*}w_{gk}},\] where $w_{gk} = \frac{N_k-Y_{gk}}{N_k Y_{gk}} - \frac{N_r-Y_{gr}}{N_r Y_{gr}}$.  Usually the scaling factors are re-scaled such that they multiply to 1. 
+
+## Relative Log Expression
+
+Define the reference as the geometric mean(less sensitive to extreme values than the standard mean) of samples $Y_{gk}^r = (\Pi_k Y_{gk})^{1/n}$, then the scaling factor for sample $k$ is calculated as $median(\frac{Y_{gk}}{Y_{gk}^r})$.
+
+
+
+
+
+
+
+
+
+
+
+
