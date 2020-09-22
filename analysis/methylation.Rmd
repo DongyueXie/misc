@@ -1,0 +1,40 @@
+---
+title: "Methylation"
+author: "DongyueXie"
+date: "2020-01-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r,include=FALSE}
+knitr::opts_chunk$set(echo=FALSE)
+```
+
+DNA Mehylation vs enhancer/promoter?
+
+What is nucleosome positions. Combine single cell? how? why? sliding window? 
+
+Another way to use single cell data would be to get a measurement for each cell (with coverage) at regions that were identified as peaks or nucleosomes and that way get a measurement of heterogeneity.??
+
+## BPRMeth
+
+Inputs are Binomial DNA methylation data, with postions $x$. Tasks are 1. smooth each binomial sequences; 2. perform clustering on multiple DNA methylation sequences.(how? each seq is of different length) 3. binomial data can be bernoulli in single cell case. 
+
+
+## BSmooth
+
+
+## Introduction
+
+Try BPRMeth package.
+
+```{r,eval=FALSE}
+library(BPRMeth)
+met_region = encode_met
+plot((encode_met$met[[21]])[,1],(encode_met$met[[21]])[,3]/(encode_met$met[[21]])[,2])
+
+expr <- encode_expr
+```
+
+

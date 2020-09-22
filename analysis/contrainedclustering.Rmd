@@ -1,0 +1,67 @@
+---
+title: "Contrained Clustering"
+author: "DongyueXie"
+date: "2020-03-16"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Each sample can belong to at most $M$ clusters/topics. The model is $y_i=Fl_i+e_i$, where $y_i\in R^p$ is obseved data of $i$th sample, $F\in R^{p\times k}$ is factor matrix with $k$ clusters/factors, and $e_i\sim N(0,\Sigma)$ where $\Sigma = diag\{\sigma_j^2\}_{j=1:p}$.
+
+Each $l_i\in R^k$ has at most $M$ non-zero elements,$||l_i||_0 \leq m$. Borrowing ideas from susie, $l_i = \sum_m b_m$, $b_m=\gamma_m*N(0,\sigma^2_{0im})$, $\gamma_m\sim Categorical(\pi_i)$
+
+```{r,eval=FALSE}
+set.seed(12345)
+n = 1000
+p = 1000
+
+k=10
+
+max_cluster = 2
+L=matrix(0,nrow=n,ncol=k)
+
+for(i in 1:n){
+  L[i,] = rowSums(rmultinom(max_cluster,1,rep(1,k))%*%diag(rnorm(max_cluster,2,1)))
+}
+
+FF = matrix(0,nrow=k,ncol=p)
+
+idx = round(seq(1,p,by=p/k))
+idx = c(idx,p+1)
+for(i in 1:(k)){
+  FF[i,(idx[i]):(idx[i+1]-1)] = 5
+}
+
+
+#FF = matrix(rnorm(n*p),nrow=k,ncol=p)
+
+sigma = sqrt(var(c(L%*%FF)))
+
+Y = L%*%FF + matrix(rnorm(n*p,0,sigma),nrow=n,ncol=p)
+
+library(mmbr)
+library(mashr)
+
+prior_covar = create_mash_prior(sample_data = list(X=t(FF),Y=t(Y),residual_variance=cov(t(Y))), max_mixture_len=-1)
+
+fit = msusie(t(FF),t(Y),prior_variance = cor(t(Y)), estimate_prior_variance=T,estimate_prior_method='EM' )
+
+cc = function(Y,K,L,maxiter=100,tol=1e-3){
+  #init
+  flash_fit = flash(Y,verbose = FALSE)
+  FF1 = flash_fit$fit$EF
+  
+  
+  for(iter in 1:maxiter){
+    
+    prior_covar = create_mash_prior(sample_data = list(X=FF1,Y=t(Y),residual_variance=cov(t(Y))), max_mixture_len=-1)
+    
+    res = msusie(FF1,t(Y),L,prior_variance = prior_covar,intercept = FALSE)
+  }
+}
+
+```
+

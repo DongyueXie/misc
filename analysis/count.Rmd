@@ -1,0 +1,10 @@
+---
+title: "count data analysis"
+author: "DongyueXie"
+date: "2020-04-14"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+tbd

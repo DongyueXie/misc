@@ -1,0 +1,140 @@
+---
+title: "ridge_em"
+author: "DongyueXie"
+date: "2020-06-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Code from Matthew's [post](https://stephens999.github.io/misc/ridge_em.html).
+
+```{r}
+ridge_em1 = function(y,X, s2,sb2, niter=10){
+  XtX = t(X) %*% X
+  Xty = t(X) %*% y
+  yty = t(y) %*% y
+  n = length(y)
+  p = ncol(X)
+  loglik = rep(0,niter)
+  for(i in 1:niter){
+    V = chol2inv(chol(XtX+ diag(s2/sb2,p))) 
+    
+    SigmaY = sb2 *(X %*% t(X)) + diag(s2,n)
+    loglik[i] = mvtnorm::dmvnorm(as.vector(y),sigma = SigmaY,log=TRUE)
+    
+    Sigma1 = s2*V  # posterior variance of b
+    mu1 = as.vector(V %*% Xty) # posterior mean of b
+    
+    s2 = as.vector((yty + sum(diag(XtX %*% (mu1 %*% t(mu1) + Sigma1)))- 2*sum(Xty*mu1))/n)
+    sb2 = mean(mu1^2+diag(Sigma1))
+   
+  }
+  return(list(s2=s2,sb2=sb2,loglik=loglik,postmean=mu1))
+}
+
+
+ridge_em2 = function(y,X, s2,sb2, niter=10){
+  XtX = t(X) %*% X
+  Xty = t(X) %*% y
+  yty = t(y) %*% y
+  n = length(y)
+  p = ncol(X)
+  loglik = rep(0,niter)
+  for(i in 1:niter){
+    V = chol2inv(chol(XtX+ diag(s2/sb2,p))) 
+    
+    SigmaY = sb2 *(X %*% t(X)) + diag(s2,n)
+    loglik[i] = mvtnorm::dmvnorm(as.vector(y),sigma = SigmaY,log=TRUE)
+    
+    Sigma1 = (s2/sb2)*V  # posterior variance of b
+    mu1 = (sqrt(sb2)/s2)*as.vector(Sigma1 %*% Xty) # posterior mean of b
+    
+    sb2 = (sum(mu1*Xty)/sum(diag(XtX %*% (mu1 %*% t(mu1) + Sigma1))))^2
+    s2 = as.vector((yty + sb2*sum(diag(XtX %*% (mu1 %*% t(mu1) + Sigma1)))- 2*sqrt(sb2)*sum(Xty*mu1))/n)
+  }
+  return(list(s2=s2,sb2=sb2,loglik=loglik,postmean=mu1*sqrt(sb2)))
+}
+
+ridge_em3 = function(y,X, s2, sb2, l2, niter=10){
+  XtX = t(X) %*% X
+  Xty = t(X) %*% y
+  yty = t(y) %*% y
+  n = length(y)
+  p = ncol(X)
+  loglik = rep(0,niter)
+  for(i in 1:niter){
+    V = chol2inv(chol(XtX+ diag(s2/(sb2*l2),p))) 
+    
+    SigmaY = l2*sb2 *(X %*% t(X)) + diag(s2,n)
+    loglik[i] = mvtnorm::dmvnorm(as.vector(y),sigma = SigmaY,log=TRUE)
+    
+    Sigma1 = (s2/sb2)*V  # posterior variance of b
+    mu1 = (1/sqrt(sb2))*as.vector(V %*% Xty) # posterior mean of b
+    
+   
+    sb2 = (sum(mu1*Xty)/sum(diag(XtX %*% (mu1 %*% t(mu1) + Sigma1))))^2
+    s2 = as.vector((yty + sb2*sum(diag(XtX %*% (mu1 %*% t(mu1) + Sigma1)))- 2*sqrt(sb2)*sum(Xty*mu1))/n)
+     
+    l2 = mean(mu1^2+diag(Sigma1))
+   
+  }
+  return(list(s2=s2,sb2=sb2,l2=l2,loglik=loglik,postmean=mu1*sqrt(sb2)))
+}
+
+plot_loglik = function(y.em1,y.em2,y.em3=NULL,sb=1,sd=1){
+  plot(y.em1$loglik,ylim=c(min(y.em1$loglik),max(c(y.em1$loglik,y.em2$loglik))),
+       type="l",xlim=c(0,max(length(y.em2$loglik),length(y.em1$loglik))),
+       main=paste('sb=',sb,"sd=",sd))
+lines(y.em2$loglik,col=2)
+if(!is.null(y.em3)){
+  lines(y.em3$loglik,col=3)
+  legend('bottomright',c('Simple param','Scaled param',"Hybrid param"),lty=c(1,1,1),col=c(1,2,3))
+}else{
+  legend('bottomright',c('Simple param','Scaled param'),lty=c(1,1),col=c(1,2))
+}
+
+}
+
+```
+
+
+```{r}
+
+
+set.seed(12345)
+sd = 1
+n = 100
+p = n
+X = matrix(rnorm(n*p),ncol=n)
+
+
+
+for(sb in seq(0,1,length.out = 11)){
+  btrue = rnorm(n,0,sb)
+  y = X %*% btrue + sd*rnorm(n)
+
+  y.em1 = ridge_em1(y,X,1,1,100)
+  y.em2 = ridge_em2(y,X,1,1,100)
+  y.em3 = ridge_em3(y,X,1,1,1,100)
+  
+  plot_loglik(y.em1,y.em2,y.em3,sb=round(sb,2),sd=1)
+}
+
+
+y.em1 = ridge_em1(y,X,1,1,100)
+y.em2 = ridge_em2(y,X,1,1,100)
+y.em3 = ridge_em3(y,X,1,1,1,100)
+
+plot_loglik = function(y.em1,y.em2,y.em3=NULL){
+  plot(y.em1$loglik,ylim=c(min(y.em1$loglik),max(c(y.em1$loglik,y.em2$loglik))),type="l",xlim=c(0,max(length(y.em2$loglik),length(y.em1$loglik))))
+lines(y.em2$loglik,col=2)
+if(!is.null(y.em3)){
+  lines(y.em3$loglik,col=3)
+}
+}
+plot_loglik(y.em1,y.em2,y.em3)
+```
+

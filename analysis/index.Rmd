@@ -23,6 +23,7 @@ editor_options:
 
 [How to process GTEX samples by genes data from gtex portal?](https://github.com/stephenslab/topics/blob/master/analysis/prepare_gtex.Rmd)
 
+[methylation](methylation.html)
 
 # Comp-related
 
@@ -57,6 +58,8 @@ editor_options:
 [EM ridge](ridge_em.html)
 
 [Polya-gamma augmentation](polya_gamma.html)
+
+[constrained clustering](contrainedclustering.Rmd)
 
 # Book
 
