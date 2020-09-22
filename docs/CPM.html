@@ -31,6 +31,14 @@
 <script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
 <script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
 
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
   pre:not([class]) {
@@ -306,13 +314,6 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<!-- Add a small amount of space between sections. -->
-<style type="text/css">
-div.section {
-  padding-top: 12px;
-}
-</style>
-
 <div class="fluid-row" id="header">
 
 
@@ -344,7 +345,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-06-09
+<strong>Last updated:</strong> 2020-09-21
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -354,7 +355,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -375,13 +376,19 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree0143800833bb599f5e2e90f8f26fe0872c0e424etargetblank0143800a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/0143800833bb599f5e2e90f8f26fe0872c0e424e" target="_blank">0143800</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree93f539537c5ae0a57dd0e7edb71080415f585255targetblank93f5395a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/93f539537c5ae0a57dd0e7edb71080415f585255" target="_blank">93f5395</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree0143800833bb599f5e2e90f8f26fe0872c0e424etargetblank0143800a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree93f539537c5ae0a57dd0e7edb71080415f585255targetblank93f5395a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/DongyueXie/misc/tree/93f539537c5ae0a57dd0e7edb71080415f585255" target="_blank">93f5395</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
@@ -394,6 +401,7 @@ Untracked files:
     Untracked:  analysis/deconvSimulation2.Rmd
     Untracked:  analysis/ideas.Rmd
     Untracked:  analysis/methylation.Rmd
+    Untracked:  analysis/ridge_em.Rmd
     Untracked:  code/sccytokines.R
     Untracked:  code/scdeCalibration.R
     Untracked:  data/bart/
@@ -408,8 +416,6 @@ Untracked files:
 Unstaged changes:
     Modified:   analysis/deconvSimulation.Rmd
     Modified:   analysis/deconvolution.Rmd
-    Modified:   analysis/gsea.Rmd
-    Modified:   analysis/index.Rmd
     Deleted:    data/mout_high.RData
     Deleted:    data/scCDT.RData
     Deleted:    data/sva_sva_high.RData
@@ -427,7 +433,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/CPM.Rmd</code>) and HTML (<code>docs/CPM.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -451,6 +457,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/93f539537c5ae0a57dd0e7edb71080415f585255/analysis/CPM.Rmd" target="_blank">93f5395</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-09-21
+</td>
+<td>
+wflow_publish(c(“analysis/CPM.Rmd”, “analysis/limma.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/6bb0476b6ea5565949270fbf7477e2b33f500b3e/docs/CPM.html" target="_blank">6bb0476</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-06-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -606,6 +646,14 @@ wflow_publish(“analysis/CPM.Rmd”)
 <div id="trimmed-mean-of-m-values" class="section level2">
 <h2>Trimmed mean of M values</h2>
 <p>Observed counts as <span class="math inline">\(Y_{gk}\)</span>, gene length <span class="math inline">\(l_g\)</span>, true and unknown expression level (number of transcripts) <span class="math inline">\(\mu_{gk}\)</span>, total number of reads for library k <span class="math inline">\(N_k\)</span>, let <span class="math inline">\(s_k = \sum_g l_g \mu_{gk}\)</span>, then <span class="math display">\[E(Y_{gk}) = \frac{\mu_{gk}l_g}{s_k}N_k\]</span></p>
+<p>The ratio of expected value between two conditions is <span class="math display">\[\frac{E(Y_{g1})}{E(Y_{g2})} = \frac{s_1}{s_2}\frac{N_2}{N_1}\frac{\mu_{g2}}{\mu_{g1}}\]</span></p>
+<p>So <span class="math inline">\(s_k\)</span> is the size of studied transcriptome in condition <span class="math inline">\(k\)</span>, <span class="math inline">\(\mu_{gk}/s_k\)</span> is the relative expression of gene <span class="math inline">\(g\)</span> in condition <span class="math inline">\(k\)</span>.</p>
+<p>Let <span class="math inline">\(r\)</span> denote the reference sample. Filter out 1. transcripts with null counts(The cases where <span class="math inline">\(Y_{gk} = 0\)</span> or <span class="math inline">\(Y_{gr} = 0\)</span> are trimmed); 2. the <span class="math inline">\(30\%\)</span> more extreme <span class="math inline">\(M-value\)</span>: <span class="math inline">\(M_{gk}^r = \log\frac{y_{gk}/N_k}{y_{gr}/N_r}\)</span>; 3. the <span class="math inline">\(5\%\)</span> more extreme <span class="math inline">\(A-value\)</span>: <span class="math inline">\(A_{gk}^r = 0.5*(\log\frac{y_{gk}}{N_k}+\log\frac{y_{gr}}{N_r})\)</span>.</p>
+<p>After filtering out genes, we have a set of genes denoted as <span class="math inline">\(G^*\)</span> whose neither value was trimmed. The scaling factor <span class="math inline">\(TMM_k\)</span> is calculated as <span class="math display">\[\log TMM_k = \frac{\sum_{g\in G^*}w_{gk}M_{gk}}{\sum_{g\in G^*}w_{gk}},\]</span> where <span class="math inline">\(w_{gk} = \frac{N_k-Y_{gk}}{N_k Y_{gk}} - \frac{N_r-Y_{gr}}{N_r Y_{gr}}\)</span>. Usually the scaling factors are re-scaled such that they multiply to 1.</p>
+</div>
+<div id="relative-log-expression" class="section level2">
+<h2>Relative Log Expression</h2>
+<p>Define the reference as the geometric mean(less sensitive to extreme values than the standard mean) of samples <span class="math inline">\(Y_{gk}^r = (\Pi_k Y_{gk})^{1/n}\)</span>, then the scaling factor for sample <span class="math inline">\(k\)</span> is calculated as <span class="math inline">\(median(\frac{Y_{gk}}{Y_{gk}^r})\)</span>.</p>
 </div>
 
 

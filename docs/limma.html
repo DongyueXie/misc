@@ -31,6 +31,14 @@
 <script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
 <script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
 
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
   pre:not([class]) {
@@ -306,13 +314,6 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<!-- Add a small amount of space between sections. -->
-<style type="text/css">
-div.section {
-  padding-top: 12px;
-}
-</style>
-
 <div class="fluid-row" id="header">
 
 
@@ -344,7 +345,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-06-09
+<strong>Last updated:</strong> 2020-09-21
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -354,7 +355,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -435,13 +436,19 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6fdff4054c13a07016cf0be30df94072b4e8bb7etargetblank6fdff40a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/6fdff4054c13a07016cf0be30df94072b4e8bb7e" target="_blank">6fdff40</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree93f539537c5ae0a57dd0e7edb71080415f585255targetblank93f5395a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/misc/tree/93f539537c5ae0a57dd0e7edb71080415f585255" target="_blank">93f5395</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6fdff4054c13a07016cf0be30df94072b4e8bb7etargetblank6fdff40a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree93f539537c5ae0a57dd0e7edb71080415f585255targetblank93f5395a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/DongyueXie/misc/tree/93f539537c5ae0a57dd0e7edb71080415f585255" target="_blank">93f5395</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
@@ -454,6 +461,7 @@ Untracked files:
     Untracked:  analysis/deconvSimulation2.Rmd
     Untracked:  analysis/ideas.Rmd
     Untracked:  analysis/methylation.Rmd
+    Untracked:  analysis/ridge_em.Rmd
     Untracked:  code/sccytokines.R
     Untracked:  code/scdeCalibration.R
     Untracked:  data/bart/
@@ -466,12 +474,8 @@ Untracked files:
     Untracked:  data/scde/
 
 Unstaged changes:
-    Modified:   analysis/CPM.Rmd
-    Modified:   analysis/bayesglm.Rmd
     Modified:   analysis/deconvSimulation.Rmd
     Modified:   analysis/deconvolution.Rmd
-    Modified:   analysis/gsea.Rmd
-    Modified:   analysis/index.Rmd
     Deleted:    data/mout_high.RData
     Deleted:    data/scCDT.RData
     Deleted:    data/sva_sva_high.RData
@@ -489,7 +493,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/limma.Rmd</code>) and HTML (<code>docs/limma.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -513,6 +517,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/93f539537c5ae0a57dd0e7edb71080415f585255/analysis/limma.Rmd" target="_blank">93f5395</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-09-21
+</td>
+<td>
+wflow_publish(c(“analysis/CPM.Rmd”, “analysis/limma.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/3ca0646f2a2376197fb6eddff5f055a89142140c/docs/limma.html" target="_blank">3ca0646</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2020-06-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -611,6 +649,7 @@ wflow_publish(“analysis/limma.Rmd”)
 <p>The number of reads observed for a given gene is proportional not just to the expression level of the gene but also to its gene transcript length and to the sequencing depth of the library. Dividing each read count by the corresponding library size (in millions) yields counts per million (cpm), a simple measure of read abundance that can be compared across libraries of different sizes. Standardizing further by transcript length (in kilobases) gives rise to reads per kilobase per million (rpkm).</p>
 <p>Differences in log-cpm between samples can be interpreted as log-fold-changes of expression. The counts are augmented by a small positive value (a half of one read) to avoid taking the logarithm of zero. This ensures no missing log-cpm values and reduces the variability at low count values.</p>
 <p>Let <span class="math inline">\(r_{gi}\)</span> denote the read count of gene <span class="math inline">\(g\)</span> in sample <span class="math inline">\(i\)</span>, and <span class="math inline">\(y_{gi} = \log_2 (\frac{r_{gi}+0.5}{R_i+1}*10^6)\)</span>, where <span class="math inline">\(R_i = \sum_gr_{gi}\)</span>. Voom assumes mean-variance relationship of <span class="math inline">\(r\)</span> being <span class="math inline">\(var(r) = \lambda+\phi\lambda^2\)</span>, where <span class="math inline">\(\lambda=E(r)\)</span>.</p>
+<p>voom variance modeling:</p>
 <pre class="r"><code>library(edgeR)
 counts = read.delim(&#39;https://raw.githubusercontent.com/ucdavis-bioinformatics-training/2018-June-RNA-Seq-Workshop/master/thursday/all_counts.txt&#39;)
 head(counts)
@@ -678,7 +717,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
- [1] workflowr_1.6.0 Rcpp_1.0.4.6    digest_0.6.18   later_0.7.5    
+ [1] workflowr_1.6.2 Rcpp_1.0.4.6    digest_0.6.18   later_0.7.5    
  [5] rprojroot_1.3-2 R6_2.3.0        backports_1.1.2 git2r_0.26.1   
  [9] magrittr_1.5    evaluate_0.12   stringi_1.2.4   fs_1.3.1       
 [13] promises_1.0.1  whisker_0.3-2   rmarkdown_1.10  tools_3.5.1    
