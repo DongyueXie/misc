@@ -9,11 +9,11 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Dongyue Xie" />
+<meta name="author" content="DongyueXie" />
 
-<meta name="date" content="2019-12-12" />
+<meta name="date" content="2020-09-23" />
 
-<title>Linux Command</title>
+<title>gene length</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -318,9 +318,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Linux Command</h1>
-<h4 class="author"><em>Dongyue Xie</em></h4>
-<h4 class="date"><em>2019-12-12</em></h4>
+<h1 class="title toc-ignore">gene length</h1>
+<h4 class="author"><em>DongyueXie</em></h4>
+<h4 class="date"><em>2020-09-23</em></h4>
 
 </div>
 
@@ -429,7 +429,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/command.Rmd</code>) and HTML (<code>docs/command.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/genelength.Rmd</code>) and HTML (<code>docs/genelength.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -458,7 +458,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/DongyueXie/misc/blob/d2b54b194819994c0a24c165a3a049344e090c61/analysis/command.Rmd" target="_blank">d2b54b1</a>
+<a href="https://github.com/DongyueXie/misc/blob/d2b54b194819994c0a24c165a3a049344e090c61/analysis/genelength.Rmd" target="_blank">d2b54b1</a>
 </td>
 <td>
 DongyueXie
@@ -470,74 +470,6 @@ DongyueXie
 wflow_publish(c(“analysis/index.Rmd”, “analysis/genelength.Rmd”,
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/misc/53029fcb15306c2b84652b444af56991e0e67aba/docs/command.html" target="_blank">53029fc</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-01-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/cfac861dce90f85b8423dd83e1175e754cace94d/analysis/command.Rmd" target="_blank">cfac861</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2020-01-15
-</td>
-<td>
-wflow_publish(“analysis/command.Rmd”)
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/misc/1313b6f8c424e9193b401d30cf7e7cb94106d720/docs/command.html" target="_blank">1313b6f</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2019-12-12
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/c07c0dcca45352ef724092c2ce5caf7a37a03b51/analysis/command.Rmd" target="_blank">c07c0dc</a>
-</td>
-<td>
-Dongyue Xie
-</td>
-<td>
-2019-12-12
-</td>
-<td>
-wflow_publish(“analysis/command.Rmd”)
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -545,33 +477,10 @@ wflow_publish(“analysis/command.Rmd”)
 </div>
 </div>
 </div>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
-<p><code>cd $SCRATCH</code></p>
-<p><code>htop</code>: check login mode cpu use</p>
-<p>Get compute node:</p>
-<p><code>sinteractive --time=10:00:00 --mem=8G -c 4 -p mstephens --account=pi-mstephens</code></p>
-<p><code>--exclusive</code>:</p>
-<p><code>squeue -u dyxie</code> : see job status</p>
-<p><code>squeue -p mstephens</code>: see who’s using nodes.</p>
-<p><code>scontrol show node=midway2-0437</code></p>
-<p><code>squeue -p broadwl | less -S</code></p>
-<p><code>export OPENLABS_NUM_THREADS=4</code>: use 4 cpus to compute</p>
-<p>Open another command window, login to midway2 then <code>ssh midway2-0437</code>, <code>htop --user=dyxie</code> monitor the computations on the other command window.</p>
-<p>Use <code>screen</code> to back up screens.</p>
-<p><code>nano myscript.R</code> to write an R script.</p>
-<p><code>module load R</code> then <code>Rscript myscript.R</code></p>
-<p><code>sbatch myscript.sbatch</code></p>
-<p><a href="https://www.msi.umn.edu/support/faq/how-can-i-use-gnu-parallel-run-lot-commands-parallel">parallel in linux command</a></p>
-</div>
-<div id="unzip-open-gz-file" class="section level2">
-<h2>Unzip (Open) Gz File</h2>
-<p><code>gzip -d file.gz</code> or <code>gunzip file.gz</code></p>
-</div>
-<div id="preview-files" class="section level2">
-<h2>Preview files</h2>
-<p><code>head</code>, <code>less</code></p>
-</div>
+<p>Go to <a href="https://www.gencodegenes.org/human/">genecode</a>, download Comprehensive gene annotation, GTF file, the file name is gencode.v35.annotation.gtf</p>
+<p>Then run the following command</p>
+<p><code>cat gencode.v35.annotation.gtf| perl -alne '{next unless $F[2] eq &quot;gene&quot; ;/gene_name \&quot;(.*?)\&quot;;/; print &quot;$F[0]\t$F[3]\t$F[4]\t$1&quot;}' &gt;all_genes_location.txt</code></p>
+<p>source: <a href="https://www.researchgate.net/post/How_can_I_get_the_chromosomal_location_of_a_list_of_genes" class="uri">https://www.researchgate.net/post/How_can_I_get_the_chromosomal_location_of_a_list_of_genes</a></p>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
