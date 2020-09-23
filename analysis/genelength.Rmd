@@ -1,0 +1,17 @@
+---
+title: "gene length"
+author: "DongyueXie"
+date: "2020-09-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+Go to [genecode](https://www.gencodegenes.org/human/), download Comprehensive gene annotation, GTF file, the file name is gencode.v35.annotation.gtf
+
+Then run the following command 
+
+`cat gencode.v35.annotation.gtf| perl -alne '{next unless $F[2] eq "gene" ;/gene_name \"(.*?)\";/; print "$F[0]\t$F[3]\t$F[4]\t$1"}' >all_genes_location.txt`
+
+source: https://www.researchgate.net/post/How_can_I_get_the_chromosomal_location_of_a_list_of_genes

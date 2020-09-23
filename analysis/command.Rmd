@@ -43,7 +43,10 @@ Use `screen` to back up screens.
 
 [parallel in linux command](https://www.msi.umn.edu/support/faq/how-can-i-use-gnu-parallel-run-lot-commands-parallel)
 
-```{r}
+## Unzip (Open) Gz File
 
-```
+`gzip -d file.gz` or `gunzip file.gz`
 
+## Preview files
+
+`head`, `less`

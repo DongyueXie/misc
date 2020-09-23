@@ -25,6 +25,8 @@ editor_options:
 
 [methylation](methylation.html)
 
+[how to get gene length](genelength.html)
+
 # Comp-related
 
 [Github tips](githubtips.html)
@@ -76,3 +78,5 @@ editor_options:
 [cisTopic scATAC-Seq](cisTopic.html)
 
 [Integer‐valued functional data analysis for measles forecasting](kowal2019.html)
+
+[SymSim](SymSim.html)

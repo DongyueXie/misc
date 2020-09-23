@@ -1,0 +1,117 @@
+---
+title: "SymSim"
+author: "DongyueXie"
+date: "2020-09-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+## Overview
+
+[SymSim](https://www.nature.com/articles/s41467-019-10500-w#Sec13) is a method simulating single cell data. I find it comprehensive, generative and mimic the experimental procedure. 
+
+[github](https://github.com/YosefLab/SymSim), [tutorial](SymSimTutorial.html)
+
+Considers three variations: extrinsic variation(cell type, cell state), intrinsic variation(promoter on/off, mRNA synthesis rate, degradation), and technical variation(library preparation and sequencing).
+
+Geneate counts: 1. generate transcript counts; 2. generate observed expressions.
+
+The true transcript counts are generated using classical promoter kinetic model, with three parameters: promotoer on rate($k_{on}$), promoter off rate($k_{off}$) and RNA synthesis rate($s$). The value of these parameters are determined by the product of gene effects and cell specific extrinsic variability EVF(indicate the cell state, low dimensional manifold). EVF value is determined by a tree stucture(dictates cell-cell similarity map). For homogenous population(a single location in a tree, like one cell type at a certain state/time), EVFs are drawn iid from a distribution. 
+
+## Generate transcript counts
+
+Two-state kinetic model: promoter switches between an on and an off states with certain probabilities. Let $s$ be the transcript rate and $d$ be the degradation rate fixed at 1.  The stationary distribution for each gene analytically is a Beta-Poisson mixture.
+
+Suppose there are $m$ genes and $n$ cells. Then there are three $m\times n$ matrices: $K_{on}$, $K_{off}, S$, each is a product of two low rank matrix.
+When the gene is on it is transcribed with transcription rate $s$. Given the three matrices, transcript counts are drawn from a beta-Poisson model.
+
+Draw transcript counts: for each gene in a cell, 1. generate $p$ from $Beta(k_{on},k_{on})$; 2, generate transcript counts from $Poisson(p*s)$
+
+
+## Generate observed expressions
+
+cell efficiency, amplification bias, fragmentation, sequencing. 
+
+```{r,message=FALSE,warning=FALSE}
+library(SymSim)
+cal_amp_bias <- function(lenslope, nbins, gene_len, amp_bias_limit){
+  
+  ngenes <- length(gene_len)
+  len_bias_bin <- (-c(1:nbins))*lenslope
+  len_bias_bin <- len_bias_bin-median(len_bias_bin)
+  if (max(len_bias_bin) > amp_bias_limit[2]) {
+    stop("The lenslope parameter is too large.")
+  }
+  max_rand_bias <- amp_bias_limit[2] - max(len_bias_bin)
+  
+  rand_bias <- rnorm(ngenes, mean=0, sd=max_rand_bias)
+  rand_bias[rand_bias > max_rand_bias] <- max_rand_bias
+  rand_bias[rand_bias < -max_rand_bias] <- -max_rand_bias
+  #rand_bias <- runif(ngenes, -max_rand_bias,  max_rand_bias)
+  
+  binsize <- floor(ngenes/nbins)
+  genes_in_bins <- vector("list", nbins)
+  bin4genes <- numeric(ngenes)
+  for (ibin in 1:(nbins-1)){
+    genes_in_bins[[ibin]] <- order(gene_len)[((ibin-1)*binsize+1) : (ibin*binsize)]
+    bin4genes[genes_in_bins[[ibin]]] <- ibin
+  }
+  genes_in_bins[[nbins]] <- order(gene_len)[((nbins-1)*binsize+1) : ngenes]
+  bin4genes[genes_in_bins[[nbins]]] <- nbins
+  
+  len_bias <- numeric(ngenes); len_bias <- len_bias_bin[bin4genes]
+  amp_bias <- rand_bias+len_bias
+  return(amp_bias)
+}
+
+expand2binary <- function(true_counts_1cell){
+  expanded_vec <- rep(1, sum(true_counts_1cell))
+  trans_idx <- sapply(which(true_counts_1cell>0), 
+                      function(igene){return(rep(igene, true_counts_1cell[igene]))})
+  trans_idx <- unlist(trans_idx)
+  return(list(expanded_vec, trans_idx))
+}
+
+
+data("gene_len_pool")
+true_counts_res <- SimulateTrueCounts(ncells_total=100, ngenes=100, evf_type="one.population", Sigma=0.4, randseed=0)
+true_counts_1cell = true_counts_res$counts[,1]
+protocol = 'nonUMI' 
+rate_2cap= 0.1
+gene_len = sample(gene_len_pool,100)
+amp_bias = cal_amp_bias(0.02, 20, gene_len, c(-0.2, 0.2))
+rate_2PCR=0.8 
+nPCR1=16 
+nPCR2=10 
+LinearAmp=FALSE 
+N_molecules_SEQ = 1e4
+
+ngenes <- length(gene_len)
+if (protocol=="nonUMI"){data(len2nfrag)} 
+inds <- vector("list",2)
+expanded_res <- expand2binary(c(true_counts_1cell,1))
+expanded_vec <- expanded_res[[1]]; trans_idx <- expanded_res[[2]]
+inds[[1]] <- which(expanded_vec > 0); expanded_vec <- expanded_vec[inds[[1]]]
+trans_idx <- trans_idx[inds[[1]]]
+
+captured_vec <- expanded_vec; captured_vec[runif(length(captured_vec)) > rate_2cap] <- 0
+captured_vec[length(captured_vec)] <- 1
+inds[[2]] <- which(captured_vec > 0); captured_vec <- captured_vec[inds[[2]]]
+trans_idx <- trans_idx[inds[[2]]]
+amp_rate <- c((rate_2PCR+amp_bias[trans_idx[1:(length(trans_idx)-1)]]),1)
+
+## what does this step do?
+
+temp <- runif(length(captured_vec)) < amp_rate
+    temp <- temp*2+captured_vec-temp
+    for (iPCR in 2:nPCR1){
+      eff <- runif(length(temp))*amp_rate
+      v1 <- temp*(1-eff)
+      round_down <- (v1-floor(v1)) < runif(length(v1))
+      v1[round_down] <- floor(v1[round_down]); v1[!round_down] <- ceiling(v1[!round_down])
+      temp <- v1 + 2*(temp-v1)
+    }
+    PCRed_vec <- temp
+```
