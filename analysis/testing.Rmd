@@ -1,0 +1,13 @@
+---
+title: "testing"
+author: "DongyueXie"
+date: "2020-09-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+i recently came across Vladimir Vovk's comment on tesing using [betting](https://arxiv.org/pdf/2009.08933.pdf). I read his paper on conformal prediction before when taking selective inference course. 
+
+The information in this comment is rich and interesting to me so i'll come back and take a look.
