@@ -1,0 +1,20 @@
+---
+title: "rna velocity"
+author: "DongyueXie"
+date: "2020-09-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+
+RNA velocity is the time derivative of the gene expression state. It can be directly estimated by distinguishing between unspliced and spliced mRNAs in common single-cell RNA sequencing protocols.
+
+Key equation: the first time derivative of the spliced mRNA abundance (RNA velocity) is determined by the balance between production of spliced mRNA from unspliced mRNA, and the mRNA degradation, $\frac{ds}{dt} = u-\gamma*s$.
+
+This simple model can be used to extrapolate the mature mRNA abundance into the future
+
+## Reference
+
+https://www.nature.com/articles/s41586-018-0414-6
