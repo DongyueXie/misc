@@ -63,6 +63,8 @@ editor_options:
 
 [constrained clustering](contrainedclustering.Rmd)
 
+[Testing by betting, p-value, BF...](testing.html)
+
 # Book
 
 [bayesian data analysis](bda.html)
