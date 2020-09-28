@@ -26,7 +26,7 @@ $$f(x \mid b, c)=\left\{\cosh ^{b}(c / 2)\right\} \frac{2^{b-1}}{\Gamma(b)} \sum
 
 All finite moments of a Polya-Gamma random variable are
 available in closed form. In particular, the expectation may be calculated directly. This
-allows the Polya-Gamma scheme to be used in EM algorithms. If $\omega\sim PG(b,c)$, then $E(\omega) = \frac{b}{2c}tanh(c/2) = \frac{b}{2c}(\frac{e^c-1}{1+e^c})$.
+allows the Polya-Gamma scheme to be used in EM algorithms. If $\omega\sim PG(b,c)$, then $E(\omega) = \frac{b}{2c}tanh(c/2) = \frac{b}{2c}(\frac{e^c-1}{1+e^c})$. The variance can be found [here](https://stats.stackexchange.com/questions/122957/what-is-the-variance-of-a-polya-gamma-distribution)
 
 If $w_1\sim PG(b_1,c)$ and $w_2\sim PG(b_2,c)$ then $w_1+w_2\sim PG(b_1+b_2,c)$
 
@@ -58,8 +58,85 @@ If the prior of $\beta$ is Gaussian, then the canditional posterior of $\beta$ i
 
 ## Simulation
 
+### PG distribution
+
+Histogram
+
 ```{r}
-library()
+library(BayesLogit)
+hist(rpg(1e4,0.1,0),breaks = 100)
+hist(rpg(1e4,1,0),breaks = 100)
+hist(rpg(1e4,10,0),breaks = 100)
+hist(rpg(1e4,100,0),breaks = 100)
+
+hist(rpg(1e4,1,0),breaks = 100)
+hist(rpg(1e4,1,-1),breaks = 100)
+hist(rpg(1e4,1,1),breaks = 100)
+hist(rpg(1e4,1,100),breaks = 100)
+```
+
+Expectation
+
+```{r}
+pg_mean = function(b,c){b/(2*c)*tanh(c/2)}
+cc = seq(-10,10,length=1000)
+plot(cc,pg_mean(1,cc),type="l",ylim=c(0,0.25), main="E[PG(1,c)]",xlab='c',ylab='mean')
+```
+
+
+Variance 
+
+\[var(\omega) = \frac{b}{4c^3}(sinh(c)-c)sech^2(c/2)\]
+
+```{r}
+pg_var = function(b,c){b/(4*c^3)*(sinh(c)-c)*(1/cosh(c/2))^2}
+plot(cc,pg_var(1,cc),type="l",ylim=c(0,0.25), main="Var[PG(1,c)]",xlab='c',ylab='var')
+```
+
+### Bayesian logistics regression 
+
+```{r}
+# install_github('jwindle/BayesLogit',INSTALL_opts = '--no-lock')
+set.seed(12345)
+N = 300;
+  P = 2;
+
+  ##------------------------------------------------------------------------------
+  ## Correlated predictors
+  rho = 0.5
+  Sig = matrix(rho, nrow=P, ncol=P); diag(Sig) = 1.0;
+  U   = chol(Sig);
+  X   = matrix(rnorm(N*P), nrow=N, ncol=P) %*% U;
+
+  ##------------------------------------------------------------------------------
+  ## Sparse predictors
+  X   = matrix(rnorm(N*P, sd=1), nrow=N, ncol=P);
+  vX  = as.numeric(X);
+  low  = vX < quantile(vX, 0.5)
+  high = vX > quantile(vX, 0.5);
+  X[low]  = 0;
+  X[!low] = 1;
+
+  beta = rnorm(P, mean=0, sd=1);
+
+  ## beta = c(1.0, 0.4);
+  ## X = matrix(rnorm(N*P), nrow=N, ncol=P);
+
+  psi = X %*% beta;
+  p = exp(psi) / (1 + exp(psi));
+  y = rbinom(N, 1, p);
+  
+  
+psw.fit = logit.R(y,X)
+beta
+apply(psw.fit$beta,2,mean)
+plot(psw.fit$beta[,1],type='l',ylab='draws')
+plot(psw.fit$beta[,2],type='l',ylab='draws')
+source('code/logistic.R')
+prior <- list(mu = rep(0,P), Sigma = diag(1,P))
+dr.fit = logit_CAVI(X,y,prior)
+dr.fit$mu
+plot(dr.fit$Convergence)
 ```
 
 ## Reference
