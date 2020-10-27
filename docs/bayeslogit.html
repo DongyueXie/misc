@@ -11,9 +11,9 @@
 
 <meta name="author" content="DongyueXie" />
 
-<meta name="date" content="2020-04-13" />
+<meta name="date" content="2020-09-26" />
 
-<title>kl divergence</title>
+<title>bayes logit VB</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -386,9 +386,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">kl divergence</h1>
+<h1 class="title toc-ignore">bayes logit VB</h1>
 <h4 class="author">DongyueXie</h4>
-<h4 class="date">2020-04-13</h4>
+<h4 class="date">2020-09-26</h4>
 
 </div>
 
@@ -485,7 +485,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/kl.Rmd</code>) and HTML (<code>docs/kl.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/bayeslogit.Rmd</code>) and HTML (<code>docs/bayeslogit.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -514,7 +514,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/DongyueXie/misc/blob/5a6cc2abf966311386f43af78cf4f48384c55276/analysis/kl.Rmd" target="_blank">5a6cc2a</a>
+<a href="https://github.com/DongyueXie/misc/blob/5a6cc2abf966311386f43af78cf4f48384c55276/analysis/bayeslogit.Rmd" target="_blank">5a6cc2a</a>
 </td>
 <td>
 DongyueXie
@@ -526,40 +526,6 @@ DongyueXie
 wflow_publish(c(“analysis/index.Rmd”, “analysis/kl.Rmd”, “analysis/polya_gamma.Rmd”,
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/misc/6e31071d26cd5aa39e7d883708f0fb16db211b39/docs/kl.html" target="_blank">6e31071</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-04-15
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/a7b43a82cc9464e4e9814976e7b97b0e7b7c7461/analysis/kl.Rmd" target="_blank">a7b43a8</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-04-15
-</td>
-<td>
-wflow_publish(“analysis/kl.Rmd”)
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -567,28 +533,28 @@ wflow_publish(“analysis/kl.Rmd”)
 </div>
 </div>
 </div>
-<div id="kl-divergence-direction" class="section level2">
-<h2>KL divergence direction</h2>
-<p>Assume <span class="math inline">\(p\)</span> is true distribution and <span class="math inline">\(q\)</span> is the approximated one. The forward KL is <span class="math inline">\(KL(p||q)\)</span> and reverse KL is <span class="math inline">\(KL(q||p)\)</span>.</p>
-<p>What’s the difference between them? The forward KL is a sum of <span class="math inline">\(log\frac{p}{q}\)</span>, weighted by <span class="math inline">\(p\)</span>. We want to choose <span class="math inline">\(q\)</span> to minimize <span class="math inline">\(KL(p||q)\)</span>, so <span class="math inline">\(q\)</span> will try to cover everywhere <span class="math inline">\(p&gt;0\)</span>, otherwise <span class="math inline">\(KL(p||q)\)</span> will be large. On the other hand, the reverse KL is weighted by <span class="math inline">\(q\)</span>, so whenever <span class="math inline">\(q&gt;0\)</span>, <span class="math inline">\(q\)</span> and <span class="math inline">\(p\)</span> should be close.</p>
-<p>Forward KL is called zero avoiding while reverse KL is called zero forcing. A classical example is from GAN <a href="https://arxiv.org/pdf/1701.00160.pdf">tutorial</a> page 24 figure 14, by Ian.</p>
-<p>Forward KL is mean seeking, and reverse KL is mode-seeking</p>
-<p>Forward KL:</p>
-<p><span class="math display">\[\begin{equation}
-\begin{split}
-argmin_q KL(p||q) &amp;= argmin_q E_p(\log p) - E_p(\log q)
-\\&amp;= argmax_q E_p(\log q)
-\end{split}
-\end{equation}\]</span></p>
-<p>Reverse KL:</p>
-<p><span class="math display">\[\begin{equation}
-\begin{split}
-argmin_q KL(q||p) &amp;= argmin_q E_q(\log q) - E_q(\log p)
-\\&amp;= argmax_q E_q(\log p) + H(q)
-\end{split}
-\end{equation}\]</span></p>
-<p>Why variational inference uses reverse KL?</p>
-<p>Because forward KL is intractable. <a href="https://ermongroup.github.io/cs228-notes/inference/variational/" class="uri">https://ermongroup.github.io/cs228-notes/inference/variational/</a></p>
+<p>This paper provides a connection between <a href="https://link.springer.com/article/10.1023/A:1008932416310">Jaakkola and Jordan (2000)</a> and Polya-gamma augmentation for logistic regression.</p>
+<div id="vb" class="section level2">
+<h2>VB</h2>
+<p>David Blei’s paper, Variational inference: A review for statisticians, has been cited a lot as good VB introduction.(I guess I should re-read it several times, and often). VB tries to find a tractable approximation of the posterir distribution <span class="math inline">\(p(\theta|y)\)</span> where <span class="math inline">\(\theta\)</span> is coeffients and <span class="math inline">\(y\)</span> is observed data.</p>
+<p>The approximation is posed as an optimization problem, by minimizing KL divergence, <span class="math display">\[
+KL(q(\theta)||p(\theta|y)) = \int q(\theta)\log\frac{q(\theta)}{p(\theta|y)}d\theta = \int q(\theta)\log\frac{q(\theta)p(y)}{p(y,\theta)}d\theta.
+\]</span></p>
+<p>(On <a href="kl.html">why</a> its <span class="math inline">\(KL(q(\theta)||p(\theta|y))\)</span> instead of <span class="math inline">\(KL(p(\theta|y)||q(\theta))\)</span>)</p>
+<p>The evidence lower bound ELBO is <span class="math display">\[ELBO(q(\theta)) = \int q(\theta))\log\frac{p(y,\theta)}{q(\theta)} = \log p(y) - KL(q(\theta)||p(\theta|y)) \\= E(\log p(y|\theta)) - KL(q(\theta)||p(\theta))\]</span></p>
+<p>The optimal <span class="math inline">\(q_j(\theta_j)\)</span> is proportional to the exp expected log of complete likelihood, <span class="math display">\[q^*_j(\theta_j)\propto exp\{E_{-j}\log p(\theta_j|\theta_{-j},y)\}.\]</span></p>
+<p>(Why? ELBO<span class="math inline">\((q_j) = E_j E_{-j}\log p(\theta_j,\theta_{-j},y) - E_j \log q_j(\theta_j)+constant \\= -E_j\log\frac{q_j}{\exp{(E_{-j}\log p(\theta_j,\theta_{-j},y))}}\)</span>)</p>
+</div>
+<div id="meanfield-vb-for-conditionally-conjugate-exponential-family" class="section level2">
+<h2>Mean–field VB for conditionally conjugate exponential family</h2>
+<p>Suppose each complete conditional is in the exponential family <span class="math display">\[p(\theta_j|\theta_{-j},y) = h(\theta_j)\exp\{\eta_j(\theta_{-j},y)^T\theta_j - a(\eta_j(\theta_{-j},y))\}\]</span> where <span class="math inline">\(h\)</span> is a base measure and <span class="math inline">\(a(\cdot)\)</span> is the log normalizer and <span class="math inline">\(\eta\)</span> is the canonical parameter.</p>
+<p>(The exponential family is <span class="math inline">\(f(y;\theta,\phi) = \exp\{(y\theta-b(\theta))/a(\phi)+c(y,\phi)\}\)</span>. If the dispersion parameter <span class="math inline">\(\phi\)</span> is known, this is an exponential family model with canonical parameter <span class="math inline">\(\theta\)</span>. often <span class="math inline">\(a(\phi)=1\)</span>, <span class="math inline">\(c(y,\phi) = c(y)\)</span>)</p>
+<p>Then the update is <span class="math display">\[q_j(\theta_j)\propto \exp\{\log h(\theta_j)+E(\eta_j(\theta_{-j},y))^T\theta_j - E(a(\eta_j(\theta_{-j},y)))\}
+\\ \propto h(\theta_j)\exp\{E(\eta_j(\theta_{-j},y))^T\theta_j\}\]</span></p>
+<p>Let <span class="math inline">\(\beta\)</span> be the global coefficients and <span class="math inline">\(z\)</span> be the local variables, and <span class="math inline">\(y\)</span> the observed data, then the joint distribution of <span class="math inline">\(y,\beta,z\)</span> is <span class="math display">\[p(y,\beta,z) = p(\beta)\Pi_i p(z_i|\beta)p(y_i|z_i,\beta) = p(\beta)\Pi_i p(y_i,z_i|\beta)\]</span> where <span class="math inline">\(\Pi_i p(y_i,z_i|\beta)\)</span> is from an exponential family and <span class="math inline">\(p(\beta)\)</span> is a conjugate prior for the density.</p>
+<div id="logistic-likelihood" class="section level3">
+<h3>logistic likelihood</h3>
+</div>
 </div>
 
 

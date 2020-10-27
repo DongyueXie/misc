@@ -11,9 +11,9 @@
 
 <meta name="author" content="DongyueXie" />
 
-<meta name="date" content="2020-09-21" />
+<meta name="date" content="2020-10-15" />
 
-<title>polya gamma augmentation</title>
+<title>single cell Haystack</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -386,9 +386,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">polya gamma augmentation</h1>
+<h1 class="title toc-ignore">single cell Haystack</h1>
 <h4 class="author">DongyueXie</h4>
-<h4 class="date">2020-09-21</h4>
+<h4 class="date">2020-10-15</h4>
 
 </div>
 
@@ -545,7 +545,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/polya_gamma.Rmd</code>) and HTML (<code>docs/polya_gamma.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/scHaystack.Rmd</code>) and HTML (<code>docs/scHaystack.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -574,7 +574,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/DongyueXie/misc/blob/5a6cc2abf966311386f43af78cf4f48384c55276/analysis/polya_gamma.Rmd" target="_blank">5a6cc2a</a>
+<a href="https://github.com/DongyueXie/misc/blob/5a6cc2abf966311386f43af78cf4f48384c55276/analysis/scHaystack.Rmd" target="_blank">5a6cc2a</a>
 </td>
 <td>
 DongyueXie
@@ -586,74 +586,6 @@ DongyueXie
 wflow_publish(c(“analysis/index.Rmd”, “analysis/kl.Rmd”, “analysis/polya_gamma.Rmd”,
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/misc/96caa31e35d7ecf306fadb00310c37fde6d7ca35/docs/polya_gamma.html" target="_blank">96caa31</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-09-28
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/c23dea68a93fdf9086cde75f28a584e95a4cd233/analysis/polya_gamma.Rmd" target="_blank">c23dea6</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-09-28
-</td>
-<td>
-wflow_publish(“analysis/polya_gamma.Rmd”)
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/DongyueXie/misc/eb3262937ab16ae8cd9e4b72634cd7885329dedb/docs/polya_gamma.html" target="_blank">eb32629</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-09-21
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/DongyueXie/misc/blob/241207b839f58e861b8530ee4216d90fe6a5e550/analysis/polya_gamma.Rmd" target="_blank">241207b</a>
-</td>
-<td>
-DongyueXie
-</td>
-<td>
-2020-09-21
-</td>
-<td>
-wflow_publish(c(“analysis/index.Rmd”, “analysis/polya_gamma.Rmd”,
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -661,143 +593,12 @@ wflow_publish(c(“analysis/index.Rmd”, “analysis/polya_gamma.Rmd”,
 </div>
 </div>
 </div>
-<p>An important idea, both in understanding and computing discrete-data regressions, is a re-expression in terms of unobserved (latent) continuous data. – BDA</p>
-<div id="bayesian-logistic-regression" class="section level3">
-<h3>Bayesian logistic regression</h3>
-<p>The likelihood of <span class="math inline">\(y_i\)</span> is <span class="math inline">\(L(y_i|\beta) = (\frac{\exp{x_i^T\beta}}{1+\exp{x_i^T\beta}})^{y_i}(\frac{1}{1+\exp{x_i^T\beta}})^{1-y_i}\)</span>.</p>
-<p>For probit link function, we can introduce a latent variable,</p>
-<p><span class="math display">\[\begin{array}{l}
-u_{i} \sim \mathrm{N}\left(X_{i} \beta, 1\right) \\
-y_{i}=\left\{\begin{array}{ll}
-1 &amp; \text { if } u_{i}&gt;0 \\
-0 &amp; \text { if } u_{i}&lt;0
-\end{array}\right.
-\end{array}\]</span></p>
-<p>For logit link function, we can replace normal distribution with <span class="math inline">\(u_{i} \sim \mathrm{logistic}\left(X_{i} \beta, 1\right)\)</span>.</p>
-<p>(Using MH algorithm to draw posteriors is straightforward, but the logistic error introduces difficulty of other inferences like variational inference)</p>
-<p>(what’s the advantage of data-augmentation over MH algorithm? faster converging? easier computation?)</p>
-</div>
-<div id="definition" class="section level2">
-<h2>Definition</h2>
-<p>X follows polya-gamma distribution with parameters <span class="math inline">\(b&gt;0\)</span> and <span class="math inline">\(c\in R\)</span> if <span class="math display">\[X\overset{D}{=}\frac{1}{2\pi^2}\sum_{k=1}^\infty\frac{g_k}{(k-1/2)^2+c^2/(4\pi^2)},\]</span> where <span class="math inline">\(g_k\sim Gamma(b,1)\)</span>.</p>
-<p>Binomial likelihoods parameterized by log odds can be represented as mixtures of Gaussians with respect to a P´olya-Gamma distribution.</p>
-</div>
-<div id="properties" class="section level2">
-<h2>Properties</h2>
-<p><span class="math display">\[\frac{\left(e^{\psi}\right)^{a}}{\left(1+e^{\psi}\right)^{b}}=2^{-b} e^{\kappa \psi} \int_{0}^{\infty} e^{-\omega \psi^{2} / 2} p(\omega) d \omega,\]</span> where <span class="math inline">\(\kappa = a-b/2\)</span>, and <span class="math inline">\(\omega\sim PG(b,0)\)</span>.</p>
-<p>The density of a Polya-Gamma random variable can be expressed as an alternating-sign sum of inverse-Gaussian densities <span class="math display">\[f(x \mid b, c)=\left\{\cosh ^{b}(c / 2)\right\} \frac{2^{b-1}}{\Gamma(b)} \sum_{n=0}^{\infty}(-1)^{n} \frac{\Gamma(n+b)}{\Gamma(n+1)} \frac{(2 n+b)}{\sqrt{2 \pi x^{3}}} e^{-\frac{(2 n+b)^{2}}{8 x}-\frac{c^{2}}{2} x}\]</span></p>
-<p>All finite moments of a Polya-Gamma random variable are available in closed form. In particular, the expectation may be calculated directly. This allows the Polya-Gamma scheme to be used in EM algorithms. If <span class="math inline">\(\omega\sim PG(b,c)\)</span>, then <span class="math inline">\(E(\omega) = \frac{b}{2c}tanh(c/2) = \frac{b}{2c}(\frac{e^c-1}{1+e^c})\)</span>. The variance can be found <a href="https://stats.stackexchange.com/questions/122957/what-is-the-variance-of-a-polya-gamma-distribution">here</a></p>
-<p>If <span class="math inline">\(w_1\sim PG(b_1,c)\)</span> and <span class="math inline">\(w_2\sim PG(b_2,c)\)</span> then <span class="math inline">\(w_1+w_2\sim PG(b_1+b_2,c)\)</span></p>
-</div>
-<div id="augmentation" class="section level2">
-<h2>Augmentation</h2>
-<p>Let <span class="math inline">\(y_i\sim Binomial(n_i,\frac{1}{1+e^{-\phi_i}})\)</span>, where <span class="math inline">\(\phi_i\)</span> are log odds of success. In logistic regression, <span class="math inline">\(\phi_i = x_i^T\beta\)</span>.</p>
-<p>THe likelihood contribution of observation <span class="math inline">\(i\)</span> is</p>
-<p><span class="math display">\[L_i(\phi_i) = \frac{(\exp\phi_i)^{y_i}}{(1+\exp(\phi_i))^{n_i}}.\]</span></p>
-<p>In logistic regression, the likelihood is</p>
-<p><span class="math display">\[\begin{aligned}
-L_{i}(\boldsymbol{\beta}) &amp;=\frac{\left\{\exp \left(x_{i}^{T} \boldsymbol{\beta}\right)\right\}^{y_{i}}}{(1+\exp \left(x_{i}^{T} \boldsymbol{\beta}\right))^{n_i}} \\
-&amp; \propto \exp \left(\kappa_{i} x_{i}^{T} \boldsymbol{\beta}\right) \int_{0}^{\infty} \exp \left\{-\omega_{i}\left(x_{i}^{T} \boldsymbol{\beta}\right)^{2} / 2\right\} p\left(\omega_{i} \mid n_{i}, 0\right)
-\end{aligned},\]</span></p>
-<p>where <span class="math inline">\(\kappa_i - y_i-n_i/2\)</span>.</p>
-<p>The conditional posterior of <span class="math inline">\(\beta\)</span> is <span class="math display">\[p(\beta|w,y)\propto p(\beta)\exp\{-\frac{1}{2}(z-X\beta)^T\Omega(z-X\beta)\} = p(\beta)\exp\{-\frac{1}{2}(\beta-X^{-1}z)^TX^T\Omega X(\beta-X^{-1}z)\},\]</span> where <span class="math inline">\(z = (\kappa_1/w_1,...,\kappa_n/w_n)\)</span> and <span class="math inline">\(\Omega = diag(w_1,...,w_n)\)</span>.</p>
-</div>
-<div id="posterior" class="section level2">
-<h2>Posterior</h2>
-<p>If the prior of <span class="math inline">\(\beta\)</span> is Gaussian, then the conditional posterior of <span class="math inline">\(\beta\)</span> is also Gaussian. So the Gibbs sampler iteratively samples from <span class="math inline">\((\omega_i|\beta)\sim PG(n_i,x_i^T\beta), (\beta|y,\Omega)\sim N(m,V)\)</span>.</p>
-</div>
-<div id="simulation" class="section level2">
-<h2>Simulation</h2>
-<div id="pg-distribution" class="section level3">
-<h3>PG distribution</h3>
-<p>Histogram</p>
-<pre class="r"><code>library(BayesLogit)
-hist(rpg(1e4,0.1,0),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hist(rpg(1e4,1,0),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hist(rpg(1e4,10,0),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hist(rpg(1e4,100,0),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-4.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hist(rpg(1e4,1,0),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-5.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hist(rpg(1e4,1,-1),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-6.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hist(rpg(1e4,1,1),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-7.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hist(rpg(1e4,1,100),breaks = 100)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-1-8.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Expectation</p>
-<pre class="r"><code>pg_mean = function(b,c){b/(2*c)*tanh(c/2)}
-cc = seq(-10,10,length=1000)
-plot(cc,pg_mean(1,cc),type=&quot;l&quot;,ylim=c(0,0.25), main=&quot;E[PG(1,c)]&quot;,xlab=&#39;c&#39;,ylab=&#39;mean&#39;)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Variance</p>
-<p><span class="math display">\[var(\omega) = \frac{b}{4c^3}(sinh(c)-c)sech^2(c/2)\]</span></p>
-<pre class="r"><code>pg_var = function(b,c){b/(4*c^3)*(sinh(c)-c)*(1/cosh(c/2))^2}
-plot(cc,pg_var(1,cc),type=&quot;l&quot;,ylim=c(0,0.25), main=&quot;Var[PG(1,c)]&quot;,xlab=&#39;c&#39;,ylab=&#39;var&#39;)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-<div id="bayesian-logistics-regression" class="section level3">
-<h3>Bayesian logistics regression</h3>
-<pre class="r"><code># install_github(&#39;jwindle/BayesLogit&#39;,INSTALL_opts = &#39;--no-lock&#39;)
-set.seed(12345)
-N = 300;
-  P = 2;
-
-  ##------------------------------------------------------------------------------
-  ## Correlated predictors
-  rho = 0.5
-  Sig = matrix(rho, nrow=P, ncol=P); diag(Sig) = 1.0;
-  U   = chol(Sig);
-  X   = matrix(rnorm(N*P), nrow=N, ncol=P) %*% U;
-
-  ##------------------------------------------------------------------------------
-  ## Sparse predictors
-  X   = matrix(rnorm(N*P, sd=1), nrow=N, ncol=P);
-  vX  = as.numeric(X);
-  low  = vX &lt; quantile(vX, 0.5)
-  high = vX &gt; quantile(vX, 0.5);
-  X[low]  = 0;
-  X[!low] = 1;
-
-  beta = rnorm(P, mean=0, sd=1);
-
-  ## beta = c(1.0, 0.4);
-  ## X = matrix(rnorm(N*P), nrow=N, ncol=P);
-
-  psi = X %*% beta;
-  p = exp(psi) / (1 + exp(psi));
-  y = rbinom(N, 1, p);
-  
-  
-psw.fit = logit.R(y,X)</code></pre>
-<pre><code>[1] &quot;LogitPG: Iteration 500&quot;
-[1] &quot;LogitPG: Iteration 1000&quot;
-[1] &quot;LogitPG: Iteration 1500&quot;</code></pre>
-<pre class="r"><code>beta</code></pre>
-<pre><code>[1] -0.2678817  0.9372880</code></pre>
-<pre class="r"><code>apply(psw.fit$beta,2,mean)</code></pre>
-<pre><code>[1] -0.2117958  1.2579055</code></pre>
-<pre class="r"><code>plot(psw.fit$beta[,1],type=&#39;l&#39;,ylab=&#39;draws&#39;)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(psw.fit$beta[,2],type=&#39;l&#39;,ylab=&#39;draws&#39;)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>source(&#39;code/logistic.R&#39;)
-prior &lt;- list(mu = rep(0,P), Sigma = diag(1,P))
-dr.fit = logit_CAVI(X,y,prior)
-dr.fit$mu</code></pre>
-<pre><code>           [,1]
-[1,] -0.1738759
-[2,]  1.1815105</code></pre>
-<pre class="r"><code>plot(dr.fit$Convergence)</code></pre>
-<p><img src="figure/polya_gamma.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-</div>
-<div id="reference" class="section level2">
-<h2>Reference</h2>
-<p>Polson, N. G., Scott, J. G., &amp; Windle, J. (2013). Bayesian inference for logistic models using Pólya–Gamma latent variables. Journal of the American statistical Association, 108(504), 1339-1349.</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The input is a matrix, <span class="math inline">\(X\)</span>, whose rows are cells and columns are coordinates(from pca or tsne or etc.).</p>
+<pre class="r"><code>library(singleCellHaystack)</code></pre>
+<pre><code>Warning: package &#39;singleCellHaystack&#39; was built under R version 4.0.2</code></pre>
+<pre class="r"><code>set.seed(1234)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -823,15 +624,21 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] BayesLogit_2.1.1 workflowr_1.6.2 
+[1] singleCellHaystack_0.3.3 workflowr_1.6.2         
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.4.6    rprojroot_1.3-2 digest_0.6.25   later_1.1.0.1  
- [5] R6_2.4.1        backports_1.1.7 git2r_0.27.1    magrittr_1.5   
- [9] evaluate_0.14   stringi_1.4.6   rlang_0.4.6     fs_1.4.1       
-[13] promises_1.1.0  whisker_0.4     rmarkdown_2.3   tools_4.0.1    
-[17] stringr_1.4.0   glue_1.4.1      httpuv_1.5.4    xfun_0.14      
-[21] yaml_2.2.1      compiler_4.0.1  htmltools_0.5.0 knitr_1.28     </code></pre>
+ [1] Rcpp_1.0.4.6     plyr_1.8.6       compiler_4.0.1   pillar_1.4.4    
+ [5] later_1.1.0.1    git2r_0.27.1     tools_4.0.1      digest_0.6.25   
+ [9] lattice_0.20-41  evaluate_0.14    lifecycle_0.2.0  tibble_3.0.1    
+[13] gtable_0.3.0     pkgconfig_2.0.3  rlang_0.4.6      Matrix_1.2-18   
+[17] yaml_2.2.1       xfun_0.14        stringr_1.4.0    dplyr_1.0.0     
+[21] knitr_1.28       generics_0.0.2   fs_1.4.1         vctrs_0.3.0     
+[25] rprojroot_1.3-2  grid_4.0.1       tidyselect_1.1.0 glue_1.4.1      
+[29] R6_2.4.1         rmarkdown_2.3    reshape2_1.4.4   ggplot2_3.3.2   
+[33] purrr_0.3.4      magrittr_1.5     whisker_0.4      splines_4.0.1   
+[37] backports_1.1.7  scales_1.1.1     promises_1.1.0   htmltools_0.5.0 
+[41] ellipsis_0.3.1   colorspace_1.4-1 httpuv_1.5.4     stringi_1.4.6   
+[45] munsell_0.5.0    crayon_1.3.4    </code></pre>
 </div>
 </div>
 
