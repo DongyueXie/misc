@@ -1,0 +1,56 @@
+---
+title: "bayes logit VB"
+author: "DongyueXie"
+date: "2020-09-26"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+This paper provides a connection between [Jaakkola and Jordan (2000)](https://link.springer.com/article/10.1023/A:1008932416310) and Polya-gamma augmentation for logistic regression.
+
+## VB
+
+David Blei's paper, Variational inference: A review for statisticians, has been cited a lot as good VB introduction.(I guess I should re-read it several times, and often). VB tries to find a tractable approximation of the posterir distribution $p(\theta|y)$ where $\theta$ is coeffients and $y$ is observed data. 
+
+The approximation is posed as an optimization problem, by minimizing KL divergence, 
+$$
+KL(q(\theta)||p(\theta|y)) = \int q(\theta)\log\frac{q(\theta)}{p(\theta|y)}d\theta = \int q(\theta)\log\frac{q(\theta)p(y)}{p(y,\theta)}d\theta.
+$$
+
+
+(On [why](kl.html) its $KL(q(\theta)||p(\theta|y))$ instead of $KL(p(\theta|y)||q(\theta))$)
+
+The evidence lower bound ELBO is 
+\[ELBO(q(\theta)) = \int q(\theta))\log\frac{p(y,\theta)}{q(\theta)} = \log p(y) - KL(q(\theta)||p(\theta|y)) \\= E(\log p(y|\theta)) - KL(q(\theta)||p(\theta))\]
+
+The optimal $q_j(\theta_j)$ is proportional to the exp expected log of complete likelihood,
+\[q^*_j(\theta_j)\propto exp\{E_{-j}\log p(\theta_j|\theta_{-j},y)\}.\]
+
+(Why? ELBO$(q_j) = E_j E_{-j}\log p(\theta_j,\theta_{-j},y) - E_j \log q_j(\theta_j)+constant \\= -E_j\log\frac{q_j}{\exp{(E_{-j}\log p(\theta_j,\theta_{-j},y))}}$)
+
+## Mean–field VB for conditionally conjugate exponential family
+
+Suppose each complete conditional is in the exponential family
+\[p(\theta_j|\theta_{-j},y) = h(\theta_j)\exp\{\eta_j(\theta_{-j},y)^T\theta_j - a(\eta_j(\theta_{-j},y))\}\]
+where $h$ is a base measure and $a(\cdot)$ is the log normalizer and $\eta$ is the canonical parameter.
+
+(The exponential family is $f(y;\theta,\phi) = \exp\{(y\theta-b(\theta))/a(\phi)+c(y,\phi)\}$. If the dispersion parameter $\phi$ is known, this is an exponential family model with canonical parameter $\theta$. often $a(\phi)=1$, $c(y,\phi) = c(y)$)
+
+Then the update is 
+\[q_j(\theta_j)\propto \exp\{\log h(\theta_j)+E(\eta_j(\theta_{-j},y))^T\theta_j - E(a(\eta_j(\theta_{-j},y)))\}
+\\ \propto h(\theta_j)\exp\{E(\eta_j(\theta_{-j},y))^T\theta_j\}\]
+
+Let $\beta$ be the global coefficients and $z$ be the local variables, and $y$ the observed data, then the joint distribution of $y,\beta,z$ is 
+\[p(y,\beta,z) = p(\beta)\Pi_i p(z_i|\beta)p(y_i|z_i,\beta) = p(\beta)\Pi_i p(y_i,z_i|\beta)\]
+ where $\Pi_i p(y_i,z_i|\beta)$ is from an exponential family and $p(\beta)$ is a conjugate prior for the density.
+
+
+ 
+### logistic likelihood
+
+
+
+
+

@@ -81,6 +81,8 @@ editor_options:
 
 [Integer‐valued functional data analysis for measles forecasting](kowal2019.html)
 
+[Conditionally conjugate mean–field variational Bayes for logistic models](bayeslogit.html)
+
 [SymSim](SymSim.html)
 
 [RNA Velocity](rnavelocity.html)

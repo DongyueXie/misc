@@ -13,8 +13,28 @@ Assume $p$ is true distribution and $q$ is the approximated one. The forward KL 
 
 What's the difference between them? The forward KL is a sum of $log\frac{p}{q}$, weighted by $p$. We want to choose $q$ to minimize $KL(p||q)$, so $q$ will try to cover everywhere $p>0$, otherwise $KL(p||q)$ will be large. On the other hand, the reverse KL is weighted by $q$, so whenever $q>0$, $q$ and $p$ should be close. 
 
-Forward KL is called zero avoiding while reverse KL is called zero forcing. A classicial example is from GAN [tutorial](https://arxiv.org/pdf/1701.00160.pdf) page 24 figure 14, by Ian. 
+Forward KL is called zero avoiding while reverse KL is called zero forcing. A classical example is from GAN [tutorial](https://arxiv.org/pdf/1701.00160.pdf) page 24 figure 14, by Ian. 
+
+Forward KL is mean seeking, and reverse KL is mode-seeking
+
+Forward KL:
+
+\begin{equation}
+\begin{split}
+argmin_q KL(p||q) &= argmin_q E_p(\log p) - E_p(\log q)
+\\&= argmax_q E_p(\log q)
+\end{split}
+\end{equation}
+
+Reverse KL:
+
+\begin{equation}
+\begin{split}
+argmin_q KL(q||p) &= argmin_q E_q(\log q) - E_q(\log p)
+\\&= argmax_q E_q(\log p) + H(q)
+\end{split}
+\end{equation}
 
 Why variational inference uses reverse KL? 
 
-Because forward KL is intractable. 
+Because forward KL is intractable. https://ermongroup.github.io/cs228-notes/inference/variational/
