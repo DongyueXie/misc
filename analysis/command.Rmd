@@ -50,3 +50,15 @@ Use `screen` to back up screens.
 ## Preview files
 
 `head`, `less`
+
+## Upload data to rcc
+
+transfer from my laptop to my home directory:
+
+Single files: `scp <some file> <CNetID>@midway2.rcc.uchicago.edu`
+
+Directories:  `scp -r <some dir> <CNetID>@midway2.rcc.uchicago.edu`
+
+To other directory:
+
+`scp -r <some dir> <CNetID>@midway2.rcc.uchicago.edu:/project2`
