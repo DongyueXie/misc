@@ -33,6 +33,7 @@ editor_options:
 
 [Linux command lines](command.html)
 
+[sparse matrix in R](sparseMatrixR.html)
 
 # Data Collection
 
