@@ -1,0 +1,22 @@
+---
+title: "sparse Matrix in R"
+author: "Dongyue Xie"
+date: "2021-09-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+After creating a sparse matrix, how to quickly find the $i,j,x$?
+
+```{r}
+library(Matrix)
+X = as(diag(3),'sparseMatrix')
+d = summary(X)
+d$i
+d$j
+d$x
+```
+
