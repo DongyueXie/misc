@@ -1,0 +1,24 @@
+---
+title: "gaussian process"
+author: "Dongyue Xie"
+date: "2021-10-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## A Case Study Competition Among Methods for Analyzing Large Spatial Data
+
+A spatial process $Y(s)$ is said to follow a GP if any realization $Y=(Y(s_1),...,Y(s_N))$ follows an $N$ dimensional multivariate normal distribution.
+
+The evaluation of density needs $O(N^3)$ operations and $O(N^2)$ memory. There are a number of approximation methods developed to solve the computational issues for example the low-rank approximations to Gaussian processes, and paralyzing the computation.
+
+The methods were grouped into one of the following categories: (i) low rank, (ii) sparse covariance matrices, (iii) sparse precision matrices and (iv) algorithmic.
+
+The experiment dataset has size $N=1.5*10^5$. About $30\%$ of the data are used as testing dataset. Main results are shown in table 2 and table 3. 
+
+FRK only uses one core but runs very fast, but with higher rmse and lower coverage.  Gapfill runs the fasted by using 40 cores but with lowerest coverage. MRA and Periodic Embedding both use 1 core and give low rmse and good coverage. NNGP also works well but using 10 cores. 
+
+
+
+
