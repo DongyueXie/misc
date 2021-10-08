@@ -68,6 +68,8 @@ editor_options:
 
 [Obtaining information matrix from EM algorithm](EM_var.html)
 
+[Gaussian process](gaussian_process.html)
+
 # Book
 
 [bayesian data analysis](bda.html)
