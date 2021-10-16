@@ -70,6 +70,8 @@ editor_options:
 
 [Gaussian process](gaussian_process.html)
 
+[Variational lower bound, logistic fucntion](logistic_bound.html)
+
 # Book
 
 [bayesian data analysis](bda.html)
