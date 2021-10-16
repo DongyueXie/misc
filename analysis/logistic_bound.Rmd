@@ -1,0 +1,48 @@
+---
+title: "logistic function bound"
+author: "Dongyue Xie"
+date: "2020-10-16"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Let $y$ be a binary variable with $p(y=1) = p$, where $p = g(\beta)$ and $g(x) = \frac{1}{1+\exp(-x)}$. The function $g$ is usually called logistic function or sigmoid function. 
+
+The log likelihood is 
+
+\begin{equation}
+\begin{split}
+l(\beta) &= \log p(y|\beta) 
+\\&= y\log g(\beta)+(1-y)\log (1-g(\beta)) 
+\\&= (-\beta-\log(1+\exp(-\beta))) +y\beta
+\\&= (y-1)\beta - \log(1+\exp(-\beta))
+\end{split}
+\end{equation}
+
+It's sometimes more convenient to write 
+
+\[l(\beta) = g((2y-1)\beta).\]
+
+The summation inside $\log$ function is a pain and it is hard to deal with. For example in variational inference of logistic regression. One method to bypass the log sum is to lower bound the function $-\log(1+\exp(-\beta))$. 
+
+In the paper [Jaakkola and Jordan, 2000](https://link.springer.com/content/pdf/10.1023/A:1008932416310.pdf), the following lower bound is suggested. 
+
+Notice that 
+\[-\log(1+\exp(-\beta)) = \frac{\beta}{2}-\log(\exp(\beta/2)+\exp(-\beta/2)),\]
+
+where $f(\beta) = -\log(\exp(\beta/2)+\exp(-\beta/2))$ is a convex  function in $\beta^2$. So we can bound $f(\beta)$ globally with a first order Taylor expansion in $\beta^2$, leading to 
+
+\[f(\beta)\geq -\frac{\eta}{2}-\log(1+\exp(-\eta))+\frac{1}{4\eta}tanh(\frac{\eta}{2})(\beta^2-\eta^2).\]
+
+This lower bound is exact if $\beta^2 = \eta^2$. The lower bound is also a quadratic function in $\beta^2$ which is a very useful property for doing Gaussian approximation. 
+
+The unknown parameter $\eta$ is suggested to be optimized within the algorithm. It turns out that $\eta^2 = E(\beta^2)$, the second moment of $\beta$. 
+
+Another two useful reference: 
+
+1. [Spike and slab variational Bayes for high dimensional logistic regression](https://arxiv.org/pdf/2010.11665.pdf)
+
+2. [VARIATIONAL BAYESIAN INFERENCE FOR LINEAR AND LOGISTIC REGRESSION](https://arxiv.org/pdf/1310.5438.pdf)
