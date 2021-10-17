@@ -35,7 +35,26 @@ Notice that
 
 where $f(\beta) = -\log(\exp(\beta/2)+\exp(-\beta/2))$ is a convex  function in $\beta^2$. So we can bound $f(\beta)$ globally with a first order Taylor expansion in $\beta^2$, leading to 
 
-\[f(\beta)\geq -\frac{\eta}{2}-\log(1+\exp(-\eta))+\frac{1}{4\eta}tanh(\frac{\eta}{2})(\beta^2-\eta^2).\]
+\[f(\beta)\geq -\frac{\eta}{2}-\log(1+\exp(-\eta))-\frac{1}{4\eta}tanh(\frac{\eta}{2})(\beta^2-\eta^2).\]
+
+(I find the derivative $\frac{\partial f(\beta)}{\partial\beta^2}$ should be $-\frac{1}{4\eta}tanh(\frac{\eta}{2})$. Let's have a check. It suggests that it should be $-\frac{1}{4\eta}tanh(\frac{\eta}{2})$)
+
+```{r}
+g = function(x){
+  1/(1+exp(-x))
+}
+f0 = function(x){
+  -log(exp(x/2)+exp(-x/2))
+}
+f0_lb = function(x,eta){
+  -eta/2 + log(g(eta))-1/4/eta*tanh(eta/2)*(x^2-eta^2)
+}
+f0(0)
+f0_lb(0,1)
+f0_lb(0,-1)
+```
+
+
 
 This lower bound is exact if $\beta^2 = \eta^2$. The lower bound is also a quadratic function in $\beta^2$ which is a very useful property for doing Gaussian approximation. 
 
@@ -46,3 +65,24 @@ Another two useful reference:
 1. [Spike and slab variational Bayes for high dimensional logistic regression](https://arxiv.org/pdf/2010.11665.pdf)
 
 2. [VARIATIONAL BAYESIAN INFERENCE FOR LINEAR AND LOGISTIC REGRESSION](https://arxiv.org/pdf/1310.5438.pdf)
+
+
+
+Now a question is how about $f(x,y) = -\log(e^\frac{x+y}{2}+e^{-\frac{x+y}{2}})$. 
+
+```{r}
+library(plotly)
+f = function(x,y){
+  -log(exp((x+y)/2)+exp(-(x+y)/2))
+}
+x = y = seq(0,10,length.out = 30)
+z = outer(x,y,f)
+fig = plot_ly(x=x^2,y=y^2,z=z)
+fig <- fig %>% add_surface()
+fig
+```
+
+The plot suggests it is a convex function in $(x^2,y^2)$. A first order Taylor series expansion of in the variable $(x^2,y^2)$ yields 
+\[f(x,y)\geq f(a,b)-\frac{1}{4a}tanh(\frac{a+b}{2})(x^2-a^2) - \frac{1}{4b}tanh(\frac{a+b}{2})(y^2-b^2)\]
+
+
