@@ -35,6 +35,8 @@ editor_options:
 
 [sparse matrix in R](sparseMatrixR.html)
 
+[sbatch job](sbatch.html)
+
 # Data Collection
 
 [RNA-Seq data collection](DataCollection.html)
