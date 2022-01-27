@@ -1,0 +1,36 @@
+---
+title: "sbatch"
+author: "Dongyue Xie"
+date: "2021-01-27"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Run slurm sbatch task on the cluster.
+
+Useful links:
+
+[rcc slurm workshop](https://github.com/rcc-uchicago/SLURM_WORKSHOP)
+[rcc: batch jobs](https://rcc.uchicago.edu/docs/using-midway/index.html#batch-jobs)
+[rcc : running jobs on midway](https://rcc.uchicago.edu/docs/running-jobs/index.html)
+[sample slurm script](https://help.rc.ufl.edu/doc/Sample_SLURM_Scripts)
+
+an example:
+
+
+```{r,eval=FALSE}
+#!/bin/bash
+​
+#SBATCH --partition=broadwl
+#SBATCH --ntasks-per-node=8
+#SBATCH --mem=32G
+#SBATCH --time=36:00:00
+​
+module load R/3.6.1
+​
+Rscript --no-save --no-restore --verbose fit_news_ebpmf_wbg_initLF.R news 20 5000 500 > ../output/News/v0.4.5/fit_news_ebpmf_wbg_K20_maxiter_5000.Rout 2>&1
+```
+
