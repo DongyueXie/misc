@@ -27,6 +27,8 @@ editor_options:
 
 [how to get gene length](genelength.html)
 
+[multiomics, transcriptional regulation](transcriptional_regulation.html)
+
 # Comp-related
 
 [Github tips](githubtips.html)
