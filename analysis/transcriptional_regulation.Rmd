@@ -1,0 +1,13 @@
+---
+title: "transcriptional regulation, multiomics"
+author: "Dongyue Xie"
+date: "2022-02-06"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+A good paper on multiomics, transcriptional regulation: [Seq-ing answers](https://www.sciencedirect.com/science/article/pii/S2001037020302816)
+
