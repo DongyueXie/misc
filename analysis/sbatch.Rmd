@@ -14,8 +14,11 @@ Run slurm sbatch task on the cluster.
 Useful links:
 
 [rcc slurm workshop](https://github.com/rcc-uchicago/SLURM_WORKSHOP)
+
 [rcc: batch jobs](https://rcc.uchicago.edu/docs/using-midway/index.html#batch-jobs)
+
 [rcc : running jobs on midway](https://rcc.uchicago.edu/docs/running-jobs/index.html)
+
 [sample slurm script](https://help.rc.ufl.edu/doc/Sample_SLURM_Scripts)
 
 an example:
@@ -33,4 +36,17 @@ module load R/3.6.1
 ​
 Rscript --no-save --no-restore --verbose fit_news_ebpmf_wbg_initLF.R news 20 5000 500 > ../output/News/v0.4.5/fit_news_ebpmf_wbg_K20_maxiter_5000.Rout 2>&1
 ```
+
+
+
+To submit the sbatch job, do `sbatch _simulation_spiky_lfsr.sbatch`
+
+To look at job status, do `qstat -u username`
+
+Linus previous directory: `../`
+
+Linus current directory: `./`
+
+Linus home directory: `~/`
+
 
