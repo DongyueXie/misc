@@ -1,0 +1,47 @@
+---
+title: "compare rfast and base R"
+author: "Dongyue Xie"
+date: "2022-05-02"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+See how different between Rfast and Rfast2, and base R function are.
+
+## row and col sums
+
+```{r}
+library(microbenchmark)
+# thin matrix
+X = matrix(rnorm(1e6),1e4,1e2)
+microbenchmark(Rfast::rowsums(X),rowSums(X))
+microbenchmark(Rfast::colsums(X),colSums(X))
+
+microbenchmark(Rfast::transpose(X),t(X))
+
+X = t(X)
+microbenchmark(Rfast::rowsums(X),rowSums(X))
+microbenchmark(Rfast::colsums(X),colSums(X))
+
+# roo slow
+#microbenchmark(Rfast::transpose(X),t(X))
+
+```
+
+## crossprod
+
+```{r,eval=FALSE}
+x <- matrnorm(100, 100)
+y <- matrnorm(100, 100)
+microbenchmark(Rfast::Tcrossprod(x,y),tcrossprod(x,y))
+```
+
+
+
+
+
+
+
