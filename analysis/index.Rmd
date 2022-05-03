@@ -39,6 +39,8 @@ editor_options:
 
 [sbatch job](sbatch.html)
 
+[rfast](rfast.html)
+
 # Data Collection
 
 [RNA-Seq data collection](DataCollection.html)
