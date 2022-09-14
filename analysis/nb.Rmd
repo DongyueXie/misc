@@ -23,7 +23,50 @@ On the other hand, if $\lambda\sim Gamma(a,\mu)$, where $\mu=a/b$, then $X\sim N
 
 ## Estimation
 
+Consider a $NB(r,p)$ with pmf $P(X=k;r,p) = {k+r-1 \choose k}p^r(1-p)^k$.
+
 If we have one observation from a NB and $r$ is known, then mle is $\hat p = \frac{r}{r+k}$ and an unbiased estimator is $\hat p = \frac{r-1}{r+k-1}$.
+
+The log-likelihood for $N$ iid observations $(y_1,...,y_n)$ is 
+\[l(r,p) = \sum_i \left(\log\Gamma(y_i+r)+y_i\log p\right) + Nr\log(1-p) -N\log\Gamma(r).\]
+
+The partial derivatives of $l(r,p)$ w.r.t r and p are 
+\[\frac{\partial l}{\partial p} = \frac{\sum_i y_i}{p} - \frac{nr}{1-p} = 0\]
+\[p = \frac{\sum_i y_i}{nr+\sum_i y_i}\]
+\[\frac{\partial l}{\partial r} = \sum_i\psi(y_i+r) - n\psi(r)+n\log(1-p) = 0\]
+\[\psi(y) = \frac{\Gamma'(y)}{\Gamma(y)}\]
+
+```{r}
+set.seed(12345)
+r = 10
+p = 0.3
+n = 1000
+x = rnbinom(n,r,1-p)
+
+lr = function(r,x){
+  n = length(x)
+  p = sum(x)/(sum(x)+n*exp(r))
+  temp = (sum(lgamma(x+exp(r))+x*log(p)) + n*exp(r)*log(1-p) - n*lgamma(exp(r)))
+  return(-temp)
+}
+
+lr_d1 = function(r,x){
+  n = length(x)
+  p = sum(x)/(sum(x)+n*exp(r))
+  temp = (sum(digamma(x+exp(r)))-n*digamma(exp(r))+n*log(1-p))
+  return(-temp)
+}
+
+r_vec = 1:50
+l_value = c()
+for(rr in r_vec){
+  l_value = c(l_value,lr(log(rr),x))
+}
+plot(r_vec,l_value,type='l')
+
+res = optim(par=log(20),fn=lr,gr=lr_d1,method ='BFGS',x=x)
+exp(res$par)
+```
 
 ## Negative binomial glm
 
