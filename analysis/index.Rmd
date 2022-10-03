@@ -54,6 +54,8 @@ editor_options:
 
 [kl-divergence](kl.html)
 
+[entropy maximization](entropy_maximization.html)
+
 [voom-limma](limma.html)
 
 [mash](mash.html)
