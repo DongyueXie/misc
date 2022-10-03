@@ -1,0 +1,35 @@
+---
+title: "simple linear regression"
+author: "Dongyue Xie"
+date: "2020-10-03"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Generate $x\sim Unif(-2,2)$, $y\sim Unif(-1,1)$, fit a lm to x,y.
+
+
+
+```{r}
+n = 1e4
+x = runif(n,-2,2)
+y = runif(n,-1,1)
+lm(y~.,data.frame(x=x,y=y))
+```
+
+Now rotate the points by 45 degree
+
+
+```{r}
+library(rearrr)
+datax = data.frame(x=x,y=y)
+new_datax = rotate_2d(datax,45,x_col = 'x',y_col = 'y',origin = c(0,0))
+plot(new_datax$x_rotated,new_datax$y_rotated,xlab='x',ylab='y',col='grey80')
+lm(y~.,data.frame(x=new_datax$x_rotated,y=new_datax$y_rotated))
+lines(new_datax$x_rotated, 0.600406*new_datax$x_rotated-0.005416)
+abline(h=0,lty=2)
+abline(v=0,lty=2)
+```
