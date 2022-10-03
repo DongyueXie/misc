@@ -1,0 +1,19 @@
+---
+title: "entropy maximization"
+author: "Dongyue Xie"
+date: "2022-10-03"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+[A useful link to max entropy under constraint](https://sgfin.github.io/2017/03/16/Deriving-probability-distributions-using-the-Principle-of-Maximum-Entropy/)
+
+[derivative of KL](https://stats.stackexchange.com/questions/235446/how-to-obtain-the-functional-derivative-in-variational-inference)
+
+
+```{r}
+
+```
+
