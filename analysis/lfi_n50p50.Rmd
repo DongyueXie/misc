@@ -1,0 +1,52 @@
+---
+title: "lfi n50 p50, compare ssvs, bb_ssl, debiased lasso"
+author: "DongyueXie"
+date: "2023-02-01"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+In this simulation, generate data 100 times from 
+
+$n = 50, p = 50, \pi_0 = 0.9, \sigma^2_0 = 0.01, \sigma^2_1 = 25, \sigma^2 = 1$
+
+Design matrix is drawn from standard normal distribution.
+
+```{r}
+res = readRDS('output/lfi/n50.rds')
+```
+
+## Coverage 
+
+The coverage is mean of (mean coverage of all parameters each time) over 100 replicates. 
+
+```{r}
+boxplot(res$covered)
+abline(h=0.95,lty=2)
+```
+
+## MSE
+
+the mse of (posterior mean, and true beta)
+
+```{r}
+mse = function(x,y){mean((x-y)^2)}
+
+calc_mse = function(res){
+  n_simu = length(res)
+  mse_all = c()
+  for(i in 1:n_simu){
+    mse_all = rbind(mse_all,c(mse(res[[i]]$data$beta,colMeans(res[[i]]$fit_ssvs$beta_draws)),
+                              mse(res[[i]]$data$beta,colMeans(res[[i]]$fit_bb$beta)),
+                              mse(res[[i]]$data$beta,res[[i]]$fit_debiased$coef)))
+  }
+  colnames(mse_all) = c('ssvs','bb_ssl','debiased')
+  return(mse_all)
+}
+boxplot(calc_mse(res$res))
+```
+
+
