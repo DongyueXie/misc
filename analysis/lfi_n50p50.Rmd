@@ -11,7 +11,7 @@ editor_options:
 
 In this simulation, generate data 100 times from 
 
-$n = 50, p = 50, \pi_0 = 0.9, \sigma^2_0 = 0.01, \sigma^2_1 = 25, \sigma^2 = 1$
+$n = 50, p = 50, \pi_0 = 0.95, \sigma^2_0 = 0.01, \sigma^2_1 = 25, \sigma^2 = 1$
 
 Design matrix is drawn from standard normal distribution.
 
