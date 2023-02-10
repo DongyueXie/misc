@@ -1,0 +1,165 @@
+---
+title: "p200_n50_exp"
+author: "Yao Rong"
+date: "2022/9/9"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("C:/Users/Alienware/Desktop/DL for statistic estimation and inference")
+```
+
+```{r}
+X = read.csv("./simulation-based-inference/data/X_rho0_N50_p200.csv", header = F)
+betas = read.csv("./simulation-based-inference/data/beta_rho0_N50_p200.csv", header = F)
+Ys = read.csv("./simulation-based-inference/data/Y_rho0_N50_p200.csv", header = F)
+```
+
+```{r}
+X = as.matrix(X)
+```
+
+```{r}
+library(glmnet)
+```
+
+```{r}
+res.lasso <- matrix(nrow=4,ncol=200)
+```
+
+
+```{r}
+cv_model <- cv.glmnet(X, t(Ys[1,]), alpha=1, intercept=FALSE)
+best_lambda <- cv_model$lambda.min
+best_model <- glmnet(X, t(Ys[1,]), alpha = 1, lambda = best_lambda, intercept=FALSE)
+coefs = coef(best_model)
+plot(1:200,coefs[2:201])
+res.lasso[1,]=coefs[2:201]
+lines(1:200,t(betas[1,]),col='red')
+mean((coefs[2:201]-t(betas[1,]))^2)
+```
+
+```{r}
+cv_model <- cv.glmnet(X, t(Ys[2,]), alpha=1, intercept=FALSE)
+best_lambda <- cv_model$lambda.min
+best_model <- glmnet(X, t(Ys[2,]), alpha = 1, lambda = best_lambda, intercept=FALSE)
+coefs = coef(best_model)
+plot(1:200,coefs[2:201], ylim=c(-3,2.5))
+res.lasso[2,]=coefs[2:201]
+lines(1:200,t(betas[2,]),col='red')
+mean((coefs[2:201]-t(betas[2,]))^2)
+```
+
+
+```{r}
+cv_model <- cv.glmnet(X, t(Ys[3,]), alpha=1, intercept=FALSE)
+best_lambda <- cv_model$lambda.min
+best_model <- glmnet(X, t(Ys[3,]), alpha = 1, lambda = best_lambda, intercept=FALSE)
+coefs = coef(best_model)
+plot(1:200,coefs[2:201])
+res.lasso[3,]=coefs[2:201]
+lines(1:200,t(betas[3,]),col='red')
+mean((coefs[2:201]-t(betas[3,]))^2)
+```
+
+```{r}
+cv_model <- cv.glmnet(X, t(Ys[4,]), alpha=1, intercept=FALSE)
+best_lambda <- cv_model$lambda.min
+best_model <- glmnet(X, t(Ys[4,]), alpha = 1, lambda = best_lambda, intercept=FALSE)
+coefs = coef(best_model)
+plot(1:200,coefs[2:201])
+res.lasso[4,]=coefs[2:201]
+lines(1:200,t(betas[4,]),col='red')
+mean((coefs[2:201]-t(betas[4,]))^2)
+```
+
+```{r}
+write.csv(res.lasso, 'rho0_lasso.csv')
+```
+
+
+
+
+```{r}
+library(BBSSL)
+```
+
+```{r}
+n = 50
+p = 200
+a = 1
+b = p
+res.bbssl <- matrix(nrow=4,ncol=200)
+```
+
+```{r}
+BB.SSL.result <- BB_SSL(Ys[1,], X, method=3, lambda=c(7, 0.05), NSample=100, a, b, maxiter=10000, alpha=16, initial.beta=rep(0,p), discard=TRUE)
+plot(1:200,colMeans(BB.SSL.result$beta), ylim=c(-2,3))
+lines(1:200,t(betas[1,]),col='red')
+```
+
+```{r}
+BB.SSL.result <- BB_SSL(Ys[1,], X, method=3, lambda=c(20, 0.05), NSample=100, a, b, maxiter=10000, alpha=18, initial.beta=rep(0,p), discard=TRUE)
+plot(1:200,colMeans(BB.SSL.result$beta), ylim=c(-2,3))
+res.bbssl[1,] = colMeans(BB.SSL.result$beta)
+lines(1:200,t(betas[1,]),col='red')
+```
+```{r}
+which(betas[1,]!=0)
+```
+
+
+
+```{r}
+par(mfrow=c(2,2))
+hist(BB.SSL.result$beta[,10])
+hist(BB.SSL.result$beta[,43])
+hist(BB.SSL.result$beta[,59])
+hist(BB.SSL.result$beta[,71])
+```
+
+```{r}
+BB.SSL.result <- BB_SSL(Ys[1,], X, method=3, lambda=c(50, 0.05), NSample=100, a, b, maxiter=10000, alpha=20, initial.beta=rep(0,p), discard=TRUE)
+plot(1:200,colMeans(BB.SSL.result$beta), ylim=c(-2,3))
+lines(1:200,t(betas[1,]),col='red')
+```
+
+
+
+```{r}
+BB.SSL.result <- BB_SSL(Ys[2,], X, method=3, lambda=c(20, 0.05), NSample=100, a, b, maxiter=10000, alpha=18, initial.beta=rep(0,p), discard=TRUE)
+plot(1:200,colMeans(BB.SSL.result$beta), ylim=c(-3,2.5))
+res.bbssl[2,] = colMeans(BB.SSL.result$beta)
+lines(1:200,t(betas[2,]),col='red')
+```
+
+
+
+```{r}
+BB.SSL.result <- BB_SSL(Ys[3,], X, method=3, lambda=c(20, 0.05), NSample=100, a, b, maxiter=10000, alpha=18, initial.beta=rep(0,p), discard=TRUE)
+plot(1:200,colMeans(BB.SSL.result$beta), ylim=c(-2.5,3))
+res.bbssl[3,] = colMeans(BB.SSL.result$beta)
+lines(1:200,t(betas[3,]),col='red')
+```
+
+```{r}
+BB.SSL.result <- BB_SSL(Ys[4,], X, method=3, lambda=c(20, 0.05), NSample=100, a, b, maxiter=10000, alpha=18, initial.beta=rep(0,p), discard=TRUE)
+plot(1:200,colMeans(BB.SSL.result$beta), ylim=c(-2.5,3))
+res.bbssl[4,] = colMeans(BB.SSL.result$beta)
+lines(1:200,t(betas[4,]),col='red')
+```
+
+```{r}
+write.csv(res.bbssl, './rho0_bbssl.csv')
+```
+
+
+```{r}
+result2 <- SSLASSO_2(X, Ys[4,], initial.beta = rep(0,200))
+plot(result2)
+```
+
