@@ -28,6 +28,25 @@ boxplot(res$covered)
 abline(h=0.95,lty=2)
 ```
 
+
+## CI length
+
+```{r}
+get_ci_length = function(res){
+  n_simu = length(res)
+  ci_length = c()
+  for(i in 1:n_simu){
+    ci_length = rbind(ci_length,c(mean(apply(res[[i]]$fit_ssvs$beta_draws,2,function(z){quantile(z,0.975)})-apply(res[[i]]$fit_ssvs$beta_draws,2,function(z){quantile(z,0.025)})),
+                                  mean(apply(res[[i]]$fit_bb$beta,2,function(z){quantile(z,0.975)})-apply(res[[i]]$fit_bb$beta,2,function(z){quantile(z,0.025)})),
+                                  mean(res[[i]]$fit_debiased$up.lim - res[[i]]$fit_debiased$low.lim)))
+  }
+    colnames(ci_length) = c('ssvs','bb_ssl','debiased')
+  return(ci_length)
+}
+
+boxplot(get_ci_length(res$res))
+```
+
 ## MSE
 
 the mse of (posterior mean, and true beta)
