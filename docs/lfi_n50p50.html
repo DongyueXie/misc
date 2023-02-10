@@ -522,15 +522,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree42b1a00a3829b5e5572879320ccf9e3132ebcba6targetblank42b1a00a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreee8d25397c8f7465a43b43dfbc2cf54c3bbb4c490targetblanke8d2539a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/DongyueXie/misc/tree/42b1a00a3829b5e5572879320ccf9e3132ebcba6" target="_blank">42b1a00</a>
+<a href="https://github.com/DongyueXie/misc/tree/e8d25397c8f7465a43b43dfbc2cf54c3bbb4c490" target="_blank">e8d2539</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree42b1a00a3829b5e5572879320ccf9e3132ebcba6targetblank42b1a00a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreee8d25397c8f7465a43b43dfbc2cf54c3bbb4c490targetblanke8d2539a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -540,7 +540,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/DongyueXie/misc/tree/42b1a00a3829b5e5572879320ccf9e3132ebcba6" target="_blank">42b1a00</a>.
+<a href="https://github.com/DongyueXie/misc/tree/e8d25397c8f7465a43b43dfbc2cf54c3bbb4c490" target="_blank">e8d2539</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -557,16 +557,15 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    code/sslasso_code/.DS_Store
+    Ignored:    code/sslasso_code/.Rapp.history
 
 Untracked files:
-    Untracked:  analysis/p50_n200_exp.Rmd
-    Untracked:  code/__MACOSX/
-    Untracked:  code/lfi.R
-    Untracked:  code/sslasso_code/
     Untracked:  output/lfi/
 
 Unstaged changes:
-    Modified:   analysis/spike_slab_sampling.ipynb
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/lfi_n100p100.Rmd
 
 </code></pre>
 <p>
@@ -612,6 +611,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/e8d25397c8f7465a43b43dfbc2cf54c3bbb4c490/analysis/lfi_n50p50.Rmd" target="_blank">e8d2539</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-10
+</td>
+<td>
+wflow_publish("analysis/lfi_n50p50.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/f39c6b81568cccffa6c131d245c6b47b791a05e4/docs/lfi_n50p50.html" target="_blank">f39c6b8</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -723,23 +756,21 @@ DongyueXie
 </div>
 </div>
 </div>
-<div id="mse" class="section level2">
-<h2>MSE</h2>
-<p>the mse of (posterior mean, and true beta)</p>
-<pre class="r"><code>mse = function(x,y){mean((x-y)^2)}
-
-calc_mse = function(res){
+<div id="ci-length" class="section level2">
+<h2>CI length</h2>
+<pre class="r"><code>get_ci_length = function(res){
   n_simu = length(res)
-  mse_all = c()
+  ci_length = c()
   for(i in 1:n_simu){
-    mse_all = rbind(mse_all,c(mse(res[[i]]$data$beta,colMeans(res[[i]]$fit_ssvs$beta_draws)),
-                              mse(res[[i]]$data$beta,colMeans(res[[i]]$fit_bb$beta)),
-                              mse(res[[i]]$data$beta,res[[i]]$fit_debiased$coef)))
+    ci_length = rbind(ci_length,c(mean(apply(res[[i]]$fit_ssvs$beta_draws,2,function(z){quantile(z,0.975)})-apply(res[[i]]$fit_ssvs$beta_draws,2,function(z){quantile(z,0.025)})),
+                                  mean(apply(res[[i]]$fit_bb$beta,2,function(z){quantile(z,0.975)})-apply(res[[i]]$fit_bb$beta,2,function(z){quantile(z,0.025)})),
+                                  mean(res[[i]]$fit_debiased$up.lim - res[[i]]$fit_debiased$low.lim)))
   }
-  colnames(mse_all) = c(&#39;ssvs&#39;,&#39;bb_ssl&#39;,&#39;debiased&#39;)
-  return(mse_all)
+    colnames(ci_length) = c(&#39;ssvs&#39;,&#39;bb_ssl&#39;,&#39;debiased&#39;)
+  return(ci_length)
 }
-boxplot(calc_mse(res$res))</code></pre>
+
+boxplot(get_ci_length(res$res))</code></pre>
 <p><img src="figure/lfi_n50p50.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
@@ -778,6 +809,25 @@ DongyueXie
 </table>
 </div>
 </div>
+</div>
+<div id="mse" class="section level2">
+<h2>MSE</h2>
+<p>the mse of (posterior mean, and true beta)</p>
+<pre class="r"><code>mse = function(x,y){mean((x-y)^2)}
+
+calc_mse = function(res){
+  n_simu = length(res)
+  mse_all = c()
+  for(i in 1:n_simu){
+    mse_all = rbind(mse_all,c(mse(res[[i]]$data$beta,colMeans(res[[i]]$fit_ssvs$beta_draws)),
+                              mse(res[[i]]$data$beta,colMeans(res[[i]]$fit_bb$beta)),
+                              mse(res[[i]]$data$beta,res[[i]]$fit_debiased$coef)))
+  }
+  colnames(mse_all) = c(&#39;ssvs&#39;,&#39;bb_ssl&#39;,&#39;debiased&#39;)
+  return(mse_all)
+}
+boxplot(calc_mse(res$res))</code></pre>
+<p><img src="figure/lfi_n50p50.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
