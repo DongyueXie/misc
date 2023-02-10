@@ -522,15 +522,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree99adf3be639cfb327b6bccedac6476bd4ddb93cdtargetblank99adf3ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreebc65183b9fe4eb647b23907222f3a0684f45f7cctargetblankbc65183a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/DongyueXie/misc/tree/99adf3be639cfb327b6bccedac6476bd4ddb93cd" target="_blank">99adf3b</a>
+<a href="https://github.com/DongyueXie/misc/tree/bc65183b9fe4eb647b23907222f3a0684f45f7cc" target="_blank">bc65183</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree99adf3be639cfb327b6bccedac6476bd4ddb93cdtargetblank99adf3ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctreebc65183b9fe4eb647b23907222f3a0684f45f7cctargetblankbc65183a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -540,7 +540,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/DongyueXie/misc/tree/99adf3be639cfb327b6bccedac6476bd4ddb93cd" target="_blank">99adf3b</a>.
+<a href="https://github.com/DongyueXie/misc/tree/bc65183b9fe4eb647b23907222f3a0684f45f7cc" target="_blank">bc65183</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -557,17 +557,14 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    code/sslasso_code/.DS_Store
+    Ignored:    code/sslasso_code/.Rapp.history
 
 Untracked files:
-    Untracked:  analysis/p50_n200_exp.Rmd
-    Untracked:  code/__MACOSX/
-    Untracked:  code/lfi.R
-    Untracked:  code/sslasso_code/
     Untracked:  output/lfi/
 
 Unstaged changes:
-    Modified:   analysis/lfi_n50p50.Rmd
-    Modified:   analysis/spike_slab_sampling.ipynb
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -618,6 +615,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/bc65183b9fe4eb647b23907222f3a0684f45f7cc/analysis/lfi_n100p100.Rmd" target="_blank">bc65183</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-10
+</td>
+<td>
+wflow_publish("analysis/lfi_n100p100.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/6955549c297aae529e1d2d88f785ccb922234bac/docs/lfi_n100p100.html" target="_blank">6955549</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/99adf3be639cfb327b6bccedac6476bd4ddb93cd/analysis/lfi_n100p100.Rmd" target="_blank">99adf3b</a>
 </td>
 <td>
@@ -652,6 +683,97 @@ over 100 replicates.</p>
 <pre class="r"><code>boxplot(res$covered)
 abline(h=0.95,lty=2)</code></pre>
 <p><img src="figure/lfi_n100p100.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/6955549c297aae529e1d2d88f785ccb922234bac/docs/figure/lfi_n100p100.Rmd/unnamed-chunk-2-1.png" target="_blank">6955549</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="ci-length" class="section level2">
+<h2>CI length</h2>
+<pre class="r"><code>get_ci_length = function(res){
+  n_simu = length(res)
+  ci_length = c()
+  for(i in 1:n_simu){
+    ci_length = rbind(ci_length,c(mean(apply(res[[i]]$fit_ssvs$beta_draws,2,function(z){quantile(z,0.975)})-apply(res[[i]]$fit_ssvs$beta_draws,2,function(z){quantile(z,0.025)})),
+                                  mean(apply(res[[i]]$fit_bb$beta,2,function(z){quantile(z,0.975)})-apply(res[[i]]$fit_bb$beta,2,function(z){quantile(z,0.025)})),
+                                  mean(res[[i]]$fit_debiased$up.lim - res[[i]]$fit_debiased$low.lim)))
+  }
+    colnames(ci_length) = c(&#39;ssvs&#39;,&#39;bb_ssl&#39;,&#39;debiased&#39;)
+  return(ci_length)
+}
+
+boxplot(get_ci_length(res$res))</code></pre>
+<p><img src="figure/lfi_n100p100.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/6955549c297aae529e1d2d88f785ccb922234bac/docs/figure/lfi_n100p100.Rmd/unnamed-chunk-3-1.png" target="_blank">6955549</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="mse" class="section level2">
 <h2>MSE</h2>
@@ -670,7 +792,7 @@ calc_mse = function(res){
   return(mse_all)
 }
 boxplot(calc_mse(res$res))</code></pre>
-<p><img src="figure/lfi_n100p100.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/lfi_n100p100.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
