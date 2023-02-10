@@ -101,3 +101,13 @@ editor_options:
 [SymSim](SymSim.html)
 
 [RNA Velocity](rnavelocity.html)
+
+# LFI
+
+[ssvs python implementation](analysis/spike_slab_sampling.ipynb)
+
+[dense design matrix, n=p=100, compare ssvs, bb, debiased lasso](lfi_n100p100.html)
+
+[dense design matrix, n=p=100, compare ssvs, bb, debiased lasso](lfi_n50p50.html)
+
+
