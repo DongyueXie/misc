@@ -108,6 +108,6 @@ editor_options:
 
 [dense design matrix, n=p=100, compare ssvs, bb, debiased lasso](lfi_n100p100.html)
 
-[dense design matrix, n=p=100, compare ssvs, bb, debiased lasso](lfi_n50p50.html)
+[dense design matrix, n=p=50, compare ssvs, bb, debiased lasso](lfi_n50p50.html)
 
 
