@@ -1,0 +1,69 @@
+---
+title: "lrvs example"
+author: "DongyueXie"
+date: "2023-02-14"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+library(lrvs)
+## generate data
+gen_data = function(n,p,pi0,var0,var1,sigma2,XI = FALSE){
+  beta0 = rnorm(p,0,sqrt(var0))
+  beta1 = rnorm(p,0,sqrt(var1))
+  gamma = rbinom(p,1,1-pi0)
+  beta = beta1 * gamma + (1-gamma) * beta0
+  if(XI){
+    y = beta + rnorm(n,0,sqrt(sigma2))
+  }else{
+    X = matrix(rnorm(n*p),nrow=n,ncol=p)
+    y = X%*%beta + rnorm(n,0,sqrt(sigma2))
+  }
+  return(list(beta=beta,y=y,X=X))
+}
+
+```
+
+```{r}
+n = 100
+p = 100
+pi0 = 0.95
+var0 = 0.01
+var1 = 25
+sigma2 = 1
+datax = gen_data(n,p,pi0,var0,var1,sigma2)
+```
+
+```{r,warning=F}
+res = lrvs(datax$X,datax$y,sigma2=sigma2,
+           ssvs_control = list(pi0=pi0,var0=var0,var1=var1,n_burnin=300,n_post=1000))
+```
+
+```{r}
+names(res)
+```
+
+```{r}
+plot(res$ssvs$posteriorMean,col='grey40',pch='.',cex=2,main='ssvs')
+lines(res$ssvs$posteriorCS[,1],col=2,type='p',pch='*')
+lines(res$ssvs$posteriorCS[,2],col=2,type='p',pch='*')
+legend('topleft',c('posterior mean','posterior Credible set'),pch=c('.','*'),col=c(1,2))
+```
+
+```{r}
+plot(res$bbssl$posteriorMean,col='grey40',pch='.',cex=2,main='bbssl')
+lines(res$bbssl$posteriorCS[,1],col=2,type='p',pch='*')
+lines(res$bbssl$posteriorCS[,2],col=2,type='p',pch='*')
+legend('topleft',c('posterior mean','posterior Credible set'),pch=c('.','*'),col=c(1,2))
+```
+
+```{r}
+plot(res$debiased_lasso$beta_hat,col='grey40',pch='.',cex=2,main='debiased lasso',ylim=range(res$debiased_lasso$confidence_interval))
+lines(res$debiased_lasso$confidence_interval[,1],col=2,type='p',pch='*')
+lines(res$debiased_lasso$confidence_interval[,2],col=2,type='p',pch='*')
+legend('topleft',c('posterior mean','posterior Credible set'),pch=c('.','*'),col=c(1,2))
+```
