@@ -110,4 +110,5 @@ editor_options:
 
 [dense design matrix, n=p=50, compare ssvs, bb, debiased lasso](lfi_n50p50.html)
 
+[lrvs example](lrvs_example.html)
 
