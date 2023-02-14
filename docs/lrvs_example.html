@@ -521,15 +521,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree98d50b257d9294ddbf5a88c60058814ed5888444targetblank98d50b2a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree4f6bdffa03cde3e850955c369529690e2087602dtargetblank4f6bdffa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/DongyueXie/misc/tree/98d50b257d9294ddbf5a88c60058814ed5888444" target="_blank">98d50b2</a>
+<a href="https://github.com/DongyueXie/misc/tree/4f6bdffa03cde3e850955c369529690e2087602d" target="_blank">4f6bdff</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree98d50b257d9294ddbf5a88c60058814ed5888444targetblank98d50b2a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree4f6bdffa03cde3e850955c369529690e2087602dtargetblank4f6bdffa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -539,7 +539,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/DongyueXie/misc/tree/98d50b257d9294ddbf5a88c60058814ed5888444" target="_blank">98d50b2</a>.
+<a href="https://github.com/DongyueXie/misc/tree/4f6bdffa03cde3e850955c369529690e2087602d" target="_blank">4f6bdff</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -561,6 +561,9 @@ Ignored files:
 
 Untracked files:
     Untracked:  output/lfi/
+
+Unstaged changes:
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -611,6 +614,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/4f6bdffa03cde3e850955c369529690e2087602d/analysis/lrvs_example.Rmd" target="_blank">4f6bdff</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-14
+</td>
+<td>
+wflow_publish("analysis/lrvs_example.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/35abc5d7b4431411ea3b5c7d8564e4e5496cab6a/docs/lrvs_example.html" target="_blank">35abc5d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/98d50b257d9294ddbf5a88c60058814ed5888444/analysis/lrvs_example.Rmd" target="_blank">98d50b2</a>
 </td>
 <td>
@@ -649,7 +686,8 @@ gen_data = function(n,p,pi0,var0,var1,sigma2,XI = FALSE){
   }
   return(list(beta=beta,y=y,X=X))
 }</code></pre>
-<pre class="r"><code>n = 100
+<pre class="r"><code>set.seed(12345)
+n = 100
 p = 100
 pi0 = 0.95
 var0 = 0.01
@@ -684,18 +722,129 @@ Done!
 <pre class="r"><code>plot(res$ssvs$posteriorMean,col=&#39;grey40&#39;,pch=&#39;.&#39;,cex=2,main=&#39;ssvs&#39;)
 lines(res$ssvs$posteriorCS[,1],col=2,type=&#39;p&#39;,pch=&#39;*&#39;)
 lines(res$ssvs$posteriorCS[,2],col=2,type=&#39;p&#39;,pch=&#39;*&#39;)
-legend(&#39;topleft&#39;,c(&#39;posterior mean&#39;,&#39;posterior Credible set&#39;),pch=c(&#39;.&#39;,&#39;*&#39;),col=c(1,2))</code></pre>
+legend(&#39;bottomright&#39;,c(&#39;posterior mean&#39;,&#39;posterior Credible set&#39;),pch=c(&#39;.&#39;,&#39;*&#39;),col=c(1,2))</code></pre>
 <p><img src="figure/lrvs_example.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/35abc5d7b4431411ea3b5c7d8564e4e5496cab6a/docs/figure/lrvs_example.Rmd/unnamed-chunk-5-1.png" target="_blank">35abc5d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(res$bbssl$posteriorMean,col=&#39;grey40&#39;,pch=&#39;.&#39;,cex=2,main=&#39;bbssl&#39;)
 lines(res$bbssl$posteriorCS[,1],col=2,type=&#39;p&#39;,pch=&#39;*&#39;)
 lines(res$bbssl$posteriorCS[,2],col=2,type=&#39;p&#39;,pch=&#39;*&#39;)
-legend(&#39;topleft&#39;,c(&#39;posterior mean&#39;,&#39;posterior Credible set&#39;),pch=c(&#39;.&#39;,&#39;*&#39;),col=c(1,2))</code></pre>
+legend(&#39;bottomright&#39;,c(&#39;posterior mean&#39;,&#39;posterior Credible set&#39;),pch=c(&#39;.&#39;,&#39;*&#39;),col=c(1,2))</code></pre>
 <p><img src="figure/lrvs_example.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/35abc5d7b4431411ea3b5c7d8564e4e5496cab6a/docs/figure/lrvs_example.Rmd/unnamed-chunk-6-1.png" target="_blank">35abc5d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(res$debiased_lasso$beta_hat,col=&#39;grey40&#39;,pch=&#39;.&#39;,cex=2,main=&#39;debiased lasso&#39;,ylim=range(res$debiased_lasso$confidence_interval))
 lines(res$debiased_lasso$confidence_interval[,1],col=2,type=&#39;p&#39;,pch=&#39;*&#39;)
 lines(res$debiased_lasso$confidence_interval[,2],col=2,type=&#39;p&#39;,pch=&#39;*&#39;)
-legend(&#39;topleft&#39;,c(&#39;posterior mean&#39;,&#39;posterior Credible set&#39;),pch=c(&#39;.&#39;,&#39;*&#39;),col=c(1,2))</code></pre>
+legend(&#39;bottomright&#39;,c(&#39;posterior mean&#39;,&#39;posterior Credible set&#39;),pch=c(&#39;.&#39;,&#39;*&#39;),col=c(1,2))</code></pre>
 <p><img src="figure/lrvs_example.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/35abc5d7b4431411ea3b5c7d8564e4e5496cab6a/docs/figure/lrvs_example.Rmd/unnamed-chunk-7-1.png" target="_blank">35abc5d</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-02-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
