@@ -112,3 +112,9 @@ editor_options:
 
 [lrvs example](lrvs_example.html)
 
+# Others
+
+[mutation smoothing](mutation.html)
+
+
+
