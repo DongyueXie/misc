@@ -1,0 +1,201 @@
+---
+title: "mutation"
+author: "DongyueXie"
+date: "2023-03-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## AtoG
+
+### 10k
+
+```{r}
+temp = read.table('/project2/compbio/todongyue/AtoG/mutation.A_to_G.and.mutation.T_to_C.10k')
+x = temp$V4
+x = as.numeric(x)
+x = x[!is.na(x)]
+sum(x==0)/length(x)
+range(x)
+```
+
+Too many zeros.
+
+### 100k
+
+```{r}
+temp = read.table('/project2/compbio/todongyue/AtoG/mutation.A_to_G.and.mutation.T_to_C.100k')
+temp = temp[temp$V4!='.',]
+x = temp$V4
+x = as.numeric(x)
+x = x[!is.na(x)]
+sum(x==0)/length(x)
+range(x)
+s = temp$V5
+s = as.numeric(s)
+range(s)
+plot(x,pch='.',col='grey80',cex=1.5)
+plot(s,pch='.',col='grey80',cex=1.5)
+plot(s,pch='.',col='grey80',cex=1.5,ylim=c(0,2))
+```
+
+Some of the scaling factors $s$ are exactly 0?
+
+Try smash poisson on the count $x$,
+
+```{r,fig.width=10,fig.height=4}
+library(smashr)
+fit_smash = smash.poiss(x)
+plot(x,pch='.',col='grey80',cex=1.5,xlab='position',main='A to G, 100k')
+lines(fit_smash)
+legend('topleft',c('data','smash fit'),pch=c('.',NA),lty=c(NA,1))
+plot(fit_smash,type='l',xlab='position',main='A to G, 100k, smash fit')
+```
+
+Try smash gaus on the $log(x/s)$.
+
+```{r,fig.width=10,fig.height=4}
+x_tilde = log((x+0.1)/(s+0.1))
+fit_smash_gaus = smash.gaus(x_tilde,ebnm_param = list(prior_family = "point_laplace"))
+plot(x,pch='.',col='grey80',cex=1.5,xlab='position',main='A to G, 100k, x/s')
+lines(exp(fit_smash_gaus))
+legend('topleft',c('data','smash fit'),pch=c('.',NA),lty=c(NA,1))
+
+plot(fit_smash_gaus,type='l',xlab='position',main='A to G, 100k, smash fit, x/s')
+```
+
+### 10m
+
+```{r}
+temp = read.table('/project2/compbio/todongyue/AtoG/mutation.A_to_G.and.mutation.T_to_C.10m')
+temp = temp[temp$V4!='.',]
+x = temp$V4
+x = as.numeric(x)
+x = x[!is.na(x)]
+sum(x==0)/length(x)
+range(x)
+s = temp$V5
+s = as.numeric(s)
+range(s)
+plot(x,pch='.',col='grey80',cex=1.5)
+plot(s,pch='.',col='grey80',cex=1.5)
+```
+
+Why range of s is much larger?
+
+Try smash poisson on the count $x$,
+
+```{r,fig.width=10,fig.height=4}
+fit_smash = smash.poiss(x)
+plot(x,pch='.',col='grey80',cex=2,xlab='position',main='A to G, 10m')
+lines(fit_smash)
+legend('topleft',c('data','smash fit'),pch=c('.',NA),lty=c(NA,1))
+plot(fit_smash,type='l',xlab='position',main='A to G, 100k, smash fit')
+```
+
+```{r}
+library(genlasso)
+fit_tf = trendfilter(x)
+fit_tf_cv =cv.trendfilter(fit_tf)
+plot(fit_tf,lambda = fit_tf_cv$lambda.min,col='grey80',pch=20)
+```
+
+
+## CtoT
+
+### 100k
+
+```{r}
+temp = read.table('/project2/compbio/todongyue/CtoT/mutation.C_to_T.nonCpG.and.mutation.G_to_A.nonCpG.bed.100k')
+temp = temp[temp$V4!='.',]
+x = temp$V4
+x = as.numeric(x)
+x = x[!is.na(x)]
+sum(x==0)/length(x)
+range(x)
+s = temp$V5
+s = as.numeric(s)
+range(s)
+plot(x,pch='.',col='grey80',cex=2)
+plot(s,pch='.',col='grey80',cex=2)
+plot(s,pch='.',col='grey80',cex=2,ylim=c(0,2))
+```
+
+Try smash poisson on the count $x$,
+
+```{r,fig.width=10,fig.height=4}
+fit_smash = smash.poiss(x)
+plot(x,pch='.',col='grey80',cex=2,xlab='position',main='C to T, 100k')
+lines(fit_smash)
+legend('topleft',c('data','smash fit'),pch=c('.',NA),lty=c(NA,1))
+plot(fit_smash,type='l',xlab='position',main='C to T, 100k, smash fit')
+```
+
+
+Try smash gaus on the $log(x/s)$.
+
+```{r,fig.width=10,fig.height=4}
+x_tilde = log((x+0.1)/(s+0.1))
+fit_smash_gaus = smash.gaus(x_tilde,ebnm_param = list(prior_family = "point_laplace"))
+plot(x,pch='.',col='grey80',cex=1.5,xlab='position',main='A to G, 100k, x/s')
+lines(exp(fit_smash_gaus))
+legend('topleft',c('data','smash fit'),pch=c('.',NA),lty=c(NA,1))
+
+plot(fit_smash_gaus,type='l',xlab='position',main='A to G, 100k, smash fit, x/s')
+```
+
+### 10m
+
+```{r}
+temp = read.table('/project2/compbio/todongyue/CtoT/mutation.C_to_T.nonCpG.and.mutation.G_to_A.nonCpG.bed.10m')
+temp = temp[temp$V4!='.',]
+x = temp$V4
+x = as.numeric(x)
+x = x[!is.na(x)]
+sum(x==0)/length(x)
+range(x)
+s = temp$V5
+s = as.numeric(s)
+range(s)
+plot(x,pch='.',col='grey80',cex=2)
+plot(s,pch='.',col='grey80',cex=2)
+```
+
+Try smash poisson on the count $x$,
+
+```{r,fig.width=10,fig.height=4}
+fit_smash = smash.poiss(x)
+plot(x,pch='.',col='grey80',cex=2,xlab='position',main='C to T, 10m')
+lines(fit_smash)
+legend('topleft',c('data','smash fit'),pch=c('.',NA),lty=c(NA,1))
+```
+
+### 500k
+
+```{r}
+temp = read.table('/project2/compbio/todongyue/CtoT2/CtoT_nonCpG.500k')
+temp = temp[temp$V4!='.',]
+x = temp$V4
+x = as.numeric(x)
+x = x[!is.na(x)]
+sum(x==0)/length(x)
+range(x)
+s = temp$V5
+s = as.numeric(s)
+range(s)
+plot(x,pch='.',col='grey80',cex=2)
+plot(s,pch='.',col='grey80',cex=2)
+```
+
+
+Try smash poisson on the count $x$,
+
+```{r,fig.width=10,fig.height=4}
+fit_smash = smash.poiss(x)
+plot(x,pch='.',col='grey80',cex=2,xlab='position',main='C to T, 500k')
+lines(fit_smash)
+legend('topleft',c('data','smash fit'),pch=c('.',NA),lty=c(NA,1))
+```
+
+
