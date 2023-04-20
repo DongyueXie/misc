@@ -520,15 +520,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree400e746314ec8bbd65bfd0685263129b62fe6bb0targetblank400e746a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6022dee270aa6a8adf50b68641d4d1aba2dd7c66targetblank6022deea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/DongyueXie/misc/tree/400e746314ec8bbd65bfd0685263129b62fe6bb0" target="_blank">400e746</a>
+<a href="https://github.com/DongyueXie/misc/tree/6022dee270aa6a8adf50b68641d4d1aba2dd7c66" target="_blank">6022dee</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree400e746314ec8bbd65bfd0685263129b62fe6bb0targetblank400e746a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomDongyueXiemisctree6022dee270aa6a8adf50b68641d4d1aba2dd7c66targetblank6022deea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -538,7 +538,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/DongyueXie/misc/tree/400e746314ec8bbd65bfd0685263129b62fe6bb0" target="_blank">400e746</a>.
+<a href="https://github.com/DongyueXie/misc/tree/6022dee270aa6a8adf50b68641d4d1aba2dd7c66" target="_blank">6022dee</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -628,6 +628,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/DongyueXie/misc/blob/6022dee270aa6a8adf50b68641d4d1aba2dd7c66/analysis/mutation_splitting.Rmd" target="_blank">6022dee</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-04-20
+</td>
+<td>
+wflow_publish("analysis/mutation_splitting.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/DongyueXie/misc/76cd0763f965b700ea3d2d45e0fe0e7fc5f27c03/docs/mutation_splitting.html" target="_blank">76cd076</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-04-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/DongyueXie/misc/blob/400e746314ec8bbd65bfd0685263129b62fe6bb0/analysis/mutation_splitting.Rmd" target="_blank">400e746</a>
 </td>
 <td>
@@ -666,11 +700,85 @@ dat &lt;- dat[complete.cases(dat$SNV_exp),]</code></pre>
 <pre class="r"><code>fit = ebps(dat$SNV_obs,dat$SNV_exp,smooth_control = list(wave_trans=&#39;ndwt&#39;,ndwt_method=&#39;smash&#39;),general_control = list(verbose=T,printevery=1))
 saveRDS(fit,file=&#39;output/chr22.expobs.SNV.1kb.bed_splitting_fit.rds&#39;)</code></pre>
 <pre class="r"><code>fit = readRDS(&#39;output/chr22.expobs.SNV.1kb.bed_splitting_fit.rds&#39;)</code></pre>
-<pre class="r"><code>plot(log(dat$SNV_obs/dat$SNV_exp),col=&#39;grey80&#39;,pch=19,ylab=&#39;&#39;)
+<pre class="r"><code>plot(log(dat$SNV_obs/dat$SNV_exp),col=&#39;grey80&#39;,pch=19,ylab=&#39;log(random effect)&#39;,xlab=&#39;position&#39;)
 lines(fit$posterior$mean_log_smooth,lwd=2,col=2)</code></pre>
-<p><img src="figure/mutation_splitting.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/mutation_splitting.Rmd/unnamed-chunk-4-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/76cd0763f965b700ea3d2d45e0fe0e7fc5f27c03/docs/figure/mutation_splitting.Rmd/unnamed-chunk-4-1.png" target="_blank">76cd076</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-04-20
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(fit$fitted_g$sigma2_trace)</code></pre>
 <p><img src="figure/mutation_splitting.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/DongyueXie/misc/blob/76cd0763f965b700ea3d2d45e0fe0e7fc5f27c03/docs/figure/mutation_splitting.Rmd/unnamed-chunk-5-1.png" target="_blank">76cd076</a>
+</td>
+<td>
+DongyueXie
+</td>
+<td>
+2023-04-20
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>fit$fitted_g$sigma2_trace</code></pre>
 <pre><code> [1] 0.131869950 0.054439443 0.023122251 0.013690936 0.010013308 0.008193507
  [7] 0.007145070 0.006481973 0.006036288 0.005723405 0.005495994 0.005325513
