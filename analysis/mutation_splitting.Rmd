@@ -27,8 +27,8 @@ saveRDS(fit,file='output/chr22.expobs.SNV.1kb.bed_splitting_fit.rds')
 fit = readRDS('output/chr22.expobs.SNV.1kb.bed_splitting_fit.rds')
 ```
 
-```{r}
-plot(log(dat$SNV_obs/dat$SNV_exp),col='grey80',pch=19,ylab='')
+```{r,fig.width=12,fig.height=6}
+plot(log(dat$SNV_obs/dat$SNV_exp),col='grey80',pch=19,ylab='log(random effect)',xlab='position')
 lines(fit$posterior$mean_log_smooth,lwd=2,col=2)
 ```
 
