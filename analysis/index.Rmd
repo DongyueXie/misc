@@ -116,5 +116,7 @@ editor_options:
 
 [mutation smoothing](mutation.html)
 
+[mutation smoothing splitting](mutation_splitting.html)
+
 
 
