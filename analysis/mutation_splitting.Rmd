@@ -1,0 +1,46 @@
+---
+title: "mutation smooth"
+author: "DongyueXie"
+date: "2023-03-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+Apply Poisson smoothing method to mutation data on chr22. 1kb window.
+
+```{r}
+library(data.table)
+library(smashrgen)
+dat <- fread('/project2/compbio/todongyue/gnomad/chr22.expobs.SNV.1kb.bed', fill = T)
+dat <- dat[complete.cases(dat$SNV_exp),]
+```
+
+```{r,eval=F}
+fit = ebps(dat$SNV_obs,dat$SNV_exp,smooth_control = list(wave_trans='ndwt',ndwt_method='smash'),general_control = list(verbose=T,printevery=1))
+saveRDS(fit,file='output/chr22.expobs.SNV.1kb.bed_splitting_fit.rds')
+```
+
+```{r}
+fit = readRDS('output/chr22.expobs.SNV.1kb.bed_splitting_fit.rds')
+```
+
+```{r}
+plot(log(dat$SNV_obs/dat$SNV_exp),col='grey80',pch=19,ylab='')
+lines(fit$posterior$mean_log_smooth,lwd=2,col=2)
+```
+
+```{r}
+plot(fit$fitted_g$sigma2_trace)
+fit$fitted_g$sigma2_trace
+```
+
+```{r,eval=F}
+dat$mean_lgre <- fit$posterior$mean_log_smooth
+dat$randeff_sm <- fit$posterior$mean_smooth
+dat$obs_randeff <- dat$SNV_exp*dat$randeff_sm
+saveRDS(dat,'/project2/compbio/todongyue/gnomad/chr22.expobs.SNV.1kb.bed_splitting_fit_obj.rds')
+```
+
